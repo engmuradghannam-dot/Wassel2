@@ -1,5 +1,6 @@
 // MuradERP Customers Page
 import { useState, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useCustomers } from '../../hooks/useCustomers';
 import { useAuthStore } from '../../store/authStore';
@@ -23,6 +24,7 @@ const emptyForm = {
 };
 
 export const CustomersPage = () => {
+  const { t } = useTranslation();
   const { selectedCompany } = useAuthStore();
   const [search, setSearch] = useState('');
   const { customers, isLoading, createCustomer, updateCustomer, deleteCustomer, isSaving } =
@@ -72,7 +74,7 @@ export const CustomersPage = () => {
   };
 
   const handleDelete = async (customer: Customer) => {
-    if (confirm(`متأكد تبي تحذف "${customer.name}"؟`)) {
+    if (confirm(t('customers.confirmDelete', { name: customer.name }))) {
       await deleteCustomer(customer.id);
     }
   };
@@ -80,7 +82,7 @@ export const CustomersPage = () => {
   if (!selectedCompany) {
     return (
       <div className="card text-center text-secondary-500">
-        الرجاء اختيار شركة أولًا من الأعلى لعرض العملاء
+        {t('common.selectCompany')}
       </div>
     );
   }
@@ -88,10 +90,10 @@ export const CustomersPage = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">العملاء</h1>
+        <h1 className="text-2xl font-bold">{t('customers.title')}</h1>
         <button className="btn-primary" onClick={openCreate}>
           <PlusIcon className="h-5 w-5 ml-1" />
-          إضافة عميل
+          {t('customers.addTitle')}
         </button>
       </div>
 
@@ -99,7 +101,7 @@ export const CustomersPage = () => {
         <MagnifyingGlassIcon className="h-5 w-5 absolute right-3 top-2.5 text-secondary-400" />
         <input
           className="input pr-10"
-          placeholder="بحث بالاسم أو الكود..."
+          placeholder={t('customers.searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -109,20 +111,20 @@ export const CustomersPage = () => {
         <table className="table">
           <thead className="table-header">
             <tr>
-              <th className="table-header-cell">الكود</th>
-              <th className="table-header-cell">الاسم</th>
-              <th className="table-header-cell">الجوال</th>
-              <th className="table-header-cell">البريد</th>
-              <th className="table-header-cell">حد الائتمان</th>
-              <th className="table-header-cell">إجراءات</th>
+              <th className="table-header-cell">{t('customers.colCode')}</th>
+              <th className="table-header-cell">{t('customers.colName')}</th>
+              <th className="table-header-cell">{t('customers.colPhone')}</th>
+              <th className="table-header-cell">{t('customers.colEmail')}</th>
+              <th className="table-header-cell">{t('customers.colCreditLimit')}</th>
+              <th className="table-header-cell">{t('customers.colActions')}</th>
             </tr>
           </thead>
           <tbody className="table-body">
             {isLoading && (
-              <tr><td className="table-cell" colSpan={6}>جاري التحميل...</td></tr>
+              <tr><td className="table-cell" colSpan={6}>{t('common.loading')}</td></tr>
             )}
             {!isLoading && customers.length === 0 && (
-              <tr><td className="table-cell text-secondary-500" colSpan={6}>لا يوجد عملاء بعد</td></tr>
+              <tr><td className="table-cell text-secondary-500" colSpan={6}>{t('customers.emptyState')}</td></tr>
             )}
             {customers.map((customer) => (
               <tr key={customer.id}>
@@ -147,62 +149,62 @@ export const CustomersPage = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'تعديل عميل' : 'إضافة عميل'}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? t('customers.editTitle') : t('customers.addTitle')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">الاسم *</label>
+            <label className="block text-sm font-medium mb-1">{t('customers.fieldName')} *</label>
             <input required className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">الاسم بالعربي</label>
+            <label className="block text-sm font-medium mb-1">{t('customers.fieldNameAr')}</label>
             <input className="input" value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">الجوال</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldPhone')}</label>
               <input className="input" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">البريد الإلكتروني</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldEmail')}</label>
               <input type="email" className="input" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">المدينة</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldCity')}</label>
               <input className="input" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">الرقم الضريبي</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldTaxId')}</label>
               <input className="input" value={form.taxId} onChange={(e) => setForm({ ...form, taxId: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">حد الائتمان</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldCreditLimit')}</label>
               <input type="number" min={0} className="input" value={form.creditLimit} onChange={(e) => setForm({ ...form, creditLimit: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">مدة السداد (يوم)</label>
+              <label className="block text-sm font-medium mb-1">{t('customers.fieldPaymentTerms')}</label>
               <input type="number" min={0} className="input" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">العملة</label>
+            <label className="block text-sm font-medium mb-1">{t('customers.fieldCurrency')}</label>
             <CurrencySelect value={form.currency} onChange={(code) => setForm({ ...form, currency: code })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">نوع العميل</label>
+            <label className="block text-sm font-medium mb-1">{t('customers.fieldType')}</label>
             <select className="input" value={form.customerType} onChange={(e) => setForm({ ...form, customerType: e.target.value })}>
-              <option value="INDIVIDUAL">فرد</option>
-              <option value="COMPANY">شركة</option>
-              <option value="GOVERNMENT">جهة حكومية</option>
+              <option value="INDIVIDUAL">{t('customers.typeIndividual')}</option>
+              <option value="COMPANY">{t('customers.typeCompany')}</option>
+              <option value="GOVERNMENT">{t('customers.typeGovernment')}</option>
             </select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>إلغاء</button>
+            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>{t('common.cancel')}</button>
             <button type="submit" disabled={isSaving} className="btn-primary">
-              {isSaving ? 'جاري الحفظ...' : 'حفظ'}
+              {isSaving ? t('common.saving') : t('common.save')}
             </button>
           </div>
         </form>

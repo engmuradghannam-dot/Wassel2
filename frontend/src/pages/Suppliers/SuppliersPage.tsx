@@ -1,5 +1,6 @@
 // MuradERP Suppliers Page
 import { useState, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useSuppliers } from '../../hooks/useSuppliers';
 import { useAuthStore } from '../../store/authStore';
@@ -23,6 +24,7 @@ const emptyForm = {
 };
 
 export const SuppliersPage = () => {
+  const { t } = useTranslation();
   const { selectedCompany } = useAuthStore();
   const [search, setSearch] = useState('');
   const { suppliers, isLoading, createSupplier, updateSupplier, deleteSupplier, isSaving } =
@@ -72,7 +74,7 @@ export const SuppliersPage = () => {
   };
 
   const handleDelete = async (supplier: Supplier) => {
-    if (confirm(`متأكد تبي تحذف "${supplier.name}"؟`)) {
+    if (confirm(t('suppliers.confirmDelete', { name: supplier.name }))) {
       await deleteSupplier(supplier.id);
     }
   };
@@ -80,7 +82,7 @@ export const SuppliersPage = () => {
   if (!selectedCompany) {
     return (
       <div className="card text-center text-secondary-500">
-        الرجاء اختيار شركة أولًا من الأعلى لعرض الموردين
+        {t('common.selectCompany')}
       </div>
     );
   }
@@ -88,10 +90,10 @@ export const SuppliersPage = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">الموردين</h1>
+        <h1 className="text-2xl font-bold">{t('suppliers.title')}</h1>
         <button className="btn-primary" onClick={openCreate}>
           <PlusIcon className="h-5 w-5 ml-1" />
-          إضافة مورد
+          {t('suppliers.addTitle')}
         </button>
       </div>
 
@@ -99,7 +101,7 @@ export const SuppliersPage = () => {
         <MagnifyingGlassIcon className="h-5 w-5 absolute right-3 top-2.5 text-secondary-400" />
         <input
           className="input pr-10"
-          placeholder="بحث بالاسم أو الكود..."
+          placeholder={t('suppliers.searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -109,20 +111,20 @@ export const SuppliersPage = () => {
         <table className="table">
           <thead className="table-header">
             <tr>
-              <th className="table-header-cell">الكود</th>
-              <th className="table-header-cell">الاسم</th>
-              <th className="table-header-cell">الجوال</th>
-              <th className="table-header-cell">البريد</th>
-              <th className="table-header-cell">حد الائتمان</th>
-              <th className="table-header-cell">إجراءات</th>
+              <th className="table-header-cell">{t('suppliers.colCode')}</th>
+              <th className="table-header-cell">{t('suppliers.colName')}</th>
+              <th className="table-header-cell">{t('suppliers.colPhone')}</th>
+              <th className="table-header-cell">{t('suppliers.colEmail')}</th>
+              <th className="table-header-cell">{t('suppliers.colCreditLimit')}</th>
+              <th className="table-header-cell">{t('suppliers.colActions')}</th>
             </tr>
           </thead>
           <tbody className="table-body">
             {isLoading && (
-              <tr><td className="table-cell" colSpan={6}>جاري التحميل...</td></tr>
+              <tr><td className="table-cell" colSpan={6}>{t('common.loading')}</td></tr>
             )}
             {!isLoading && suppliers.length === 0 && (
-              <tr><td className="table-cell text-secondary-500" colSpan={6}>لا يوجد موردين بعد</td></tr>
+              <tr><td className="table-cell text-secondary-500" colSpan={6}>{t('suppliers.emptyState')}</td></tr>
             )}
             {suppliers.map((supplier) => (
               <tr key={supplier.id}>
@@ -147,62 +149,62 @@ export const SuppliersPage = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'تعديل مورد' : 'إضافة مورد'}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? t('suppliers.editTitle') : t('suppliers.addTitle')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">الاسم *</label>
+            <label className="block text-sm font-medium mb-1">{t('suppliers.fieldName')} *</label>
             <input required className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">الاسم بالعربي</label>
+            <label className="block text-sm font-medium mb-1">{t('suppliers.fieldNameAr')}</label>
             <input className="input" value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">الجوال</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldPhone')}</label>
               <input className="input" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">البريد الإلكتروني</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldEmail')}</label>
               <input type="email" className="input" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">المدينة</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldCity')}</label>
               <input className="input" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">الرقم الضريبي</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldTaxId')}</label>
               <input className="input" value={form.taxId} onChange={(e) => setForm({ ...form, taxId: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">حد الائتمان</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldCreditLimit')}</label>
               <input type="number" min={0} className="input" value={form.creditLimit} onChange={(e) => setForm({ ...form, creditLimit: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">مدة السداد (يوم)</label>
+              <label className="block text-sm font-medium mb-1">{t('suppliers.fieldPaymentTerms')}</label>
               <input type="number" min={0} className="input" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">العملة</label>
+            <label className="block text-sm font-medium mb-1">{t('suppliers.fieldCurrency')}</label>
             <CurrencySelect value={form.currency} onChange={(code) => setForm({ ...form, currency: code })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">نوع المورد</label>
+            <label className="block text-sm font-medium mb-1">{t('suppliers.fieldType')}</label>
             <select className="input" value={form.supplierType} onChange={(e) => setForm({ ...form, supplierType: e.target.value })}>
-              <option value="COMPANY">شركة</option>
-              <option value="INDIVIDUAL">فرد</option>
-              <option value="IMPORTER">مستورد</option>
+              <option value="COMPANY">{t('suppliers.typeCompany')}</option>
+              <option value="INDIVIDUAL">{t('suppliers.typeIndividual')}</option>
+              <option value="IMPORTER">{t('suppliers.typeImporter')}</option>
             </select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>إلغاء</button>
+            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>{t('common.cancel')}</button>
             <button type="submit" disabled={isSaving} className="btn-primary">
-              {isSaving ? 'جاري الحفظ...' : 'حفظ'}
+              {isSaving ? t('common.saving') : t('common.save')}
             </button>
           </div>
         </form>

@@ -1,23 +1,12 @@
 // MuradERP Fixed Assets Page
 import { useState, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, ArrowTrendingDownIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAssets } from '../../hooks/useAssets';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Asset } from '../../types';
 import { formatCurrency } from '../../utils/currency';
-
-const statusBadge: Record<string, string> = {
-  ACTIVE: 'badge-success',
-  UNDER_MAINTENANCE: 'badge-warning',
-  DISPOSED: 'badge-danger',
-};
-
-const statusLabel: Record<string, string> = {
-  ACTIVE: 'نشط',
-  UNDER_MAINTENANCE: 'تحت الصيانة',
-  DISPOSED: 'مستبعد',
-};
 
 const emptyForm = {
   assetName: '',
@@ -32,8 +21,21 @@ const emptyForm = {
 };
 
 export const AssetsPage = () => {
+  const { t } = useTranslation();
   const { selectedCompany } = useAuthStore();
   const { assets, isLoading, createAsset, depreciateAsset, disposeAsset, isSaving } = useAssets();
+
+  const statusBadge: Record<string, string> = {
+    ACTIVE: 'badge-success',
+    UNDER_MAINTENANCE: 'badge-warning',
+    DISPOSED: 'badge-danger',
+  };
+
+  const statusLabel: Record<string, string> = {
+    ACTIVE: t('assets.statusActive'),
+    UNDER_MAINTENANCE: t('assets.statusMaintenance'),
+    DISPOSED: t('assets.statusDisposed'),
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyForm);
@@ -52,13 +54,13 @@ export const AssetsPage = () => {
   };
 
   const handleDepreciate = async (asset: Asset) => {
-    if (confirm(`تطبيق إهلاك سنوي على "${asset.assetName}"؟`)) {
+    if (confirm(t('assets.depreciateConfirm', { name: asset.assetName }))) {
       await depreciateAsset(asset.id);
     }
   };
 
   const handleDispose = async (asset: Asset) => {
-    if (confirm(`استبعاد الأصل "${asset.assetName}"؟ هذا الإجراء نهائي.`)) {
+    if (confirm(t('assets.disposeConfirm', { name: asset.assetName }))) {
       await disposeAsset({
         id: asset.id,
         data: { disposalDate: new Date().toISOString(), disposalValue: asset.netBookValue },
@@ -69,7 +71,7 @@ export const AssetsPage = () => {
   if (!selectedCompany) {
     return (
       <div className="card text-center text-secondary-500">
-        الرجاء اختيار شركة أولًا من الأعلى لعرض الأصول الثابتة
+        {t('common.selectCompany')}
       </div>
     );
   }
@@ -77,10 +79,10 @@ export const AssetsPage = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">الأصول الثابتة</h1>
+        <h1 className="text-2xl font-bold">{t('assets.title')}</h1>
         <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
           <PlusIcon className="h-5 w-5 ml-1" />
-          إضافة أصل
+          {t('assets.addAsset')}
         </button>
       </div>
 
@@ -88,19 +90,19 @@ export const AssetsPage = () => {
         <table className="table">
           <thead className="table-header">
             <tr>
-              <th className="table-header-cell">الرقم</th>
-              <th className="table-header-cell">اسم الأصل</th>
-              <th className="table-header-cell">التصنيف</th>
-              <th className="table-header-cell">قيمة الشراء</th>
-              <th className="table-header-cell">صافي القيمة الدفترية</th>
-              <th className="table-header-cell">الحالة</th>
-              <th className="table-header-cell">إجراءات</th>
+              <th className="table-header-cell">{t('assets.colNumber')}</th>
+              <th className="table-header-cell">{t('assets.colName')}</th>
+              <th className="table-header-cell">{t('assets.colCategory')}</th>
+              <th className="table-header-cell">{t('assets.colPurchaseAmount')}</th>
+              <th className="table-header-cell">{t('assets.colNetBookValue')}</th>
+              <th className="table-header-cell">{t('assets.colStatus')}</th>
+              <th className="table-header-cell">{t('assets.colActions')}</th>
             </tr>
           </thead>
           <tbody className="table-body">
-            {isLoading && <tr><td className="table-cell" colSpan={7}>جاري التحميل...</td></tr>}
+            {isLoading && <tr><td className="table-cell" colSpan={7}>{t('common.loading')}</td></tr>}
             {!isLoading && assets.length === 0 && (
-              <tr><td className="table-cell text-secondary-500" colSpan={7}>لا يوجد أصول مسجلة بعد</td></tr>
+              <tr><td className="table-cell text-secondary-500" colSpan={7}>{t('assets.emptyState')}</td></tr>
             )}
             {assets.map((asset) => (
               <tr key={asset.id}>
@@ -115,10 +117,10 @@ export const AssetsPage = () => {
                 <td className="table-cell">
                   {asset.status === 'ACTIVE' && (
                     <div className="flex gap-2">
-                      <button onClick={() => handleDepreciate(asset)} className="text-primary-600 hover:text-primary-800" title="تطبيق إهلاك">
+                      <button onClick={() => handleDepreciate(asset)} className="text-primary-600 hover:text-primary-800" title={t('assets.depreciateAction')}>
                         <ArrowTrendingDownIcon className="h-5 w-5" />
                       </button>
-                      <button onClick={() => handleDispose(asset)} className="text-danger-600 hover:text-danger-800" title="استبعاد">
+                      <button onClick={() => handleDispose(asset)} className="text-danger-600 hover:text-danger-800" title={t('assets.disposeAction')}>
                         <TrashIcon className="h-5 w-5" />
                       </button>
                     </div>
@@ -130,57 +132,57 @@ export const AssetsPage = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="إضافة أصل ثابت">
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t('assets.modalTitle')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">اسم الأصل *</label>
+            <label className="block text-sm font-medium mb-1">{t('assets.fieldAssetName')} *</label>
             <input required className="input" value={form.assetName} onChange={(e) => setForm({ ...form, assetName: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">التصنيف *</label>
-            <input required className="input" placeholder="مثال: أثاث، معدات، سيارات..." value={form.assetCategory} onChange={(e) => setForm({ ...form, assetCategory: e.target.value })} />
+            <label className="block text-sm font-medium mb-1">{t('assets.fieldCategory')} *</label>
+            <input required className="input" placeholder={t('assets.categoryPlaceholder')} value={form.assetCategory} onChange={(e) => setForm({ ...form, assetCategory: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">تاريخ الشراء</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldPurchaseDate')}</label>
               <input type="date" className="input" value={form.purchaseDate} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">قيمة الشراء *</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldPurchaseAmount')} *</label>
               <input required type="number" min={0} step="0.01" className="input" value={form.purchaseAmount} onChange={(e) => setForm({ ...form, purchaseAmount: e.target.value })} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">العمر الإنتاجي (سنوات)</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldUsefulLife')}</label>
               <input type="number" min={1} className="input" value={form.usefulLife} onChange={(e) => setForm({ ...form, usefulLife: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">القيمة التخريدية</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldSalvageValue')}</label>
               <input type="number" min={0} step="0.01" className="input" value={form.salvageValue} onChange={(e) => setForm({ ...form, salvageValue: e.target.value })} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">طريقة الإهلاك</label>
+            <label className="block text-sm font-medium mb-1">{t('assets.fieldDepreciationMethod')}</label>
             <select className="input" value={form.depreciationMethod} onChange={(e) => setForm({ ...form, depreciationMethod: e.target.value })}>
-              <option value="STRAIGHT_LINE">القسط الثابت</option>
-              <option value="DECLINING_BALANCE">الرصيد المتناقص</option>
-              <option value="UNITS_OF_PRODUCTION">وحدات الإنتاج</option>
+              <option value="STRAIGHT_LINE">{t('assets.methodStraightLine')}</option>
+              <option value="DECLINING_BALANCE">{t('assets.methodDecliningBalance')}</option>
+              <option value="UNITS_OF_PRODUCTION">{t('assets.methodUnitsOfProduction')}</option>
             </select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">الموقع</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldLocation')}</label>
               <input className="input" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">المسؤول عن الأصل</label>
+              <label className="block text-sm font-medium mb-1">{t('assets.fieldCustodian')}</label>
               <input className="input" value={form.custodian} onChange={(e) => setForm({ ...form, custodian: e.target.value })} />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>إلغاء</button>
-            <button type="submit" disabled={isSaving} className="btn-primary">{isSaving ? 'جاري الحفظ...' : 'حفظ'}</button>
+            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>{t('common.cancel')}</button>
+            <button type="submit" disabled={isSaving} className="btn-primary">{isSaving ? t('common.saving') : t('common.save')}</button>
           </div>
         </form>
       </Modal>

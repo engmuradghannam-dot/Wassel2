@@ -1,5 +1,6 @@
 // MuradERP Invoices Page
 import { useState, FormEvent, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, TrashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useInvoices } from '../../hooks/useInvoices';
 import { useCustomers } from '../../hooks/useCustomers';
@@ -20,14 +21,6 @@ const statusBadge: Record<string, string> = {
   CANCELLED: 'badge-danger',
 };
 
-const statusLabel: Record<string, string> = {
-  DRAFT: 'مسودة',
-  SUBMITTED: 'معتمدة',
-  PAID: 'مدفوعة',
-  OVERDUE: 'متأخرة',
-  CANCELLED: 'ملغاة',
-};
-
 function todayPlus(days: number) {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -35,6 +28,7 @@ function todayPlus(days: number) {
 }
 
 export const InvoicesPage = () => {
+  const { t, i18n } = useTranslation();
   const { selectedCompany } = useAuthStore();
   const [typeFilter, setTypeFilter] = useState('');
   const { invoices, isLoading, createInvoice, submitInvoice, cancelInvoice, isSaving } =
@@ -42,6 +36,14 @@ export const InvoicesPage = () => {
   const { customers } = useCustomers();
   const { suppliers } = useSuppliers();
   const { items } = useItems();
+
+  const statusLabel: Record<string, string> = {
+    DRAFT: t('status.draft'),
+    SUBMITTED: t('invoices.statusSubmitted'),
+    PAID: t('status.paid'),
+    OVERDUE: t('status.overdue'),
+    CANCELLED: t('invoices.statusCancelled'),
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invoiceType, setInvoiceType] = useState<'SALES' | 'PURCHASE'>('SALES');
@@ -121,13 +123,13 @@ export const InvoicesPage = () => {
   };
 
   const handleSubmitInvoice = async (invoice: Invoice) => {
-    if (confirm(`اعتماد الفاتورة ${invoice.invoiceNumber}؟`)) {
+    if (confirm(t('invoices.approveConfirm', { number: invoice.invoiceNumber }))) {
       await submitInvoice(invoice.id);
     }
   };
 
   const handleCancel = async (invoice: Invoice) => {
-    if (confirm(`إلغاء الفاتورة ${invoice.invoiceNumber}؟`)) {
+    if (confirm(t('invoices.cancelConfirm', { number: invoice.invoiceNumber }))) {
       await cancelInvoice(invoice.id);
     }
   };
@@ -135,7 +137,7 @@ export const InvoicesPage = () => {
   if (!selectedCompany) {
     return (
       <div className="card text-center text-secondary-500">
-        الرجاء اختيار شركة أولًا من الأعلى لعرض الفواتير
+        {t('common.selectCompany')}
       </div>
     );
   }
@@ -143,18 +145,18 @@ export const InvoicesPage = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">الفواتير</h1>
+        <h1 className="text-2xl font-bold">{t('invoices.title')}</h1>
         <button className="btn-primary" onClick={openCreate}>
           <PlusIcon className="h-5 w-5 ml-1" />
-          فاتورة جديدة
+          {t('invoices.newInvoice')}
         </button>
       </div>
 
       <div className="flex gap-2">
         <select className="input max-w-xs" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-          <option value="">كل الفواتير</option>
-          <option value="SALES">فواتير مبيعات</option>
-          <option value="PURCHASE">فواتير مشتريات</option>
+          <option value="">{t('invoices.allInvoices')}</option>
+          <option value="SALES">{t('invoices.salesInvoices')}</option>
+          <option value="PURCHASE">{t('invoices.purchaseInvoices')}</option>
         </select>
       </div>
 
@@ -162,26 +164,26 @@ export const InvoicesPage = () => {
         <table className="table">
           <thead className="table-header">
             <tr>
-              <th className="table-header-cell">رقم الفاتورة</th>
-              <th className="table-header-cell">العميل/المورد</th>
-              <th className="table-header-cell">التاريخ</th>
-              <th className="table-header-cell">الإجمالي</th>
-              <th className="table-header-cell">الحالة</th>
-              <th className="table-header-cell">إجراءات</th>
+              <th className="table-header-cell">{t('invoices.colNumber')}</th>
+              <th className="table-header-cell">{t('invoices.colCustomerSupplier')}</th>
+              <th className="table-header-cell">{t('invoices.colDate')}</th>
+              <th className="table-header-cell">{t('invoices.colTotal')}</th>
+              <th className="table-header-cell">{t('invoices.colStatus')}</th>
+              <th className="table-header-cell">{t('invoices.colActions')}</th>
             </tr>
           </thead>
           <tbody className="table-body">
             {isLoading && (
-              <tr><td className="table-cell" colSpan={6}>جاري التحميل...</td></tr>
+              <tr><td className="table-cell" colSpan={6}>{t('common.loading')}</td></tr>
             )}
             {!isLoading && invoices.length === 0 && (
-              <tr><td className="table-cell text-secondary-500" colSpan={6}>لا يوجد فواتير بعد</td></tr>
+              <tr><td className="table-cell text-secondary-500" colSpan={6}>{t('invoices.emptyState')}</td></tr>
             )}
             {invoices.map((invoice) => (
               <tr key={invoice.id}>
                 <td className="table-cell font-medium">{invoice.invoiceNumber}</td>
                 <td className="table-cell">{invoice.customer?.name || invoice.supplier?.name || '-'}</td>
-                <td className="table-cell">{new Date(invoice.invoiceDate).toLocaleDateString('ar-SA')}</td>
+                <td className="table-cell">{new Date(invoice.invoiceDate).toLocaleDateString(i18n.language)}</td>
                 <td className="table-cell">{formatCurrency(invoice.totalAmount, selectedCompany.currency)}</td>
                 <td className="table-cell">
                   <span className={statusBadge[invoice.status] || 'badge-info'}>
@@ -191,10 +193,10 @@ export const InvoicesPage = () => {
                 <td className="table-cell">
                   {invoice.status === 'DRAFT' && (
                     <div className="flex gap-2">
-                      <button onClick={() => handleSubmitInvoice(invoice)} className="text-success-600 hover:text-success-800" title="اعتماد">
+                      <button onClick={() => handleSubmitInvoice(invoice)} className="text-success-600 hover:text-success-800" title={t('invoices.approveTitle')}>
                         <CheckCircleIcon className="h-5 w-5" />
                       </button>
-                      <button onClick={() => handleCancel(invoice)} className="text-danger-600 hover:text-danger-800" title="إلغاء">
+                      <button onClick={() => handleCancel(invoice)} className="text-danger-600 hover:text-danger-800" title={t('invoices.cancelTitle')}>
                         <XCircleIcon className="h-5 w-5" />
                       </button>
                     </div>
@@ -206,21 +208,21 @@ export const InvoicesPage = () => {
         </table>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="فاتورة جديدة">
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t('invoices.modalTitle')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">نوع الفاتورة</label>
+              <label className="block text-sm font-medium mb-1">{t('invoices.fieldInvoiceType')}</label>
               <select className="input" value={invoiceType} onChange={(e) => setInvoiceType(e.target.value as any)}>
-                <option value="SALES">مبيعات</option>
-                <option value="PURCHASE">مشتريات</option>
+                <option value="SALES">{t('invoices.typeSales')}</option>
+                <option value="PURCHASE">{t('invoices.typePurchase')}</option>
               </select>
             </div>
             {invoiceType === 'SALES' ? (
               <div>
-                <label className="block text-sm font-medium mb-1">العميل *</label>
+                <label className="block text-sm font-medium mb-1">{t('invoices.fieldCustomer')} *</label>
                 <select required className="input" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
-                  <option value="">اختر عميل</option>
+                  <option value="">{t('invoices.chooseCustomer')}</option>
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -228,9 +230,9 @@ export const InvoicesPage = () => {
               </div>
             ) : (
               <div>
-                <label className="block text-sm font-medium mb-1">المورد *</label>
+                <label className="block text-sm font-medium mb-1">{t('invoices.fieldSupplier')} *</label>
                 <select required className="input" value={supplierId} onChange={(e) => setSupplierId(e.target.value)}>
-                  <option value="">اختر مورد</option>
+                  <option value="">{t('invoices.chooseSupplier')}</option>
                   {suppliers.map((s) => (
                     <option key={s.id} value={s.id}>{s.name}</option>
                   ))}
@@ -241,19 +243,19 @@ export const InvoicesPage = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">تاريخ الفاتورة</label>
+              <label className="block text-sm font-medium mb-1">{t('invoices.fieldInvoiceDate')}</label>
               <input type="datetime-local" className="input" value={invoiceDate} onChange={(e) => setInvoiceDate(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">تاريخ الاستحقاق</label>
+              <label className="block text-sm font-medium mb-1">{t('invoices.fieldDueDate')}</label>
               <input type="datetime-local" className="input" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium">البنود</label>
-              <button type="button" onClick={addLine} className="text-primary-600 text-sm hover:underline">+ إضافة بند</button>
+              <label className="block text-sm font-medium">{t('invoices.lineItems')}</label>
+              <button type="button" onClick={addLine} className="text-primary-600 text-sm hover:underline">{t('invoices.addLine')}</button>
             </div>
             <div className="space-y-2">
               {lines.map((line, index) => (
@@ -263,25 +265,25 @@ export const InvoicesPage = () => {
                     value={line.itemId}
                     onChange={(e) => onPickItem(index, e.target.value)}
                   >
-                    <option value="">اختر منتج</option>
+                    <option value="">{t('invoices.chooseProduct')}</option>
                     {items.map((it) => (
                       <option key={it.id} value={it.id}>{it.name}</option>
                     ))}
                   </select>
                   <input
-                    type="number" min={0.01} step="0.01" placeholder="الكمية"
+                    type="number" min={0.01} step="0.01" placeholder={t('invoices.quantity')}
                     className="input col-span-2"
                     value={line.quantity}
                     onChange={(e) => updateLine(index, { quantity: Number(e.target.value) })}
                   />
                   <input
-                    type="number" min={0} step="0.01" placeholder="السعر"
+                    type="number" min={0} step="0.01" placeholder={t('invoices.price')}
                     className="input col-span-2"
                     value={line.unitPrice}
                     onChange={(e) => updateLine(index, { unitPrice: Number(e.target.value) })}
                   />
                   <input
-                    type="number" min={0} max={100} placeholder="خصم %"
+                    type="number" min={0} max={100} placeholder={t('invoices.discount')}
                     className="input col-span-2"
                     value={line.discountPercent}
                     onChange={(e) => updateLine(index, { discountPercent: Number(e.target.value) })}
@@ -295,22 +297,22 @@ export const InvoicesPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">ملاحظات</label>
+            <label className="block text-sm font-medium mb-1">{t('invoices.fieldNotes')}</label>
             <textarea className="input" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
 
           <div className="bg-secondary-50 rounded-lg p-4 space-y-1 text-sm">
-            <div className="flex justify-between"><span>المجموع الفرعي</span><span>{formatCurrency(totals.subtotal, selectedCompany.currency)}</span></div>
-            <div className="flex justify-between"><span>الضريبة</span><span>{formatCurrency(totals.tax, selectedCompany.currency)}</span></div>
+            <div className="flex justify-between"><span>{t('invoices.subtotal')}</span><span>{formatCurrency(totals.subtotal, selectedCompany.currency)}</span></div>
+            <div className="flex justify-between"><span>{t('invoices.tax')}</span><span>{formatCurrency(totals.tax, selectedCompany.currency)}</span></div>
             <div className="flex justify-between font-bold text-base pt-1 border-t border-secondary-200">
-              <span>الإجمالي</span><span>{formatCurrency(totals.total, selectedCompany.currency)}</span>
+              <span>{t('invoices.total')}</span><span>{formatCurrency(totals.total, selectedCompany.currency)}</span>
             </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>إلغاء</button>
+            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>{t('common.cancel')}</button>
             <button type="submit" disabled={isSaving} className="btn-primary">
-              {isSaving ? 'جاري الحفظ...' : 'حفظ الفاتورة'}
+              {isSaving ? t('common.saving') : t('invoices.save')}
             </button>
           </div>
         </form>

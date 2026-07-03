@@ -93,10 +93,10 @@ export const Header = () => {
             {showNotifications && (
               <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
                 <div className="px-4 py-2 border-b border-secondary-200">
-                  <h3 className="text-sm font-semibold text-secondary-900">الإشعارات</h3>
+                  <h3 className="text-sm font-semibold text-secondary-900">{t('header.notifications')}</h3>
                 </div>
                 <div className="max-h-64 overflow-y-auto">
-                  <p className="px-4 py-8 text-center text-sm text-secondary-500">لا توجد إشعارات جديدة</p>
+                  <p className="px-4 py-8 text-center text-sm text-secondary-500">{t('header.noNotifications')}</p>
                 </div>
               </div>
             )}
@@ -124,14 +124,14 @@ export const Header = () => {
             {showProfile && (
               <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
                 <a href="/profile" className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50">
-                  الملف الشخصي
+                  {t('header.profile')}
                 </a>
                 <a href="/settings" className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50">
-                  الإعدادات
+                  {t('header.settings')}
                 </a>
                 <hr className="my-1 border-secondary-200" />
                 <button className="block w-full text-right px-4 py-2 text-sm text-danger-600 hover:bg-danger-50">
-                  تسجيل الخروج
+                  {t('header.logout')}
                 </button>
               </div>
             )}
