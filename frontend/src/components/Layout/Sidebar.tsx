@@ -1,7 +1,7 @@
 // MuradERP Sidebar Component
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -17,7 +17,6 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ChevronDownIcon,
   PhoneArrowUpRightIcon,
   ArchiveBoxIcon,
   BanknotesIcon,
@@ -86,22 +85,93 @@ const navigation: NavEntry[] = [
   { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
 ];
 
+const GroupNavItem = ({
+  entry,
+  sidebarOpen,
+  isActive,
+}: {
+  entry: GroupItem;
+  sidebarOpen: boolean;
+  isActive: boolean;
+}) => {
+  const { t } = useTranslation();
+  const [flyoutOpen, setFlyoutOpen] = useState(false);
+  const [flyoutPos, setFlyoutPos] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        buttonRef.current && !buttonRef.current.contains(e.target as Node) &&
+        panelRef.current && !panelRef.current.contains(e.target as Node)
+      ) {
+        setFlyoutOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const openFlyout = () => {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (rect) {
+      // Position the flyout just to the left of the sidebar button, at the
+      // same vertical position — a fixed position element so it escapes the
+      // scrollable nav's clipping instead of being cut off.
+      setFlyoutPos({ top: rect.top, right: window.innerWidth - rect.left + 8 });
+    }
+    setFlyoutOpen((v) => !v);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={openFlyout}
+        className={`sidebar-link w-full ${isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'} ${sidebarOpen ? '' : 'justify-center'}`}
+        title={t(entry.labelKey)}
+      >
+        <entry.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
+        {sidebarOpen && <span className="mr-3 flex-1 text-right animate-fade-in">{t(entry.labelKey)}</span>}
+      </button>
+
+      {/* Flyout panel — pops out to the side, like a Windows Start menu category flyout.
+          Fixed positioning (not absolute) so it isn't clipped by the scrollable nav. */}
+      {flyoutOpen && (
+        <div
+          ref={panelRef}
+          className="fixed z-50 w-56 bg-white rounded-xl shadow-lg border border-secondary-200 py-2"
+          style={{ top: flyoutPos.top, right: flyoutPos.right }}
+        >
+          <div className="px-4 py-1.5 text-xs font-semibold text-secondary-400">{t(entry.labelKey)}</div>
+          {entry.children.map((child) => (
+            <NavLink
+              key={child.key}
+              to={child.href}
+              onClick={() => setFlyoutOpen(false)}
+              className={({ isActive: childActive }) =>
+                `flex items-center px-4 py-2.5 text-sm transition-colors ${
+                  childActive ? 'bg-primary-50 text-primary-700' : 'text-secondary-700 hover:bg-secondary-50'
+                }`
+              }
+            >
+              <child.icon className="w-4 h-4 flex-shrink-0" />
+              <span className="mr-2">{t(child.labelKey)}</span>
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Sidebar = () => {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const { logout } = useAuth();
   const { t } = useTranslation();
-
-  // Auto-expand whichever group contains the current route.
-  const initiallyOpen = navigation
-    .filter(isGroup)
-    .filter((g) => g.children.some((c) => location.pathname.startsWith(c.href)))
-    .map((g) => g.key);
-  const [openGroups, setOpenGroups] = useState<string[]>(initiallyOpen);
-
-  const toggleGroup = (key: string) => {
-    setOpenGroups((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
-  };
 
   return (
     <aside
@@ -153,65 +223,8 @@ export const Sidebar = () => {
           }
 
           const groupHasActiveChild = entry.children.some((c) => location.pathname.startsWith(c.href));
-          const isOpen = openGroups.includes(entry.key) || groupHasActiveChild;
-
           return (
-            <div key={entry.key}>
-              <button
-                type="button"
-                onClick={() => toggleGroup(entry.key)}
-                className={`sidebar-link w-full ${groupHasActiveChild ? 'sidebar-link-active' : 'sidebar-link-inactive'}`}
-                title={!sidebarOpen ? t(entry.labelKey) : undefined}
-              >
-                <entry.icon className={`w-5 h-5 flex-shrink-0 ${groupHasActiveChild ? 'text-primary-600' : 'text-secondary-400'}`} />
-                {sidebarOpen && (
-                  <>
-                    <span className="mr-3 flex-1 text-right animate-fade-in">{t(entry.labelKey)}</span>
-                    <ChevronDownIcon
-                      className={`w-4 h-4 text-secondary-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                    />
-                  </>
-                )}
-              </button>
-
-              {/* Flyout / expanded sub-items */}
-              {isOpen && sidebarOpen && (
-                <div className="mr-6 mt-1 space-y-1 border-r border-secondary-200 pr-3 animate-fade-in">
-                  {entry.children.map((child) => {
-                    const isActive = location.pathname.startsWith(child.href);
-                    return (
-                      <NavLink
-                        key={child.key}
-                        to={child.href}
-                        className={`sidebar-link text-sm ${isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'}`}
-                      >
-                        <child.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
-                        <span className="mr-2">{t(child.labelKey)}</span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Collapsed sidebar: show children as simple stacked icons (no flyout popover, kept simple) */}
-              {!sidebarOpen && (
-                <div className="space-y-1 mt-1">
-                  {entry.children.map((child) => {
-                    const isActive = location.pathname.startsWith(child.href);
-                    return (
-                      <NavLink
-                        key={child.key}
-                        to={child.href}
-                        className={`sidebar-link justify-center ${isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'}`}
-                        title={t(child.labelKey)}
-                      >
-                        <child.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <GroupNavItem key={entry.key} entry={entry} sidebarOpen={sidebarOpen} isActive={groupHasActiveChild} />
           );
         })}
       </nav>
