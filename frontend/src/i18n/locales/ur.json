@@ -19,7 +19,11 @@
     "sales": "فروخت",
     "purchasing": "خریداری",
     "inventoryGroup": "انوینٹری اور اثاثے",
-    "hr": "ہیومن ریسورس"
+    "hr": "ہیومن ریسورس",
+    "purchaseOrders": "خریداری آرڈرز",
+    "accountingGroup": "اکاؤنٹنگ",
+    "accounting": "چارٹ آف اکاؤنٹس اور جرنل",
+    "stockEntries": "اسٹاک انٹریز"
   },
   "auth": {
     "login": "لاگ ان",

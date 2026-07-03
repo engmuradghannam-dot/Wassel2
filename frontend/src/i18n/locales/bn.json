@@ -19,7 +19,11 @@
     "sales": "বিক্রয়",
     "purchasing": "ক্রয়",
     "inventoryGroup": "মজুদ ও সম্পদ",
-    "hr": "মানব সম্পদ"
+    "hr": "মানব সম্পদ",
+    "purchaseOrders": "ক্রয় আদেশ",
+    "accountingGroup": "হিসাববিজ্ঞান",
+    "accounting": "হিসাবের তালিকা ও জার্নাল",
+    "stockEntries": "স্টক এন্ট্রি"
   },
   "auth": {
     "login": "লগইন",

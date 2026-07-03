@@ -19,7 +19,11 @@
     "sales": "വിൽപ്പന",
     "purchasing": "വാങ്ങൽ",
     "inventoryGroup": "ഇൻവെന്ററിയും ആസ്തികളും",
-    "hr": "എച്ച്ആർ"
+    "hr": "എച്ച്ആർ",
+    "purchaseOrders": "വാങ്ങൽ ഓർഡറുകൾ",
+    "accountingGroup": "അക്കൗണ്ടിംഗ്",
+    "accounting": "അക്കൗണ്ട് ചാർട്ടും ജേണലും",
+    "stockEntries": "സ്റ്റോക്ക് എൻട്രികൾ"
   },
   "auth": {
     "login": "ലോഗിൻ",

@@ -12,10 +12,13 @@ import { ItemsPage } from './pages/Items/ItemsPage';
 import { InvoicesPage } from './pages/Invoices/InvoicesPage';
 import { CRMPage } from './pages/CRM/CRMPage';
 import { AssetsPage } from './pages/Assets/AssetsPage';
+import { WarehousesPage } from './pages/Warehouses/WarehousesPage';
+import { StockEntriesPage } from './pages/StockEntries/StockEntriesPage';
+import { PurchaseOrdersPage } from './pages/PurchaseOrders/PurchaseOrdersPage';
+import { AccountingPage } from './pages/Accounting/AccountingPage';
 
 // Placeholder pages (not built yet)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
-const InventoryPage = () => <div className="card"><h1 className="text-2xl font-bold">المخزون</h1></div>;
 const EmployeesPage = () => <div className="card"><h1 className="text-2xl font-bold">الموظفين</h1></div>;
 const ReportsPage = () => <div className="card"><h1 className="text-2xl font-bold">التقارير</h1></div>;
 const SettingsPage = () => <div className="card"><h1 className="text-2xl font-bold">الإعدادات</h1></div>;
@@ -38,7 +41,10 @@ function App() {
         <Route path="/invoices" element={<InvoicesPage />} />
         <Route path="/crm" element={<CRMPage />} />
         <Route path="/assets" element={<AssetsPage />} />
-        <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/inventory" element={<WarehousesPage />} />
+        <Route path="/stock-entries" element={<StockEntriesPage />} />
+        <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
+        <Route path="/accounting" element={<AccountingPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings" element={<SettingsPage />} />

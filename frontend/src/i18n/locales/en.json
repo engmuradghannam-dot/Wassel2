@@ -19,7 +19,11 @@
     "sales": "Sales",
     "purchasing": "Purchasing",
     "inventoryGroup": "Inventory & Assets",
-    "hr": "Human Resources"
+    "hr": "Human Resources",
+    "purchaseOrders": "Purchase Orders",
+    "accountingGroup": "Accounting",
+    "accounting": "Chart of Accounts & Journal",
+    "stockEntries": "Stock Entries"
   },
   "auth": {
     "login": "Login",

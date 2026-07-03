@@ -19,7 +19,11 @@
     "sales": "Ventes",
     "purchasing": "Achats",
     "inventoryGroup": "Inventaire et Actifs",
-    "hr": "Ressources Humaines"
+    "hr": "Ressources Humaines",
+    "purchaseOrders": "Bons de commande",
+    "accountingGroup": "Comptabilité",
+    "accounting": "Plan comptable et journal",
+    "stockEntries": "Écritures de stock"
   },
   "auth": {
     "login": "Connexion",

@@ -19,7 +19,11 @@
     "sales": "Benta",
     "purchasing": "Pagbili",
     "inventoryGroup": "Imbentaryo at Ari-arian",
-    "hr": "Human Resources"
+    "hr": "Human Resources",
+    "purchaseOrders": "Purchase Orders",
+    "accountingGroup": "Accounting",
+    "accounting": "Chart of Accounts at Journal",
+    "stockEntries": "Stock Entries"
   },
   "auth": {
     "login": "Mag-login",

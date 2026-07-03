@@ -19,7 +19,11 @@
     "sales": "Ventas",
     "purchasing": "Compras",
     "inventoryGroup": "Inventario y Activos",
-    "hr": "Recursos Humanos"
+    "hr": "Recursos Humanos",
+    "purchaseOrders": "Órdenes de compra",
+    "accountingGroup": "Contabilidad",
+    "accounting": "Plan de cuentas y diario",
+    "stockEntries": "Movimientos de inventario"
   },
   "auth": {
     "login": "Iniciar sesión",

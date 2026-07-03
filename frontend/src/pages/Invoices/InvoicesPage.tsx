@@ -1,7 +1,7 @@
 // MuradERP Invoices Page
 import { useState, FormEvent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusIcon, TrashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, CheckCircleIcon, XCircleIcon, QrCodeIcon } from '@heroicons/react/24/outline';
 import { useInvoices } from '../../hooks/useInvoices';
 import { useCustomers } from '../../hooks/useCustomers';
 import { useSuppliers } from '../../hooks/useSuppliers';
@@ -9,6 +9,7 @@ import { useItems } from '../../hooks/useItems';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Invoice } from '../../types';
+import { zatcaApi } from '../../services/api';
 import { formatCurrency } from '../../utils/currency';
 
 type LineItem = { itemId: string; quantity: number; unitPrice: number; discountPercent: number };
@@ -128,6 +129,24 @@ export const InvoicesPage = () => {
     }
   };
 
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [qrData, setQrData] = useState<{ qrDataUrl: string } | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+
+  const handleShowQr = async (invoice: Invoice) => {
+    setQrModalOpen(true);
+    setQrLoading(true);
+    try {
+      const res = await zatcaApi.getInvoiceQr(invoice.id);
+      setQrData(res.data as any);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || 'تعذر جلب رمز ZATCA');
+      setQrModalOpen(false);
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
   const handleCancel = async (invoice: Invoice) => {
     if (confirm(t('invoices.cancelConfirm', { number: invoice.invoiceNumber }))) {
       await cancelInvoice(invoice.id);
@@ -191,16 +210,23 @@ export const InvoicesPage = () => {
                   </span>
                 </td>
                 <td className="table-cell">
-                  {invoice.status === 'DRAFT' && (
-                    <div className="flex gap-2">
-                      <button onClick={() => handleSubmitInvoice(invoice)} className="text-success-600 hover:text-success-800" title={t('invoices.approveTitle')}>
-                        <CheckCircleIcon className="h-5 w-5" />
+                  <div className="flex gap-2">
+                    {invoice.status === 'DRAFT' && (
+                      <>
+                        <button onClick={() => handleSubmitInvoice(invoice)} className="text-success-600 hover:text-success-800" title={t('invoices.approveTitle')}>
+                          <CheckCircleIcon className="h-5 w-5" />
+                        </button>
+                        <button onClick={() => handleCancel(invoice)} className="text-danger-600 hover:text-danger-800" title={t('invoices.cancelTitle')}>
+                          <XCircleIcon className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
+                    {(invoice as any).invoiceType === 'SALES' && (
+                      <button onClick={() => handleShowQr(invoice)} className="text-primary-600 hover:text-primary-800" title="رمز ZATCA">
+                        <QrCodeIcon className="h-5 w-5" />
                       </button>
-                      <button onClick={() => handleCancel(invoice)} className="text-danger-600 hover:text-danger-800" title={t('invoices.cancelTitle')}>
-                        <XCircleIcon className="h-5 w-5" />
-                      </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -316,6 +342,20 @@ export const InvoicesPage = () => {
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal isOpen={qrModalOpen} onClose={() => setQrModalOpen(false)} title="رمز ZATCA (فوترة إلكترونية)">
+        <div className="flex flex-col items-center gap-4 py-4">
+          {qrLoading && <p className="text-secondary-500">جاري التحميل...</p>}
+          {!qrLoading && qrData && (
+            <>
+              <img src={qrData.qrDataUrl} alt="ZATCA QR" className="w-56 h-56" />
+              <p className="text-xs text-secondary-500 text-center">
+                امسح هذا الرمز للتحقق من بيانات الفاتورة حسب متطلبات هيئة الزكاة والضريبة والجمارك (المرحلة الأولى)
+              </p>
+            </>
+          )}
+        </div>
       </Modal>
     </div>
   );

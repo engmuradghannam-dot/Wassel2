@@ -19,7 +19,11 @@
     "sales": "المبيعات",
     "purchasing": "المشتريات",
     "inventoryGroup": "المخزون والأصول",
-    "hr": "الموارد البشرية"
+    "hr": "الموارد البشرية",
+    "purchaseOrders": "أوامر الشراء",
+    "accountingGroup": "المحاسبة",
+    "accounting": "دليل الحسابات والقيود",
+    "stockEntries": "حركات المخزون"
   },
   "auth": {
     "login": "تسجيل الدخول",

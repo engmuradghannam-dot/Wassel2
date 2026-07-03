@@ -19,7 +19,11 @@
     "sales": "बिक्री",
     "purchasing": "खरीद",
     "inventoryGroup": "इन्वेंटरी और संपत्ति",
-    "hr": "मानव संसाधन"
+    "hr": "मानव संसाधन",
+    "purchaseOrders": "क्रय आदेश",
+    "accountingGroup": "लेखांकन",
+    "accounting": "खातों का चार्ट और जर्नल",
+    "stockEntries": "स्टॉक प्रविष्टियाँ"
   },
   "auth": {
     "login": "लॉगिन",

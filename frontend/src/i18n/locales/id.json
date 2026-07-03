@@ -19,7 +19,11 @@
     "sales": "Penjualan",
     "purchasing": "Pembelian",
     "inventoryGroup": "Inventaris & Aset",
-    "hr": "SDM"
+    "hr": "SDM",
+    "purchaseOrders": "Pesanan Pembelian",
+    "accountingGroup": "Akuntansi",
+    "accounting": "Bagan Akun & Jurnal",
+    "stockEntries": "Entri Stok"
   },
   "auth": {
     "login": "Masuk",

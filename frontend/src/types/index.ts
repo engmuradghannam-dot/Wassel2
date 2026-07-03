@@ -365,3 +365,58 @@ export interface Asset {
   disposalValue?: number;
   createdAt: string;
 }
+
+export interface StockEntry {
+  id: string;
+  entryNumber: string;
+  entryDate: string;
+  entryType: 'RECEIPT' | 'ISSUE' | 'TRANSFER' | 'ADJUSTMENT' | 'RETURN' | 'MANUFACTURE';
+  reference?: string;
+  description?: string;
+  status: 'DRAFT' | 'SUBMITTED' | 'CANCELLED';
+  warehouse?: { name: string };
+  createdAt: string;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  orderNumber: string;
+  orderDate: string;
+  deliveryDate?: string;
+  supplierId: string;
+  supplier?: Supplier;
+  subtotal: number;
+  discountAmount: number;
+  taxAmount: number;
+  totalAmount: number;
+  status: 'DRAFT' | 'SUBMITTED' | 'CONFIRMED' | 'PARTIALLY_FULFILLED' | 'FULFILLED' | 'CANCELLED';
+  notes?: string;
+  createdAt: string;
+}
+
+export interface GLAccount {
+  id: string;
+  code: string;
+  name: string;
+  nameAr?: string;
+  type: 'ASSET' | 'LIABILITY' | 'EQUITY' | 'INCOME' | 'EXPENSE';
+  accountType: string;
+  isGroup: boolean;
+  isBank: boolean;
+  currency: string;
+  openingBalance: number;
+  currentBalance: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface JournalEntry {
+  id: string;
+  entryNumber: string;
+  entryDate: string;
+  reference?: string;
+  description?: string;
+  totalDebit: number;
+  totalCredit: number;
+  status: 'DRAFT' | 'POSTED' | 'CANCELLED';
+  createdAt: string;
+}

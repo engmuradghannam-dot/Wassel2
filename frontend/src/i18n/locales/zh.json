@@ -19,7 +19,11 @@
     "sales": "销售",
     "purchasing": "采购",
     "inventoryGroup": "库存与资产",
-    "hr": "人力资源"
+    "hr": "人力资源",
+    "purchaseOrders": "采购订单",
+    "accountingGroup": "会计",
+    "accounting": "科目表与日记账",
+    "stockEntries": "库存分录"
   },
   "auth": {
     "login": "登录",

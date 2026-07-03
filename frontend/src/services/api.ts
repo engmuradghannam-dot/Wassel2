@@ -217,3 +217,72 @@ export const assetApi = {
   dispose: (id: string, data: any) =>
     api.post(`/assets/${id}/dispose`, data),
 };
+
+// Warehouse API
+export const warehouseApi = {
+  getAll: (params?: any) =>
+    api.get('/warehouses', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/warehouses', data, companyId ? { companyId } : undefined),
+  update: (id: string, data: any) =>
+    api.put(`/warehouses/${id}`, data),
+  delete: (id: string) =>
+    api.delete(`/warehouses/${id}`),
+  getStockLevels: (params?: any) =>
+    api.get('/warehouses/stock-levels', params),
+};
+
+// Stock Entry API
+export const stockEntryApi = {
+  getAll: (params?: any) =>
+    api.get('/stock-entries', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/stock-entries', data, companyId ? { companyId } : undefined),
+  submit: (id: string) =>
+    api.post(`/stock-entries/${id}/submit`),
+  cancel: (id: string) =>
+    api.post(`/stock-entries/${id}/cancel`),
+};
+
+// Purchase Order API
+export const purchaseOrderApi = {
+  getAll: (params?: any) =>
+    api.get('/purchase-orders', params),
+  getById: (id: string) =>
+    api.get(`/purchase-orders/${id}`),
+  create: (data: any, companyId?: string) =>
+    api.post('/purchase-orders', data, companyId ? { companyId } : undefined),
+  submit: (id: string) =>
+    api.post(`/purchase-orders/${id}/submit`),
+  cancel: (id: string) =>
+    api.post(`/purchase-orders/${id}/cancel`),
+};
+
+// Accounting API
+export const accountApi = {
+  getAll: (params?: any) =>
+    api.get('/accounts', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/accounts', data, companyId ? { companyId } : undefined),
+  update: (id: string, data: any) =>
+    api.put(`/accounts/${id}`, data),
+  delete: (id: string) =>
+    api.delete(`/accounts/${id}`),
+};
+
+export const journalEntryApi = {
+  getAll: (params?: any) =>
+    api.get('/journal-entries', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/journal-entries', data, companyId ? { companyId } : undefined),
+  post: (id: string) =>
+    api.post(`/journal-entries/${id}/post`),
+  cancel: (id: string) =>
+    api.post(`/journal-entries/${id}/cancel`),
+};
+
+// ZATCA API
+export const zatcaApi = {
+  getInvoiceQr: (invoiceId: string) =>
+    api.get(`/invoices/${invoiceId}/zatca-qr`),
+};

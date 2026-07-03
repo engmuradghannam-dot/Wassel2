@@ -20,6 +20,7 @@ import {
   PhoneArrowUpRightIcon,
   ArchiveBoxIcon,
   BanknotesIcon,
+  CalculatorIcon,
 } from '@heroicons/react/24/outline';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -61,6 +62,15 @@ const navigation: NavEntry[] = [
     icon: TruckIcon,
     children: [
       { key: 'suppliers', labelKey: 'nav.suppliers', href: '/suppliers', icon: TruckIcon },
+      { key: 'purchaseOrders', labelKey: 'nav.purchaseOrders', href: '/purchase-orders', icon: DocumentTextIcon },
+    ],
+  },
+  {
+    key: 'accountingGroup',
+    labelKey: 'nav.accountingGroup',
+    icon: CalculatorIcon,
+    children: [
+      { key: 'accounting', labelKey: 'nav.accounting', href: '/accounting', icon: CalculatorIcon },
     ],
   },
   {
@@ -70,6 +80,7 @@ const navigation: NavEntry[] = [
     children: [
       { key: 'items', labelKey: 'nav.items', href: '/items', icon: CubeIcon },
       { key: 'inventory', labelKey: 'nav.inventory', href: '/inventory', icon: ShoppingCartIcon },
+      { key: 'stockEntries', labelKey: 'nav.stockEntries', href: '/stock-entries', icon: ShoppingCartIcon },
       { key: 'assets', labelKey: 'nav.assets', href: '/assets', icon: ArchiveBoxIcon },
     ],
   },

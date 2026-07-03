@@ -19,7 +19,11 @@
     "sales": "Satış",
     "purchasing": "Satın Alma",
     "inventoryGroup": "Envanter ve Varlıklar",
-    "hr": "İnsan Kaynakları"
+    "hr": "İnsan Kaynakları",
+    "purchaseOrders": "Satın Alma Siparişleri",
+    "accountingGroup": "Muhasebe",
+    "accounting": "Hesap Planı ve Yevmiye",
+    "stockEntries": "Stok Kayıtları"
   },
   "auth": {
     "login": "Giriş Yap",
