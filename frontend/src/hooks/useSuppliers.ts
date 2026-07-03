@@ -23,7 +23,7 @@ export const useSuppliers = (search?: string) => {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['suppliers', companyId] });
 
   const createMutation = useMutation({
-    mutationFn: (payload: Partial<Supplier>) => supplierApi.create({ ...payload, companyId }),
+    mutationFn: (payload: Partial<Supplier>) => supplierApi.create(payload, companyId),
     onSuccess: () => {
       toast.success('تم إضافة المورد بنجاح');
       invalidate();

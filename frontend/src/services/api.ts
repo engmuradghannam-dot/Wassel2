@@ -53,13 +53,13 @@ class ApiService {
     return response.data;
   }
 
-  async post<T>(url: string, data?: any): Promise<ApiResponse<T>> {
-    const response = await this.client.post<ApiResponse<T>>(url, data);
+  async post<T>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
+    const response = await this.client.post<ApiResponse<T>>(url, data, { params });
     return response.data;
   }
 
-  async put<T>(url: string, data?: any): Promise<ApiResponse<T>> {
-    const response = await this.client.put<ApiResponse<T>>(url, data);
+  async put<T>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
+    const response = await this.client.put<ApiResponse<T>>(url, data, { params });
     return response.data;
   }
 
@@ -112,8 +112,8 @@ export const invoiceApi = {
     api.get('/invoices', params),
   getById: (id: string) => 
     api.get(`/invoices/${id}`),
-  create: (data: any) => 
-    api.post('/invoices', data),
+  create: (data: any, companyId?: string) => 
+    api.post('/invoices', data, companyId ? { companyId } : undefined),
   update: (id: string, data: any) => 
     api.put(`/invoices/${id}`, data),
   submit: (id: string) => 
@@ -152,8 +152,8 @@ export const customerApi = {
     api.get('/customers', params),
   getById: (id: string) => 
     api.get(`/customers/${id}`),
-  create: (data: any) => 
-    api.post('/customers', data),
+  create: (data: any, companyId?: string) => 
+    api.post('/customers', data, companyId ? { companyId } : undefined),
   update: (id: string, data: any) => 
     api.put(`/customers/${id}`, data),
   delete: (id: string) => 
@@ -166,8 +166,8 @@ export const supplierApi = {
     api.get('/suppliers', params),
   getById: (id: string) => 
     api.get(`/suppliers/${id}`),
-  create: (data: any) => 
-    api.post('/suppliers', data),
+  create: (data: any, companyId?: string) => 
+    api.post('/suppliers', data, companyId ? { companyId } : undefined),
   update: (id: string, data: any) => 
     api.put(`/suppliers/${id}`, data),
   delete: (id: string) => 
@@ -180,8 +180,8 @@ export const itemApi = {
     api.get('/items', params),
   getById: (id: string) => 
     api.get(`/items/${id}`),
-  create: (data: any) => 
-    api.post('/items', data),
+  create: (data: any, companyId?: string) => 
+    api.post('/items', data, companyId ? { companyId } : undefined),
   update: (id: string, data: any) => 
     api.put(`/items/${id}`, data),
   delete: (id: string) => 

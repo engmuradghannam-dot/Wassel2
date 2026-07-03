@@ -9,10 +9,10 @@ import { DashboardPage } from './pages/Dashboard/Dashboard';
 import { CustomersPage } from './pages/Customers/CustomersPage';
 import { SuppliersPage } from './pages/Suppliers/SuppliersPage';
 import { ItemsPage } from './pages/Items/ItemsPage';
+import { InvoicesPage } from './pages/Invoices/InvoicesPage';
 
 // Placeholder pages (not built yet)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
-const InvoicesPage = () => <div className="card"><h1 className="text-2xl font-bold">الفواتير</h1></div>;
 const InventoryPage = () => <div className="card"><h1 className="text-2xl font-bold">المخزون</h1></div>;
 const EmployeesPage = () => <div className="card"><h1 className="text-2xl font-bold">الموظفين</h1></div>;
 const ReportsPage = () => <div className="card"><h1 className="text-2xl font-bold">التقارير</h1></div>;

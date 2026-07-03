@@ -23,7 +23,7 @@ export const useItems = (search?: string) => {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['items', companyId] });
 
   const createMutation = useMutation({
-    mutationFn: (payload: Partial<Item>) => itemApi.create({ ...payload, companyId }),
+    mutationFn: (payload: Partial<Item>) => itemApi.create(payload, companyId),
     onSuccess: () => {
       toast.success('تم إضافة المنتج بنجاح');
       invalidate();
