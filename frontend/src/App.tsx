@@ -10,6 +10,8 @@ import { CustomersPage } from './pages/Customers/CustomersPage';
 import { SuppliersPage } from './pages/Suppliers/SuppliersPage';
 import { ItemsPage } from './pages/Items/ItemsPage';
 import { InvoicesPage } from './pages/Invoices/InvoicesPage';
+import { CRMPage } from './pages/CRM/CRMPage';
+import { AssetsPage } from './pages/Assets/AssetsPage';
 
 // Placeholder pages (not built yet)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
@@ -34,6 +36,8 @@ function App() {
         <Route path="/suppliers" element={<SuppliersPage />} />
         <Route path="/items" element={<ItemsPage />} />
         <Route path="/invoices" element={<InvoicesPage />} />
+        <Route path="/crm" element={<CRMPage />} />
+        <Route path="/assets" element={<AssetsPage />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/reports" element={<ReportsPage />} />

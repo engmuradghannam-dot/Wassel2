@@ -35,6 +35,8 @@ import projectRoutes from './routes/projects';
 import taskRoutes from './routes/tasks';
 import dashboardRoutes from './routes/dashboard';
 import reportRoutes from './routes/reports';
+import crmRoutes from './routes/crm';
+import assetRoutes from './routes/assets';
 
 dotenv.config();
 
@@ -91,6 +93,8 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/crm', crmRoutes);
+app.use('/api/assets', assetRoutes);
 
 // Static files (uploads)
 app.use('/uploads', express.static('uploads'));

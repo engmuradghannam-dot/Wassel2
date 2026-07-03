@@ -309,3 +309,59 @@ export interface PaginationParams {
   order?: 'asc' | 'desc';
   search?: string;
 }
+
+export interface Lead {
+  id: string;
+  leadName: string;
+  companyName?: string;
+  email?: string;
+  phone?: string;
+  mobile?: string;
+  source?: string;
+  status: 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'PROPOSAL' | 'CONVERTED' | 'LOST';
+  notes?: string;
+  convertedToCustomerId?: string;
+  createdAt: string;
+}
+
+export interface Opportunity {
+  id: string;
+  opportunityName: string;
+  stage: 'PROSPECTING' | 'QUALIFICATION' | 'NEEDS_ANALYSIS' | 'VALUE_PROPOSITION' | 'ID_DECISION_MAKERS' | 'PERCEPTION_ANALYSIS' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSED_WON' | 'CLOSED_LOST';
+  expectedAmount: number;
+  actualAmount?: number;
+  probability: number;
+  expectedCloseDate: string;
+  actualCloseDate?: string;
+  description?: string;
+  customerId?: string;
+  customer?: Customer;
+  leadId?: string;
+  lead?: Lead;
+  createdAt: string;
+}
+
+export interface Asset {
+  id: string;
+  assetNumber: string;
+  assetName: string;
+  assetNameAr?: string;
+  assetCategory: string;
+  itemCode?: string;
+  purchaseDate: string;
+  purchaseAmount: number;
+  depreciationMethod: 'STRAIGHT_LINE' | 'DECLINING_BALANCE' | 'UNITS_OF_PRODUCTION';
+  usefulLife: number;
+  salvageValue: number;
+  annualDepreciation: number;
+  accumulatedDepreciation: number;
+  netBookValue: number;
+  location?: string;
+  custodian?: string;
+  serialNo?: string;
+  notes?: string;
+  status: 'ACTIVE' | 'UNDER_MAINTENANCE' | 'DISPOSED';
+  disposalDate?: string;
+  disposalValue?: number;
+  createdAt: string;
+}

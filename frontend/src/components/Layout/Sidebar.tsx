@@ -15,6 +15,8 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PhoneArrowUpRightIcon,
+  ArchiveBoxIcon,
 } from '@heroicons/react/24/outline';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -30,11 +32,13 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: 'Dashboard', nameAr: 'لوحة التحكم', href: '/dashboard', icon: HomeIcon },
   { name: 'Companies', nameAr: 'الشركات', href: '/companies', icon: BuildingOfficeIcon },
+  { name: 'CRM', nameAr: 'إدارة المبيعات', href: '/crm', icon: PhoneArrowUpRightIcon },
   { name: 'Customers', nameAr: 'العملاء', href: '/customers', icon: UsersIcon },
   { name: 'Suppliers', nameAr: 'الموردين', href: '/suppliers', icon: TruckIcon },
   { name: 'Items', nameAr: 'المنتجات', href: '/items', icon: CubeIcon },
   { name: 'Invoices', nameAr: 'الفواتير', href: '/invoices', icon: DocumentTextIcon },
   { name: 'Inventory', nameAr: 'المخزون', href: '/inventory', icon: ShoppingCartIcon },
+  { name: 'Assets', nameAr: 'الأصول الثابتة', href: '/assets', icon: ArchiveBoxIcon },
   { name: 'Employees', nameAr: 'الموظفين', href: '/employees', icon: UsersIcon },
   { name: 'Reports', nameAr: 'التقارير', href: '/reports', icon: ChartBarIcon },
   { name: 'Settings', nameAr: 'الإعدادات', href: '/settings', icon: CogIcon },

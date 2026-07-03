@@ -48,6 +48,11 @@ model User {
   createdJournalEntries JournalEntry[] @relation("JournalEntryCreatedBy")
   createdProjects     Project[]    @relation("ProjectCreatedBy")
   createdTasks        Task[]       @relation("TaskCreatedBy")
+  createdLeads        Lead[]       @relation("LeadCreatedBy")
+  assignedLeads       Lead[]       @relation("LeadAssignedTo")
+  createdOpportunities Opportunity[] @relation("OpportunityCreatedBy")
+  assignedOpportunities Opportunity[] @relation("OpportunityAssignedTo")
+  createdAssets       Asset[]      @relation("AssetCreatedBy")
 
   @@map("users")
 }
@@ -131,6 +136,9 @@ model Company {
   projects    Project[]
   journalEntries JournalEntry[]
   invoices    Invoice[]
+  leads        Lead[]
+  opportunities Opportunity[]
+  assets       Asset[]
 
   @@map("companies")
 }
@@ -415,6 +423,8 @@ model Customer {
   // Relations
   invoices    Invoice[]
   salesOrders SalesOrder[]
+  opportunities Opportunity[]
+  convertedFromLead Lead?
 
   @@map("customers")
 }
@@ -1248,4 +1258,133 @@ enum NotificationType {
   SUCCESS
   WARNING
   ERROR
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  leadName    String
+  companyName String?
+  email       String?
+  phone       String?
+  mobile      String?
+  source      String?
+  status      LeadStatus @default(NEW)
+  notes       String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User     @relation("LeadCreatedBy", fields: [createdById], references: [id])
+  assignedToId String?
+  assignedTo  User?    @relation("LeadAssignedTo", fields: [assignedToId], references: [id])
+
+  convertedToCustomerId String? @unique
+  convertedToCustomer   Customer? @relation(fields: [convertedToCustomerId], references: [id])
+
+  opportunities Opportunity[]
+
+  @@map("leads")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  CONVERTED
+  LOST
+}
+
+model Opportunity {
+  id                String   @id @default(uuid())
+  opportunityName   String
+  stage             OpportunityStage @default(PROSPECTING)
+  expectedAmount    Decimal  @db.Decimal(18, 2)
+  actualAmount      Decimal? @db.Decimal(18, 2)
+  probability       Int      @default(0)
+  expectedCloseDate DateTime
+  actualCloseDate   DateTime?
+  description       String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User     @relation("OpportunityCreatedBy", fields: [createdById], references: [id])
+  assignedToId String?
+  assignedTo  User?    @relation("OpportunityAssignedTo", fields: [assignedToId], references: [id])
+
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+
+  @@map("opportunities")
+}
+
+enum OpportunityStage {
+  PROSPECTING
+  QUALIFICATION
+  NEEDS_ANALYSIS
+  VALUE_PROPOSITION
+  ID_DECISION_MAKERS
+  PERCEPTION_ANALYSIS
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+model Asset {
+  id            String   @id @default(uuid())
+  assetNumber   String   @unique
+  assetName     String
+  assetNameAr   String?
+  assetCategory String
+  itemCode      String?
+
+  purchaseDate     DateTime
+  purchaseAmount   Decimal  @db.Decimal(18, 2)
+  depreciationMethod AssetDepreciationMethod @default(STRAIGHT_LINE)
+  usefulLife       Int
+  salvageValue     Decimal  @default(0) @db.Decimal(18, 2)
+  annualDepreciation Decimal @default(0) @db.Decimal(18, 2)
+  accumulatedDepreciation Decimal @default(0) @db.Decimal(18, 2)
+  netBookValue     Decimal  @db.Decimal(18, 2)
+
+  location      String?
+  custodian     String?
+  serialNo      String?
+  notes         String?
+
+  status        AssetStatus @default(ACTIVE)
+  disposalDate  DateTime?
+  disposalValue Decimal? @db.Decimal(18, 2)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User     @relation("AssetCreatedBy", fields: [createdById], references: [id])
+
+  @@map("assets")
+}
+
+enum AssetDepreciationMethod {
+  STRAIGHT_LINE
+  DECLINING_BALANCE
+  UNITS_OF_PRODUCTION
+}
+
+enum AssetStatus {
+  ACTIVE
+  UNDER_MAINTENANCE
+  DISPOSED
 }

@@ -187,3 +187,33 @@ export const itemApi = {
   delete: (id: string) => 
     api.delete(`/items/${id}`),
 };
+
+// CRM API (Leads + Opportunities)
+export const crmApi = {
+  getLeads: (params?: any) =>
+    api.get('/crm/leads', params),
+  createLead: (data: any, companyId?: string) =>
+    api.post('/crm/leads', data, companyId ? { companyId } : undefined),
+  updateLeadStatus: (id: string, status: string) =>
+    api.put(`/crm/leads/${id}/status`, { status }),
+  convertLead: (id: string, companyId?: string) =>
+    api.post(`/crm/leads/${id}/convert`, undefined, companyId ? { companyId } : undefined),
+  getOpportunities: (params?: any) =>
+    api.get('/crm/opportunities', params),
+  createOpportunity: (data: any, companyId?: string) =>
+    api.post('/crm/opportunities', data, companyId ? { companyId } : undefined),
+  updateOpportunityStage: (id: string, stage: string, actualAmount?: number) =>
+    api.put(`/crm/opportunities/${id}/stage`, { stage, actualAmount }),
+};
+
+// Asset API
+export const assetApi = {
+  getAll: (params?: any) =>
+    api.get('/assets', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/assets', data, companyId ? { companyId } : undefined),
+  depreciate: (id: string) =>
+    api.post(`/assets/${id}/depreciate`),
+  dispose: (id: string, data: any) =>
+    api.post(`/assets/${id}/dispose`, data),
+};
