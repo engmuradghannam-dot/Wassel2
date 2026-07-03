@@ -6,12 +6,12 @@ import { useAuth } from './hooks/useAuth';
 import { MainLayout } from './components/Layout/MainLayout';
 import { LoginPage } from './pages/Auth/Login';
 import { DashboardPage } from './pages/Dashboard/Dashboard';
+import { CustomersPage } from './pages/Customers/CustomersPage';
+import { SuppliersPage } from './pages/Suppliers/SuppliersPage';
+import { ItemsPage } from './pages/Items/ItemsPage';
 
-// Placeholder pages
+// Placeholder pages (not built yet)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
-const CustomersPage = () => <div className="card"><h1 className="text-2xl font-bold">العملاء</h1></div>;
-const SuppliersPage = () => <div className="card"><h1 className="text-2xl font-bold">الموردين</h1></div>;
-const ItemsPage = () => <div className="card"><h1 className="text-2xl font-bold">المنتجات</h1></div>;
 const InvoicesPage = () => <div className="card"><h1 className="text-2xl font-bold">الفواتير</h1></div>;
 const InventoryPage = () => <div className="card"><h1 className="text-2xl font-bold">المخزون</h1></div>;
 const EmployeesPage = () => <div className="card"><h1 className="text-2xl font-bold">الموظفين</h1></div>;

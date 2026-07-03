@@ -1,11 +1,15 @@
 import { Router } from 'express';
+import { createCustomer, getCustomers, getCustomer, updateCustomer, deleteCustomer } from '../controllers/customer';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
+
 router.use(authenticate);
 
-router.get('/', async (req, res) => {
-  res.json({ success: true, message: 'Customers endpoint', data: [] });
-});
+router.post('/', createCustomer);
+router.get('/', getCustomers);
+router.get('/:id', getCustomer);
+router.put('/:id', updateCustomer);
+router.delete('/:id', deleteCustomer);
 
 export default router;
