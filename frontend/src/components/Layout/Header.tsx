@@ -2,6 +2,7 @@
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   BellIcon,
   UserCircleIcon,
@@ -12,8 +13,10 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useUIStore } from '../../store/uiStore';
 import { useCompany } from '../../hooks/useCompany';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 export const Header = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { sidebarOpen } = useUIStore();
   const { companies, selectedCompany, setSelectedCompany } = useCompany();
@@ -34,7 +37,7 @@ export const Header = () => {
             <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary-400" />
             <input
               type="text"
-              placeholder="بحث..."
+              placeholder={t('common.search') + '...'}
               className="input pr-10 w-full"
             />
           </div>
@@ -42,6 +45,9 @@ export const Header = () => {
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {/* Company Selector */}
           <div className="relative">
             <button
@@ -49,7 +55,7 @@ export const Header = () => {
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-secondary-700 bg-secondary-50 rounded-lg hover:bg-secondary-100 transition-colors"
             >
               <BuildingOfficeIcon className="w-5 h-5 text-secondary-500" />
-              <span>{selectedCompany?.name || 'اختر الشركة'}</span>
+              <span>{selectedCompany?.name || t('common.selectCompany')}</span>
               <ChevronDownIcon className="w-4 h-4 text-secondary-400" />
             </button>
 

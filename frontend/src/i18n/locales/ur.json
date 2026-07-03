@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "انٹرپرائز ریسورس پلاننگ سسٹم" },
+  "nav": {
+    "dashboard": "ڈیش بورڈ",
+    "companies": "کمپنیاں",
+    "crm": "سیلز مینجمنٹ",
+    "customers": "گاہک",
+    "suppliers": "سپلائرز",
+    "items": "مصنوعات",
+    "invoices": "انوائسز",
+    "inventory": "انوینٹری",
+    "assets": "فکسڈ اثاثے",
+    "employees": "ملازمین",
+    "reports": "رپورٹس",
+    "settings": "ترتیبات"
+  },
+  "auth": {
+    "login": "لاگ ان",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "rememberMe": "مجھے یاد رکھیں",
+    "forgotPassword": "پاس ورڈ بھول گئے؟",
+    "loggingIn": "لاگ ان ہو رہا ہے...",
+    "noAccount": "اکاؤنٹ نہیں ہے؟",
+    "createAccount": "نیا اکاؤنٹ بنائیں",
+    "allRightsReserved": "© 2026 MuradERP. جملہ حقوق محفوظ ہیں۔"
+  },
+  "common": {
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ کریں",
+    "add": "شامل کریں",
+    "edit": "ترمیم کریں",
+    "delete": "حذف کریں",
+    "search": "تلاش کریں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "saving": "محفوظ ہو رہا ہے...",
+    "actions": "اعمال",
+    "status": "حیثیت",
+    "selectCompany": "کمپنی منتخب کریں",
+    "logout": "لاگ آؤٹ",
+    "language": "زبان",
+    "currency": "کرنسی"
+  }
+}

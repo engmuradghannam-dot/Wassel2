@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "نظام تخطيط موارد المؤسسات" },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "companies": "الشركات",
+    "crm": "إدارة المبيعات",
+    "customers": "العملاء",
+    "suppliers": "الموردين",
+    "items": "المنتجات",
+    "invoices": "الفواتير",
+    "inventory": "المخزون",
+    "assets": "الأصول الثابتة",
+    "employees": "الموظفين",
+    "reports": "التقارير",
+    "settings": "الإعدادات"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "loggingIn": "جاري تسجيل الدخول...",
+    "noAccount": "ليس لديك حساب؟",
+    "createAccount": "إنشاء حساب جديد",
+    "allRightsReserved": "© 2026 MuradERP. جميع الحقوق محفوظة."
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "search": "بحث",
+    "loading": "جاري التحميل...",
+    "saving": "جاري الحفظ...",
+    "actions": "إجراءات",
+    "status": "الحالة",
+    "selectCompany": "اختر الشركة",
+    "logout": "تسجيل الخروج",
+    "language": "اللغة",
+    "currency": "العملة"
+  }
+}

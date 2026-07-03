@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "Kurumsal Kaynak Planlama Sistemi" },
+  "nav": {
+    "dashboard": "Panel",
+    "companies": "Şirketler",
+    "crm": "Satış Yönetimi",
+    "customers": "Müşteriler",
+    "suppliers": "Tedarikçiler",
+    "items": "Ürünler",
+    "invoices": "Faturalar",
+    "inventory": "Envanter",
+    "assets": "Sabit Kıymetler",
+    "employees": "Çalışanlar",
+    "reports": "Raporlar",
+    "settings": "Ayarlar"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "rememberMe": "Beni hatırla",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "loggingIn": "Giriş yapılıyor...",
+    "noAccount": "Hesabınız yok mu?",
+    "createAccount": "Yeni hesap oluştur",
+    "allRightsReserved": "© 2026 MuradERP. Tüm hakları saklıdır."
+  },
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "add": "Ekle",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "search": "Ara",
+    "loading": "Yükleniyor...",
+    "saving": "Kaydediliyor...",
+    "actions": "İşlemler",
+    "status": "Durum",
+    "selectCompany": "Şirket Seçin",
+    "logout": "Çıkış Yap",
+    "language": "Dil",
+    "currency": "Para Birimi"
+  }
+}

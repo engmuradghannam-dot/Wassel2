@@ -5,6 +5,8 @@ import { useSuppliers } from '../../hooks/useSuppliers';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Supplier } from '../../types';
+import { formatCurrency } from '../../utils/currency';
+import { CurrencySelect } from '../../components/common/CurrencySelect';
 
 const emptyForm = {
   code: '',
@@ -16,6 +18,7 @@ const emptyForm = {
   taxId: '',
   creditLimit: 0,
   paymentTerms: 30,
+  currency: 'SAR',
   supplierType: 'COMPANY' as const,
 };
 
@@ -47,6 +50,7 @@ export const SuppliersPage = () => {
       taxId: supplier.taxId || '',
       creditLimit: supplier.creditLimit,
       paymentTerms: supplier.paymentTerms,
+      currency: (supplier as any).currency || 'SAR',
       supplierType: supplier.supplierType,
     });
     setIsModalOpen(true);
@@ -126,7 +130,7 @@ export const SuppliersPage = () => {
                 <td className="table-cell font-medium">{supplier.name}</td>
                 <td className="table-cell">{supplier.phone || '-'}</td>
                 <td className="table-cell">{supplier.email || '-'}</td>
-                <td className="table-cell">{supplier.creditLimit.toLocaleString()} ر.س</td>
+                <td className="table-cell">{formatCurrency(supplier.creditLimit, (supplier as any).currency || 'SAR')}</td>
                 <td className="table-cell">
                   <div className="flex gap-2">
                     <button onClick={() => openEdit(supplier)} className="text-primary-600 hover:text-primary-800">
@@ -182,6 +186,10 @@ export const SuppliersPage = () => {
               <label className="block text-sm font-medium mb-1">مدة السداد (يوم)</label>
               <input type="number" min={0} className="input" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })} />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">العملة</label>
+            <CurrencySelect value={form.currency} onChange={(code) => setForm({ ...form, currency: code })} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">نوع المورد</label>

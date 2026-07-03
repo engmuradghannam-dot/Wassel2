@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "企业资源规划系统" },
+  "nav": {
+    "dashboard": "仪表盘",
+    "companies": "公司",
+    "crm": "销售管理",
+    "customers": "客户",
+    "suppliers": "供应商",
+    "items": "产品",
+    "invoices": "发票",
+    "inventory": "库存",
+    "assets": "固定资产",
+    "employees": "员工",
+    "reports": "报表",
+    "settings": "设置"
+  },
+  "auth": {
+    "login": "登录",
+    "email": "电子邮箱",
+    "password": "密码",
+    "rememberMe": "记住我",
+    "forgotPassword": "忘记密码？",
+    "loggingIn": "正在登录...",
+    "noAccount": "还没有账号？",
+    "createAccount": "创建新账号",
+    "allRightsReserved": "© 2026 MuradERP. 保留所有权利。"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "add": "添加",
+    "edit": "编辑",
+    "delete": "删除",
+    "search": "搜索",
+    "loading": "加载中...",
+    "saving": "保存中...",
+    "actions": "操作",
+    "status": "状态",
+    "selectCompany": "选择公司",
+    "logout": "退出登录",
+    "language": "语言",
+    "currency": "货币"
+  }
+}

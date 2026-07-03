@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "एंटरप्राइज़ रिसोर्स प्लानिंग सिस्टम" },
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "companies": "कंपनियाँ",
+    "crm": "सेल्स प्रबंधन",
+    "customers": "ग्राहक",
+    "suppliers": "आपूर्तिकर्ता",
+    "items": "उत्पाद",
+    "invoices": "इनवॉइस",
+    "inventory": "इन्वेंटरी",
+    "assets": "स्थायी संपत्ति",
+    "employees": "कर्मचारी",
+    "reports": "रिपोर्ट",
+    "settings": "सेटिंग्स"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "rememberMe": "मुझे याद रखें",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "loggingIn": "लॉगिन हो रहा है...",
+    "noAccount": "खाता नहीं है?",
+    "createAccount": "नया खाता बनाएं",
+    "allRightsReserved": "© 2026 MuradERP. सर्वाधिकार सुरक्षित।"
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "add": "जोड़ें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "search": "खोजें",
+    "loading": "लोड हो रहा है...",
+    "saving": "सहेजा जा रहा है...",
+    "actions": "कार्रवाई",
+    "status": "स्थिति",
+    "selectCompany": "कंपनी चुनें",
+    "logout": "लॉगआउट",
+    "language": "भाषा",
+    "currency": "मुद्रा"
+  }
+}

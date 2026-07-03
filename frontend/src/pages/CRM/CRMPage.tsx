@@ -5,6 +5,7 @@ import { useLeads, useOpportunities } from '../../hooks/useCRM';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Lead, Opportunity } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 const leadStatusLabel: Record<string, string> = {
   NEW: 'جديد', CONTACTED: 'تم التواصل', QUALIFIED: 'مؤهّل',
@@ -171,7 +172,7 @@ export const CRMPage = () => {
                 {opportunities.map((opp: Opportunity) => (
                   <tr key={opp.id}>
                     <td className="table-cell font-medium">{opp.opportunityName}</td>
-                    <td className="table-cell">{opp.expectedAmount.toLocaleString()} ر.س</td>
+                    <td className="table-cell">{formatCurrency(opp.expectedAmount, selectedCompany.currency)}</td>
                     <td className="table-cell">{opp.probability}%</td>
                     <td className="table-cell">{new Date(opp.expectedCloseDate).toLocaleDateString('ar-SA')}</td>
                     <td className="table-cell">

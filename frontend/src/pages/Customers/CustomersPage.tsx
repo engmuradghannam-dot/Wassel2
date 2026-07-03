@@ -5,6 +5,8 @@ import { useCustomers } from '../../hooks/useCustomers';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Customer } from '../../types';
+import { formatCurrency } from '../../utils/currency';
+import { CurrencySelect } from '../../components/common/CurrencySelect';
 
 const emptyForm = {
   code: '',
@@ -16,6 +18,7 @@ const emptyForm = {
   taxId: '',
   creditLimit: 0,
   paymentTerms: 30,
+  currency: 'SAR',
   customerType: 'INDIVIDUAL' as const,
 };
 
@@ -47,6 +50,7 @@ export const CustomersPage = () => {
       taxId: customer.taxId || '',
       creditLimit: customer.creditLimit,
       paymentTerms: customer.paymentTerms,
+      currency: (customer as any).currency || 'SAR',
       customerType: customer.customerType,
     });
     setIsModalOpen(true);
@@ -126,7 +130,7 @@ export const CustomersPage = () => {
                 <td className="table-cell font-medium">{customer.name}</td>
                 <td className="table-cell">{customer.phone || '-'}</td>
                 <td className="table-cell">{customer.email || '-'}</td>
-                <td className="table-cell">{customer.creditLimit.toLocaleString()} ر.س</td>
+                <td className="table-cell">{formatCurrency(customer.creditLimit, (customer as any).currency || 'SAR')}</td>
                 <td className="table-cell">
                   <div className="flex gap-2">
                     <button onClick={() => openEdit(customer)} className="text-primary-600 hover:text-primary-800">
@@ -182,6 +186,10 @@ export const CustomersPage = () => {
               <label className="block text-sm font-medium mb-1">مدة السداد (يوم)</label>
               <input type="number" min={0} className="input" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })} />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">العملة</label>
+            <CurrencySelect value={form.currency} onChange={(code) => setForm({ ...form, currency: code })} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">نوع العميل</label>

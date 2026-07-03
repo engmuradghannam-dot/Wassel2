@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "Sistema ng Enterprise Resource Planning" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "companies": "Mga Kumpanya",
+    "crm": "Pamamahala ng Benta",
+    "customers": "Mga Kustomer",
+    "suppliers": "Mga Supplier",
+    "items": "Mga Produkto",
+    "invoices": "Mga Invoice",
+    "inventory": "Imbentaryo",
+    "assets": "Fixed Assets",
+    "employees": "Mga Empleyado",
+    "reports": "Mga Ulat",
+    "settings": "Mga Setting"
+  },
+  "auth": {
+    "login": "Mag-login",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Tandaan ako",
+    "forgotPassword": "Nakalimutan ang password?",
+    "loggingIn": "Nagla-log in...",
+    "noAccount": "Walang account?",
+    "createAccount": "Gumawa ng bagong account",
+    "allRightsReserved": "© 2026 MuradERP. Nakalaan ang lahat ng karapatan."
+  },
+  "common": {
+    "save": "I-save",
+    "cancel": "Kanselahin",
+    "add": "Magdagdag",
+    "edit": "I-edit",
+    "delete": "Tanggalin",
+    "search": "Maghanap",
+    "loading": "Naglo-load...",
+    "saving": "Nagse-save...",
+    "actions": "Mga Aksyon",
+    "status": "Katayuan",
+    "selectCompany": "Pumili ng Kumpanya",
+    "logout": "Mag-logout",
+    "language": "Wika",
+    "currency": "Pera"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "Enterprise Resource Planning System" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "companies": "Companies",
+    "crm": "CRM",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "items": "Products",
+    "invoices": "Invoices",
+    "inventory": "Inventory",
+    "assets": "Fixed Assets",
+    "employees": "Employees",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create new account",
+    "allRightsReserved": "© 2026 MuradERP. All rights reserved."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "actions": "Actions",
+    "status": "Status",
+    "selectCompany": "Select Company",
+    "logout": "Logout",
+    "language": "Language",
+    "currency": "Currency"
+  }
+}

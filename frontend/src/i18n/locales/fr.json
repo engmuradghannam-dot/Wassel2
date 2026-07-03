@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "Système de Planification des Ressources d'Entreprise" },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "companies": "Sociétés",
+    "crm": "Gestion des ventes",
+    "customers": "Clients",
+    "suppliers": "Fournisseurs",
+    "items": "Produits",
+    "invoices": "Factures",
+    "inventory": "Inventaire",
+    "assets": "Immobilisations",
+    "employees": "Employés",
+    "reports": "Rapports",
+    "settings": "Paramètres"
+  },
+  "auth": {
+    "login": "Connexion",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loggingIn": "Connexion en cours...",
+    "noAccount": "Pas de compte ?",
+    "createAccount": "Créer un nouveau compte",
+    "allRightsReserved": "© 2026 MuradERP. Tous droits réservés."
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "saving": "Enregistrement...",
+    "actions": "Actions",
+    "status": "Statut",
+    "selectCompany": "Sélectionner une société",
+    "logout": "Déconnexion",
+    "language": "Langue",
+    "currency": "Devise"
+  }
+}

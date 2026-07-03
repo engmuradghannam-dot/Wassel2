@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "Sistem Perencanaan Sumber Daya Perusahaan" },
+  "nav": {
+    "dashboard": "Dasbor",
+    "companies": "Perusahaan",
+    "crm": "Manajemen Penjualan",
+    "customers": "Pelanggan",
+    "suppliers": "Pemasok",
+    "items": "Produk",
+    "invoices": "Faktur",
+    "inventory": "Inventaris",
+    "assets": "Aset Tetap",
+    "employees": "Karyawan",
+    "reports": "Laporan",
+    "settings": "Pengaturan"
+  },
+  "auth": {
+    "login": "Masuk",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "rememberMe": "Ingat saya",
+    "forgotPassword": "Lupa kata sandi?",
+    "loggingIn": "Sedang masuk...",
+    "noAccount": "Belum punya akun?",
+    "createAccount": "Buat akun baru",
+    "allRightsReserved": "© 2026 MuradERP. Hak cipta dilindungi."
+  },
+  "common": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "add": "Tambah",
+    "edit": "Ubah",
+    "delete": "Hapus",
+    "search": "Cari",
+    "loading": "Memuat...",
+    "saving": "Menyimpan...",
+    "actions": "Tindakan",
+    "status": "Status",
+    "selectCompany": "Pilih Perusahaan",
+    "logout": "Keluar",
+    "language": "Bahasa",
+    "currency": "Mata Uang"
+  }
+}

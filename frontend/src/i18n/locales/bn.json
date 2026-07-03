@@ -1,0 +1,44 @@
+{
+  "app": { "name": "MuradERP", "tagline": "এন্টারপ্রাইজ রিসোর্স প্ল্যানিং সিস্টেম" },
+  "nav": {
+    "dashboard": "ড্যাশবোর্ড",
+    "companies": "কোম্পানিসমূহ",
+    "crm": "সেলস ম্যানেজমেন্ট",
+    "customers": "গ্রাহক",
+    "suppliers": "সরবরাহকারী",
+    "items": "পণ্য",
+    "invoices": "চালান",
+    "inventory": "মজুদ",
+    "assets": "স্থায়ী সম্পদ",
+    "employees": "কর্মচারী",
+    "reports": "রিপোর্ট",
+    "settings": "সেটিংস"
+  },
+  "auth": {
+    "login": "লগইন",
+    "email": "ইমেইল",
+    "password": "পাসওয়ার্ড",
+    "rememberMe": "আমাকে মনে রাখুন",
+    "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+    "loggingIn": "লগইন হচ্ছে...",
+    "noAccount": "অ্যাকাউন্ট নেই?",
+    "createAccount": "নতুন অ্যাকাউন্ট তৈরি করুন",
+    "allRightsReserved": "© 2026 MuradERP. সর্বস্বত্ব সংরক্ষিত।"
+  },
+  "common": {
+    "save": "সংরক্ষণ করুন",
+    "cancel": "বাতিল করুন",
+    "add": "যোগ করুন",
+    "edit": "সম্পাদনা করুন",
+    "delete": "মুছুন",
+    "search": "অনুসন্ধান",
+    "loading": "লোড হচ্ছে...",
+    "saving": "সংরক্ষণ হচ্ছে...",
+    "actions": "কার্যক্রম",
+    "status": "অবস্থা",
+    "selectCompany": "কোম্পানি নির্বাচন করুন",
+    "logout": "লগআউট",
+    "language": "ভাষা",
+    "currency": "মুদ্রা"
+  }
+}

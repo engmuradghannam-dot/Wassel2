@@ -5,6 +5,7 @@ import { useItems } from '../../hooks/useItems';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Item } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 const emptyForm = {
   code: '',
@@ -126,8 +127,8 @@ export const ItemsPage = () => {
                 <td className="table-cell">{item.code}</td>
                 <td className="table-cell font-medium">{item.name}</td>
                 <td className="table-cell">{item.unitOfMeasure}</td>
-                <td className="table-cell">{item.standardCost.toLocaleString()} ر.س</td>
-                <td className="table-cell">{item.sellingPrice.toLocaleString()} ر.س</td>
+                <td className="table-cell">{formatCurrency(item.standardCost, selectedCompany.currency)}</td>
+                <td className="table-cell">{formatCurrency(item.sellingPrice, selectedCompany.currency)}</td>
                 <td className="table-cell">
                   <div className="flex gap-2">
                     <button onClick={() => openEdit(item)} className="text-primary-600 hover:text-primary-800">

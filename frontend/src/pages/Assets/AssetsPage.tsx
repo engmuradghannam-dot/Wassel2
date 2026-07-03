@@ -5,6 +5,7 @@ import { useAssets } from '../../hooks/useAssets';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Asset } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 const statusBadge: Record<string, string> = {
   ACTIVE: 'badge-success',
@@ -106,8 +107,8 @@ export const AssetsPage = () => {
                 <td className="table-cell">{asset.assetNumber}</td>
                 <td className="table-cell font-medium">{asset.assetName}</td>
                 <td className="table-cell">{asset.assetCategory}</td>
-                <td className="table-cell">{asset.purchaseAmount.toLocaleString()} ر.س</td>
-                <td className="table-cell">{asset.netBookValue.toLocaleString()} ر.س</td>
+                <td className="table-cell">{formatCurrency(asset.purchaseAmount, selectedCompany.currency)}</td>
+                <td className="table-cell">{formatCurrency(asset.netBookValue, selectedCompany.currency)}</td>
                 <td className="table-cell">
                   <span className={statusBadge[asset.status]}>{statusLabel[asset.status]}</span>
                 </td>

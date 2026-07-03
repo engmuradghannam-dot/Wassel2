@@ -8,6 +8,7 @@ import { useItems } from '../../hooks/useItems';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../../components/common/Modal';
 import { Invoice } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 type LineItem = { itemId: string; quantity: number; unitPrice: number; discountPercent: number };
 
@@ -181,7 +182,7 @@ export const InvoicesPage = () => {
                 <td className="table-cell font-medium">{invoice.invoiceNumber}</td>
                 <td className="table-cell">{invoice.customer?.name || invoice.supplier?.name || '-'}</td>
                 <td className="table-cell">{new Date(invoice.invoiceDate).toLocaleDateString('ar-SA')}</td>
-                <td className="table-cell">{invoice.totalAmount.toLocaleString()} ر.س</td>
+                <td className="table-cell">{formatCurrency(invoice.totalAmount, selectedCompany.currency)}</td>
                 <td className="table-cell">
                   <span className={statusBadge[invoice.status] || 'badge-info'}>
                     {statusLabel[invoice.status] || invoice.status}
@@ -299,10 +300,10 @@ export const InvoicesPage = () => {
           </div>
 
           <div className="bg-secondary-50 rounded-lg p-4 space-y-1 text-sm">
-            <div className="flex justify-between"><span>المجموع الفرعي</span><span>{totals.subtotal.toFixed(2)} ر.س</span></div>
-            <div className="flex justify-between"><span>الضريبة</span><span>{totals.tax.toFixed(2)} ر.س</span></div>
+            <div className="flex justify-between"><span>المجموع الفرعي</span><span>{formatCurrency(totals.subtotal, selectedCompany.currency)}</span></div>
+            <div className="flex justify-between"><span>الضريبة</span><span>{formatCurrency(totals.tax, selectedCompany.currency)}</span></div>
             <div className="flex justify-between font-bold text-base pt-1 border-t border-secondary-200">
-              <span>الإجمالي</span><span>{totals.total.toFixed(2)} ر.س</span>
+              <span>الإجمالي</span><span>{formatCurrency(totals.total, selectedCompany.currency)}</span>
             </div>
           </div>
 

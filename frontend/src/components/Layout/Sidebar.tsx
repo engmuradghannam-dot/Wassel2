@@ -2,6 +2,7 @@
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
 import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   HomeIcon,
   BuildingOfficeIcon,
@@ -22,32 +23,33 @@ import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
 
 interface NavItem {
-  name: string;
-  nameAr: string;
+  key: string;
+  labelKey: string;
   href: string;
   icon: React.ElementType;
   roles?: string[];
 }
 
 const navigation: NavItem[] = [
-  { name: 'Dashboard', nameAr: 'لوحة التحكم', href: '/dashboard', icon: HomeIcon },
-  { name: 'Companies', nameAr: 'الشركات', href: '/companies', icon: BuildingOfficeIcon },
-  { name: 'CRM', nameAr: 'إدارة المبيعات', href: '/crm', icon: PhoneArrowUpRightIcon },
-  { name: 'Customers', nameAr: 'العملاء', href: '/customers', icon: UsersIcon },
-  { name: 'Suppliers', nameAr: 'الموردين', href: '/suppliers', icon: TruckIcon },
-  { name: 'Items', nameAr: 'المنتجات', href: '/items', icon: CubeIcon },
-  { name: 'Invoices', nameAr: 'الفواتير', href: '/invoices', icon: DocumentTextIcon },
-  { name: 'Inventory', nameAr: 'المخزون', href: '/inventory', icon: ShoppingCartIcon },
-  { name: 'Assets', nameAr: 'الأصول الثابتة', href: '/assets', icon: ArchiveBoxIcon },
-  { name: 'Employees', nameAr: 'الموظفين', href: '/employees', icon: UsersIcon },
-  { name: 'Reports', nameAr: 'التقارير', href: '/reports', icon: ChartBarIcon },
-  { name: 'Settings', nameAr: 'الإعدادات', href: '/settings', icon: CogIcon },
+  { key: 'dashboard', labelKey: 'nav.dashboard', href: '/dashboard', icon: HomeIcon },
+  { key: 'companies', labelKey: 'nav.companies', href: '/companies', icon: BuildingOfficeIcon },
+  { key: 'crm', labelKey: 'nav.crm', href: '/crm', icon: PhoneArrowUpRightIcon },
+  { key: 'customers', labelKey: 'nav.customers', href: '/customers', icon: UsersIcon },
+  { key: 'suppliers', labelKey: 'nav.suppliers', href: '/suppliers', icon: TruckIcon },
+  { key: 'items', labelKey: 'nav.items', href: '/items', icon: CubeIcon },
+  { key: 'invoices', labelKey: 'nav.invoices', href: '/invoices', icon: DocumentTextIcon },
+  { key: 'inventory', labelKey: 'nav.inventory', href: '/inventory', icon: ShoppingCartIcon },
+  { key: 'assets', labelKey: 'nav.assets', href: '/assets', icon: ArchiveBoxIcon },
+  { key: 'employees', labelKey: 'nav.employees', href: '/employees', icon: UsersIcon },
+  { key: 'reports', labelKey: 'nav.reports', href: '/reports', icon: ChartBarIcon },
+  { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
 ];
 
 export const Sidebar = () => {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <aside
@@ -63,8 +65,8 @@ export const Sidebar = () => {
           </div>
           {sidebarOpen && (
             <div className="animate-fade-in">
-              <h1 className="text-lg font-bold text-secondary-900">MuradERP</h1>
-              <p className="text-xs text-secondary-500">نظام إدارة المؤسسات</p>
+              <h1 className="text-lg font-bold text-secondary-900">{t('app.name')}</h1>
+              <p className="text-xs text-secondary-500">{t('app.tagline')}</p>
             </div>
           )}
         </div>
@@ -86,16 +88,16 @@ export const Sidebar = () => {
           const isActive = location.pathname.startsWith(item.href);
           return (
             <NavLink
-              key={item.name}
+              key={item.key}
               to={item.href}
               className={`sidebar-link ${
                 isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'
               }`}
-              title={!sidebarOpen ? item.nameAr : undefined}
+              title={!sidebarOpen ? t(item.labelKey) : undefined}
             >
               <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
               {sidebarOpen && (
-                <span className="mr-3 animate-fade-in">{item.nameAr}</span>
+                <span className="mr-3 animate-fade-in">{t(item.labelKey)}</span>
               )}
             </NavLink>
           );
@@ -107,10 +109,10 @@ export const Sidebar = () => {
         <button
           onClick={logout}
           className="flex items-center w-full px-4 py-3 text-sm font-medium text-danger-600 rounded-lg hover:bg-danger-50 transition-colors"
-          title={!sidebarOpen ? 'تسجيل الخروج' : undefined}
+          title={!sidebarOpen ? t('common.logout') : undefined}
         >
           <ArrowRightOnRectangleIcon className="w-5 h-5 flex-shrink-0" />
-          {sidebarOpen && <span className="mr-3 animate-fade-in">تسجيل الخروج</span>}
+          {sidebarOpen && <span className="mr-3 animate-fade-in">{t('common.logout')}</span>}
         </button>
       </div>
     </aside>
