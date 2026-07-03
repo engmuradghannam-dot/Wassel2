@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Sistem Perencanaan Sumber Daya Perusahaan" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Sistem Perencanaan Sumber Daya Perusahaan"
+  },
   "nav": {
     "dashboard": "Dasbor",
     "companies": "Perusahaan",
@@ -12,7 +15,11 @@
     "assets": "Aset Tetap",
     "employees": "Karyawan",
     "reports": "Laporan",
-    "settings": "Pengaturan"
+    "settings": "Pengaturan",
+    "sales": "Penjualan",
+    "purchasing": "Pembelian",
+    "inventoryGroup": "Inventaris & Aset",
+    "hr": "SDM"
   },
   "auth": {
     "login": "Masuk",
@@ -40,5 +47,37 @@
     "logout": "Keluar",
     "language": "Bahasa",
     "currency": "Mata Uang"
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "subtitle": "Ikhtisar kinerja perusahaan",
+    "noCompany": "Belum ada perusahaan dipilih",
+    "selectCompanyPrompt": "Silakan pilih perusahaan dari menu atas",
+    "fiscalYear": "Tahun Fiskal",
+    "customers": "Pelanggan",
+    "suppliers": "Pemasok",
+    "items": "Produk",
+    "employees": "Karyawan",
+    "invoices": "Faktur",
+    "pendingInvoices": "Faktur Tertunda",
+    "lastMonth": "dari bulan lalu",
+    "totalSales": "Total Penjualan",
+    "totalPurchases": "Total Pembelian",
+    "ofMonthlyTarget": "dari target bulanan",
+    "ofBudget": "dari anggaran",
+    "lowStockAlerts": "Peringatan Stok Rendah",
+    "product": "produk",
+    "minLevel": "Tingkat minimum",
+    "lowQuantity": "Jumlah rendah",
+    "noAlerts": "Tidak ada peringatan",
+    "recentInvoices": "Faktur Terbaru",
+    "viewAll": "Lihat semua",
+    "noInvoices": "Tidak ada faktur"
+  },
+  "status": {
+    "paid": "Lunas",
+    "overdue": "Jatuh tempo",
+    "submitted": "Diajukan",
+    "draft": "Draf"
   }
 }

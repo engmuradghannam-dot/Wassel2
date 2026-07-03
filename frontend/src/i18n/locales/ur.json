@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "انٹرپرائز ریسورس پلاننگ سسٹم" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "انٹرپرائز ریسورس پلاننگ سسٹم"
+  },
   "nav": {
     "dashboard": "ڈیش بورڈ",
     "companies": "کمپنیاں",
@@ -12,7 +15,11 @@
     "assets": "فکسڈ اثاثے",
     "employees": "ملازمین",
     "reports": "رپورٹس",
-    "settings": "ترتیبات"
+    "settings": "ترتیبات",
+    "sales": "فروخت",
+    "purchasing": "خریداری",
+    "inventoryGroup": "انوینٹری اور اثاثے",
+    "hr": "ہیومن ریسورس"
   },
   "auth": {
     "login": "لاگ ان",
@@ -40,5 +47,37 @@
     "logout": "لاگ آؤٹ",
     "language": "زبان",
     "currency": "کرنسی"
+  },
+  "dashboard": {
+    "title": "ڈیش بورڈ",
+    "subtitle": "کمپنی کی کارکردگی کا جائزہ",
+    "noCompany": "کوئی کمپنی منتخب نہیں",
+    "selectCompanyPrompt": "براہ کرم اوپر سے کمپنی منتخب کریں",
+    "fiscalYear": "مالی سال",
+    "customers": "گاہک",
+    "suppliers": "سپلائرز",
+    "items": "مصنوعات",
+    "employees": "ملازمین",
+    "invoices": "انوائسز",
+    "pendingInvoices": "زیر التواء انوائسز",
+    "lastMonth": "پچھلے مہینے سے",
+    "totalSales": "کل فروخت",
+    "totalPurchases": "کل خریداری",
+    "ofMonthlyTarget": "ماہانہ ہدف کا",
+    "ofBudget": "بجٹ کا",
+    "lowStockAlerts": "کم اسٹاک الرٹس",
+    "product": "پروڈکٹ",
+    "minLevel": "کم از کم سطح",
+    "lowQuantity": "کم مقدار",
+    "noAlerts": "کوئی الرٹ نہیں",
+    "recentInvoices": "حالیہ انوائسز",
+    "viewAll": "سب دیکھیں",
+    "noInvoices": "کوئی انوائس نہیں"
+  },
+  "status": {
+    "paid": "ادا شدہ",
+    "overdue": "زائد المیعاد",
+    "submitted": "جمع شدہ",
+    "draft": "ڈرافٹ"
   }
 }

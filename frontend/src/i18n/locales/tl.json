@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Sistema ng Enterprise Resource Planning" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Sistema ng Enterprise Resource Planning"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "companies": "Mga Kumpanya",
@@ -12,7 +15,11 @@
     "assets": "Fixed Assets",
     "employees": "Mga Empleyado",
     "reports": "Mga Ulat",
-    "settings": "Mga Setting"
+    "settings": "Mga Setting",
+    "sales": "Benta",
+    "purchasing": "Pagbili",
+    "inventoryGroup": "Imbentaryo at Ari-arian",
+    "hr": "Human Resources"
   },
   "auth": {
     "login": "Mag-login",
@@ -40,5 +47,37 @@
     "logout": "Mag-logout",
     "language": "Wika",
     "currency": "Pera"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Pangkalahatang-ideya ng performance ng kumpanya",
+    "noCompany": "Walang napiling kumpanya",
+    "selectCompanyPrompt": "Mangyaring pumili ng kumpanya sa itaas",
+    "fiscalYear": "Fiscal Year",
+    "customers": "Mga Kustomer",
+    "suppliers": "Mga Supplier",
+    "items": "Mga Produkto",
+    "employees": "Mga Empleyado",
+    "invoices": "Mga Invoice",
+    "pendingInvoices": "Mga Pending na Invoice",
+    "lastMonth": "mula noong nakaraang buwan",
+    "totalSales": "Kabuuang Benta",
+    "totalPurchases": "Kabuuang Bili",
+    "ofMonthlyTarget": "ng buwanang target",
+    "ofBudget": "ng badyet",
+    "lowStockAlerts": "Mababang Stock Alerts",
+    "product": "produkto",
+    "minLevel": "Minimum na antas",
+    "lowQuantity": "Mababang dami",
+    "noAlerts": "Walang alerto",
+    "recentInvoices": "Kamakailang Invoice",
+    "viewAll": "Tingnan lahat",
+    "noInvoices": "Walang invoice"
+  },
+  "status": {
+    "paid": "Bayad na",
+    "overdue": "Overdue",
+    "submitted": "Naisumite",
+    "draft": "Draft"
   }
 }

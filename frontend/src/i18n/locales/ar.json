@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "نظام تخطيط موارد المؤسسات" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "نظام تخطيط موارد المؤسسات"
+  },
   "nav": {
     "dashboard": "لوحة التحكم",
     "companies": "الشركات",
@@ -12,7 +15,11 @@
     "assets": "الأصول الثابتة",
     "employees": "الموظفين",
     "reports": "التقارير",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "sales": "المبيعات",
+    "purchasing": "المشتريات",
+    "inventoryGroup": "المخزون والأصول",
+    "hr": "الموارد البشرية"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -40,5 +47,37 @@
     "logout": "تسجيل الخروج",
     "language": "اللغة",
     "currency": "العملة"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "subtitle": "نظرة عامة على أداء الشركة",
+    "noCompany": "لم يتم اختيار شركة",
+    "selectCompanyPrompt": "الرجاء اختيار شركة من القائمة العلوية",
+    "fiscalYear": "السنة المالية",
+    "customers": "العملاء",
+    "suppliers": "الموردين",
+    "items": "المنتجات",
+    "employees": "الموظفين",
+    "invoices": "الفواتير",
+    "pendingInvoices": "فواتير معلقة",
+    "lastMonth": "من الشهر الماضي",
+    "totalSales": "إجمالي المبيعات",
+    "totalPurchases": "إجمالي المشتريات",
+    "ofMonthlyTarget": "من الهدف الشهري",
+    "ofBudget": "من الميزانية",
+    "lowStockAlerts": "تنبيهات المخزون المنخفض",
+    "product": "منتج",
+    "minLevel": "الحد الأدنى",
+    "lowQuantity": "كمية منخفضة",
+    "noAlerts": "لا توجد تنبيهات",
+    "recentInvoices": "أحدث الفواتير",
+    "viewAll": "عرض الكل",
+    "noInvoices": "لا توجد فواتير"
+  },
+  "status": {
+    "paid": "مدفوع",
+    "overdue": "متأخر",
+    "submitted": "مقدم",
+    "draft": "مسودة"
   }
 }

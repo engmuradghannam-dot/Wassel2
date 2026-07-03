@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Kurumsal Kaynak Planlama Sistemi" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Kurumsal Kaynak Planlama Sistemi"
+  },
   "nav": {
     "dashboard": "Panel",
     "companies": "Şirketler",
@@ -12,7 +15,11 @@
     "assets": "Sabit Kıymetler",
     "employees": "Çalışanlar",
     "reports": "Raporlar",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "sales": "Satış",
+    "purchasing": "Satın Alma",
+    "inventoryGroup": "Envanter ve Varlıklar",
+    "hr": "İnsan Kaynakları"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -40,5 +47,37 @@
     "logout": "Çıkış Yap",
     "language": "Dil",
     "currency": "Para Birimi"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Şirket performansına genel bakış",
+    "noCompany": "Şirket seçilmedi",
+    "selectCompanyPrompt": "Lütfen üstteki menüden bir şirket seçin",
+    "fiscalYear": "Mali Yıl",
+    "customers": "Müşteriler",
+    "suppliers": "Tedarikçiler",
+    "items": "Ürünler",
+    "employees": "Çalışanlar",
+    "invoices": "Faturalar",
+    "pendingInvoices": "Bekleyen Faturalar",
+    "lastMonth": "geçen aya göre",
+    "totalSales": "Toplam Satış",
+    "totalPurchases": "Toplam Alım",
+    "ofMonthlyTarget": "aylık hedefin",
+    "ofBudget": "bütçenin",
+    "lowStockAlerts": "Düşük Stok Uyarıları",
+    "product": "ürün",
+    "minLevel": "Minimum seviye",
+    "lowQuantity": "Düşük miktar",
+    "noAlerts": "Uyarı yok",
+    "recentInvoices": "Son Faturalar",
+    "viewAll": "Tümünü gör",
+    "noInvoices": "Fatura yok"
+  },
+  "status": {
+    "paid": "Ödendi",
+    "overdue": "Gecikmiş",
+    "submitted": "Gönderildi",
+    "draft": "Taslak"
   }
 }

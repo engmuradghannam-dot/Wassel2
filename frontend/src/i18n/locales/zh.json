@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "企业资源规划系统" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "企业资源规划系统"
+  },
   "nav": {
     "dashboard": "仪表盘",
     "companies": "公司",
@@ -12,7 +15,11 @@
     "assets": "固定资产",
     "employees": "员工",
     "reports": "报表",
-    "settings": "设置"
+    "settings": "设置",
+    "sales": "销售",
+    "purchasing": "采购",
+    "inventoryGroup": "库存与资产",
+    "hr": "人力资源"
   },
   "auth": {
     "login": "登录",
@@ -40,5 +47,37 @@
     "logout": "退出登录",
     "language": "语言",
     "currency": "货币"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "subtitle": "公司业绩概览",
+    "noCompany": "未选择公司",
+    "selectCompanyPrompt": "请从顶部菜单选择公司",
+    "fiscalYear": "财年",
+    "customers": "客户",
+    "suppliers": "供应商",
+    "items": "产品",
+    "employees": "员工",
+    "invoices": "发票",
+    "pendingInvoices": "待处理发票",
+    "lastMonth": "较上月",
+    "totalSales": "总销售额",
+    "totalPurchases": "总采购额",
+    "ofMonthlyTarget": "月度目标的",
+    "ofBudget": "预算的",
+    "lowStockAlerts": "低库存提醒",
+    "product": "产品",
+    "minLevel": "最低水平",
+    "lowQuantity": "数量偏低",
+    "noAlerts": "暂无提醒",
+    "recentInvoices": "最近发票",
+    "viewAll": "查看全部",
+    "noInvoices": "暂无发票"
+  },
+  "status": {
+    "paid": "已付款",
+    "overdue": "已逾期",
+    "submitted": "已提交",
+    "draft": "草稿"
   }
 }

@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Enterprise Resource Planning System" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Enterprise Resource Planning System"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "companies": "Companies",
@@ -12,7 +15,11 @@
     "assets": "Fixed Assets",
     "employees": "Employees",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "sales": "Sales",
+    "purchasing": "Purchasing",
+    "inventoryGroup": "Inventory & Assets",
+    "hr": "Human Resources"
   },
   "auth": {
     "login": "Login",
@@ -40,5 +47,37 @@
     "logout": "Logout",
     "language": "Language",
     "currency": "Currency"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of company performance",
+    "noCompany": "No company selected",
+    "selectCompanyPrompt": "Please select a company from the top menu",
+    "fiscalYear": "Fiscal Year",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "items": "Products",
+    "employees": "Employees",
+    "invoices": "Invoices",
+    "pendingInvoices": "Pending Invoices",
+    "lastMonth": "from last month",
+    "totalSales": "Total Sales",
+    "totalPurchases": "Total Purchases",
+    "ofMonthlyTarget": "of monthly target",
+    "ofBudget": "of budget",
+    "lowStockAlerts": "Low Stock Alerts",
+    "product": "item",
+    "minLevel": "Min level",
+    "lowQuantity": "Low quantity",
+    "noAlerts": "No alerts",
+    "recentInvoices": "Recent Invoices",
+    "viewAll": "View all",
+    "noInvoices": "No invoices"
+  },
+  "status": {
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "submitted": "Submitted",
+    "draft": "Draft"
   }
 }

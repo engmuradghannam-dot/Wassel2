@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "এন্টারপ্রাইজ রিসোর্স প্ল্যানিং সিস্টেম" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "এন্টারপ্রাইজ রিসোর্স প্ল্যানিং সিস্টেম"
+  },
   "nav": {
     "dashboard": "ড্যাশবোর্ড",
     "companies": "কোম্পানিসমূহ",
@@ -12,7 +15,11 @@
     "assets": "স্থায়ী সম্পদ",
     "employees": "কর্মচারী",
     "reports": "রিপোর্ট",
-    "settings": "সেটিংস"
+    "settings": "সেটিংস",
+    "sales": "বিক্রয়",
+    "purchasing": "ক্রয়",
+    "inventoryGroup": "মজুদ ও সম্পদ",
+    "hr": "মানব সম্পদ"
   },
   "auth": {
     "login": "লগইন",
@@ -40,5 +47,37 @@
     "logout": "লগআউট",
     "language": "ভাষা",
     "currency": "মুদ্রা"
+  },
+  "dashboard": {
+    "title": "ড্যাশবোর্ড",
+    "subtitle": "কোম্পানির কর্মক্ষমতার সংক্ষিপ্ত বিবরণ",
+    "noCompany": "কোনো কোম্পানি নির্বাচিত হয়নি",
+    "selectCompanyPrompt": "উপর থেকে একটি কোম্পানি নির্বাচন করুন",
+    "fiscalYear": "অর্থবছর",
+    "customers": "গ্রাহক",
+    "suppliers": "সরবরাহকারী",
+    "items": "পণ্য",
+    "employees": "কর্মচারী",
+    "invoices": "চালান",
+    "pendingInvoices": "মুলতুবি চালান",
+    "lastMonth": "গত মাস থেকে",
+    "totalSales": "মোট বিক্রয়",
+    "totalPurchases": "মোট ক্রয়",
+    "ofMonthlyTarget": "মাসিক লক্ষ্যের",
+    "ofBudget": "বাজেটের",
+    "lowStockAlerts": "কম মজুদ সতর্কতা",
+    "product": "পণ্য",
+    "minLevel": "সর্বনিম্ন স্তর",
+    "lowQuantity": "কম পরিমাণ",
+    "noAlerts": "কোনো সতর্কতা নেই",
+    "recentInvoices": "সাম্প্রতিক চালান",
+    "viewAll": "সব দেখুন",
+    "noInvoices": "কোনো চালান নেই"
+  },
+  "status": {
+    "paid": "পরিশোধিত",
+    "overdue": "বকেয়া",
+    "submitted": "জমা দেওয়া",
+    "draft": "খসড়া"
   }
 }

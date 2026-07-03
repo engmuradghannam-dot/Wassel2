@@ -1,6 +1,7 @@
 // MuradERP Dashboard Page
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
+import { useTranslation } from 'react-i18next';
 import {
   UsersIcon,
   TruckIcon,
@@ -10,10 +11,12 @@ import {
   ExclamationTriangleIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
+  BuildingOfficeIcon,
 } from '@heroicons/react/24/outline';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useCompany } from '../../hooks/useCompany';
 import { DashboardStats } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 interface StatCardProps {
   title: string;
@@ -50,6 +53,7 @@ const StatCard = ({ title, value, icon: Icon, trend, trendLabel, color }: StatCa
 );
 
 export const DashboardPage = () => {
+  const { t } = useTranslation();
   const { stats, statsLoading } = useDashboard();
   const { selectedCompany } = useCompany();
 
@@ -65,8 +69,8 @@ export const DashboardPage = () => {
     return (
       <div className="flex flex-col items-center justify-center h-96">
         <BuildingOfficeIcon className="w-16 h-16 text-secondary-300 mb-4" />
-        <h2 className="text-xl font-semibold text-secondary-900 mb-2">لم يتم اختيار شركة</h2>
-        <p className="text-secondary-500">الرجاء اختيار شركة من القائمة العلوية</p>
+        <h2 className="text-xl font-semibold text-secondary-900 mb-2">{t('dashboard.noCompany')}</h2>
+        <p className="text-secondary-500">{t('dashboard.selectCompanyPrompt')}</p>
       </div>
     );
   }
@@ -80,14 +84,21 @@ export const DashboardPage = () => {
   const alerts: DashboardStats['alerts'] = stats?.alerts || { lowStock: 0, lowStockItems: [] };
   const recentActivity: DashboardStats['recentActivity'] = stats?.recentActivity || { invoices: [] };
 
+  const statusLabel: Record<string, string> = {
+    PAID: t('status.paid'),
+    OVERDUE: t('status.overdue'),
+    SUBMITTED: t('status.submitted'),
+    DRAFT: t('status.draft'),
+  };
+
   return (
     <div className="animate-fade-in">
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">لوحة التحكم</h1>
+          <h1 className="page-title">{t('dashboard.title')}</h1>
           <p className="mt-1 text-sm text-secondary-500">
-            نظرة عامة على أداء الشركة
+            {t('dashboard.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -95,7 +106,7 @@ export const DashboardPage = () => {
             {selectedCompany.currency}
           </span>
           <span className="text-sm text-secondary-500">
-            السنة المالية: {selectedCompany.fiscalYearStart} - {selectedCompany.fiscalYearEnd}
+            {t('dashboard.fiscalYear')}: {selectedCompany.fiscalYearStart} - {selectedCompany.fiscalYearEnd}
           </span>
         </div>
       </div>
@@ -103,39 +114,39 @@ export const DashboardPage = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         <StatCard
-          title="العملاء"
+          title={t('dashboard.customers')}
           value={counts.customers || 0}
           icon={UsersIcon}
           color="bg-primary-500"
           trend={12}
-          trendLabel="من الشهر الماضي"
+          trendLabel={t('dashboard.lastMonth')}
         />
         <StatCard
-          title="الموردين"
+          title={t('dashboard.suppliers')}
           value={counts.suppliers || 0}
           icon={TruckIcon}
           color="bg-secondary-500"
         />
         <StatCard
-          title="المنتجات"
+          title={t('dashboard.items')}
           value={counts.items || 0}
           icon={CubeIcon}
           color="bg-warning-500"
         />
         <StatCard
-          title="الموظفين"
+          title={t('dashboard.employees')}
           value={counts.employees || 0}
           icon={UserGroupIcon}
           color="bg-success-500"
         />
         <StatCard
-          title="الفواتير"
+          title={t('dashboard.invoices')}
           value={counts.invoices || 0}
           icon={DocumentTextIcon}
           color="bg-primary-600"
         />
         <StatCard
-          title="فواتير معلقة"
+          title={t('dashboard.pendingInvoices')}
           value={counts.pendingInvoices || 0}
           icon={ExclamationTriangleIcon}
           color="bg-danger-500"
@@ -145,29 +156,29 @@ export const DashboardPage = () => {
       {/* Financial Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="card">
-          <h3 className="text-lg font-semibold text-secondary-900 mb-4">إجمالي المبيعات</h3>
+          <h3 className="text-lg font-semibold text-secondary-900 mb-4">{t('dashboard.totalSales')}</h3>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-bold text-success-600">
-              {financials.totalSales?.toLocaleString('ar-SA', { style: 'currency', currency: selectedCompany.currency }) || '0 ر.س'}
+              {formatCurrency(financials.totalSales || 0, selectedCompany.currency)}
             </span>
           </div>
           <div className="mt-4 h-2 bg-secondary-100 rounded-full overflow-hidden">
             <div className="h-full bg-success-500 rounded-full" style={{ width: '75%' }}></div>
           </div>
-          <p className="mt-2 text-sm text-secondary-500">75% من الهدف الشهري</p>
+          <p className="mt-2 text-sm text-secondary-500">75% {t('dashboard.ofMonthlyTarget')}</p>
         </div>
 
         <div className="card">
-          <h3 className="text-lg font-semibold text-secondary-900 mb-4">إجمالي المشتريات</h3>
+          <h3 className="text-lg font-semibold text-secondary-900 mb-4">{t('dashboard.totalPurchases')}</h3>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-bold text-primary-600">
-              {financials.totalPurchases?.toLocaleString('ar-SA', { style: 'currency', currency: selectedCompany.currency }) || '0 ر.س'}
+              {formatCurrency(financials.totalPurchases || 0, selectedCompany.currency)}
             </span>
           </div>
           <div className="mt-4 h-2 bg-secondary-100 rounded-full overflow-hidden">
             <div className="h-full bg-primary-500 rounded-full" style={{ width: '60%' }}></div>
           </div>
-          <p className="mt-2 text-sm text-secondary-500">60% من الميزانية</p>
+          <p className="mt-2 text-sm text-secondary-500">60% {t('dashboard.ofBudget')}</p>
         </div>
       </div>
 
@@ -176,8 +187,8 @@ export const DashboardPage = () => {
         {/* Low Stock Alerts */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-secondary-900">تنبيهات المخزون المنخفض</h3>
-            <span className="badge-danger">{alerts.lowStock || 0} منتج</span>
+            <h3 className="text-lg font-semibold text-secondary-900">{t('dashboard.lowStockAlerts')}</h3>
+            <span className="badge-danger">{alerts.lowStock || 0} {t('dashboard.product')}</span>
           </div>
           {alerts.lowStockItems.length > 0 ? (
             <div className="space-y-3">
@@ -185,23 +196,23 @@ export const DashboardPage = () => {
                 <div key={item.id} className="flex items-center justify-between p-3 bg-danger-50 rounded-lg">
                   <div>
                     <p className="text-sm font-medium text-secondary-900">{item.item?.name}</p>
-                    <p className="text-xs text-secondary-500">الحد الأدنى: {item.item?.reorderLevel}</p>
+                    <p className="text-xs text-secondary-500">{t('dashboard.minLevel')}: {item.item?.reorderLevel}</p>
                   </div>
-                  <span className="badge-danger">كمية منخفضة</span>
+                  <span className="badge-danger">{t('dashboard.lowQuantity')}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-center py-8 text-secondary-500">لا توجد تنبيهات</p>
+            <p className="text-center py-8 text-secondary-500">{t('dashboard.noAlerts')}</p>
           )}
         </div>
 
         {/* Recent Invoices */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-secondary-900">أحدث الفواتير</h3>
+            <h3 className="text-lg font-semibold text-secondary-900">{t('dashboard.recentInvoices')}</h3>
             <a href="/invoices" className="text-sm text-primary-600 hover:text-primary-700">
-              عرض الكل
+              {t('dashboard.viewAll')}
             </a>
           </div>
           {recentActivity.invoices.length > 0 ? (
@@ -218,29 +229,24 @@ export const DashboardPage = () => {
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-semibold text-secondary-900">
-                      {invoice.totalAmount?.toLocaleString('ar-SA')} ر.س
+                      {formatCurrency(invoice.totalAmount || 0, selectedCompany.currency)}
                     </p>
                     <span className={`badge text-xs ${
                       invoice.status === 'PAID' ? 'badge-success' :
                       invoice.status === 'OVERDUE' ? 'badge-danger' :
                       'badge-warning'
                     }`}>
-                      {invoice.status === 'PAID' ? 'مدفوع' :
-                       invoice.status === 'OVERDUE' ? 'متأخر' :
-                       invoice.status === 'SUBMITTED' ? 'مقدم' : 'مسودة'}
+                      {statusLabel[invoice.status] || invoice.status}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-center py-8 text-secondary-500">لا توجد فواتير</p>
+            <p className="text-center py-8 text-secondary-500">{t('dashboard.noInvoices')}</p>
           )}
         </div>
       </div>
     </div>
   );
 };
-
-// Import for the no-company state
-import { BuildingOfficeIcon } from '@heroicons/react/24/outline';

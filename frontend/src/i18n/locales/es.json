@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Sistema de Planificación de Recursos Empresariales" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Sistema de Planificación de Recursos Empresariales"
+  },
   "nav": {
     "dashboard": "Panel",
     "companies": "Empresas",
@@ -12,7 +15,11 @@
     "assets": "Activos Fijos",
     "employees": "Empleados",
     "reports": "Informes",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "sales": "Ventas",
+    "purchasing": "Compras",
+    "inventoryGroup": "Inventario y Activos",
+    "hr": "Recursos Humanos"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -40,5 +47,37 @@
     "logout": "Cerrar sesión",
     "language": "Idioma",
     "currency": "Moneda"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Resumen del rendimiento de la empresa",
+    "noCompany": "Ninguna empresa seleccionada",
+    "selectCompanyPrompt": "Seleccione una empresa en el menú superior",
+    "fiscalYear": "Año fiscal",
+    "customers": "Clientes",
+    "suppliers": "Proveedores",
+    "items": "Productos",
+    "employees": "Empleados",
+    "invoices": "Facturas",
+    "pendingInvoices": "Facturas pendientes",
+    "lastMonth": "desde el mes pasado",
+    "totalSales": "Ventas totales",
+    "totalPurchases": "Compras totales",
+    "ofMonthlyTarget": "del objetivo mensual",
+    "ofBudget": "del presupuesto",
+    "lowStockAlerts": "Alertas de stock bajo",
+    "product": "producto",
+    "minLevel": "Nivel mínimo",
+    "lowQuantity": "Cantidad baja",
+    "noAlerts": "Sin alertas",
+    "recentInvoices": "Facturas recientes",
+    "viewAll": "Ver todo",
+    "noInvoices": "Sin facturas"
+  },
+  "status": {
+    "paid": "Pagada",
+    "overdue": "Vencida",
+    "submitted": "Enviada",
+    "draft": "Borrador"
   }
 }

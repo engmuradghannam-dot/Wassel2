@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "Système de Planification des Ressources d'Entreprise" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "Système de Planification des Ressources d'Entreprise"
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "companies": "Sociétés",
@@ -12,7 +15,11 @@
     "assets": "Immobilisations",
     "employees": "Employés",
     "reports": "Rapports",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "sales": "Ventes",
+    "purchasing": "Achats",
+    "inventoryGroup": "Inventaire et Actifs",
+    "hr": "Ressources Humaines"
   },
   "auth": {
     "login": "Connexion",
@@ -40,5 +47,37 @@
     "logout": "Déconnexion",
     "language": "Langue",
     "currency": "Devise"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Aperçu des performances de l'entreprise",
+    "noCompany": "Aucune société sélectionnée",
+    "selectCompanyPrompt": "Veuillez sélectionner une société dans le menu",
+    "fiscalYear": "Exercice fiscal",
+    "customers": "Clients",
+    "suppliers": "Fournisseurs",
+    "items": "Produits",
+    "employees": "Employés",
+    "invoices": "Factures",
+    "pendingInvoices": "Factures en attente",
+    "lastMonth": "depuis le mois dernier",
+    "totalSales": "Ventes totales",
+    "totalPurchases": "Achats totaux",
+    "ofMonthlyTarget": "de l'objectif mensuel",
+    "ofBudget": "du budget",
+    "lowStockAlerts": "Alertes de stock faible",
+    "product": "produit",
+    "minLevel": "Niveau minimum",
+    "lowQuantity": "Quantité faible",
+    "noAlerts": "Aucune alerte",
+    "recentInvoices": "Factures récentes",
+    "viewAll": "Voir tout",
+    "noInvoices": "Aucune facture"
+  },
+  "status": {
+    "paid": "Payée",
+    "overdue": "En retard",
+    "submitted": "Soumise",
+    "draft": "Brouillon"
   }
 }

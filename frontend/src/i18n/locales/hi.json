@@ -1,5 +1,8 @@
 {
-  "app": { "name": "MuradERP", "tagline": "एंटरप्राइज़ रिसोर्स प्लानिंग सिस्टम" },
+  "app": {
+    "name": "MuradERP",
+    "tagline": "एंटरप्राइज़ रिसोर्स प्लानिंग सिस्टम"
+  },
   "nav": {
     "dashboard": "डैशबोर्ड",
     "companies": "कंपनियाँ",
@@ -12,7 +15,11 @@
     "assets": "स्थायी संपत्ति",
     "employees": "कर्मचारी",
     "reports": "रिपोर्ट",
-    "settings": "सेटिंग्स"
+    "settings": "सेटिंग्स",
+    "sales": "बिक्री",
+    "purchasing": "खरीद",
+    "inventoryGroup": "इन्वेंटरी और संपत्ति",
+    "hr": "मानव संसाधन"
   },
   "auth": {
     "login": "लॉगिन",
@@ -40,5 +47,37 @@
     "logout": "लॉगआउट",
     "language": "भाषा",
     "currency": "मुद्रा"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "subtitle": "कंपनी के प्रदर्शन का अवलोकन",
+    "noCompany": "कोई कंपनी चयनित नहीं",
+    "selectCompanyPrompt": "कृपया ऊपर से कंपनी चुनें",
+    "fiscalYear": "वित्तीय वर्ष",
+    "customers": "ग्राहक",
+    "suppliers": "आपूर्तिकर्ता",
+    "items": "उत्पाद",
+    "employees": "कर्मचारी",
+    "invoices": "इनवॉइस",
+    "pendingInvoices": "लंबित इनवॉइस",
+    "lastMonth": "पिछले महीने से",
+    "totalSales": "कुल बिक्री",
+    "totalPurchases": "कुल खरीद",
+    "ofMonthlyTarget": "मासिक लक्ष्य का",
+    "ofBudget": "बजट का",
+    "lowStockAlerts": "कम स्टॉक अलर्ट",
+    "product": "उत्पाद",
+    "minLevel": "न्यूनतम स्तर",
+    "lowQuantity": "कम मात्रा",
+    "noAlerts": "कोई अलर्ट नहीं",
+    "recentInvoices": "हाल के इनवॉइस",
+    "viewAll": "सभी देखें",
+    "noInvoices": "कोई इनवॉइस नहीं"
+  },
+  "status": {
+    "paid": "भुगतान किया",
+    "overdue": "अतिदेय",
+    "submitted": "प्रस्तुत",
+    "draft": "मसौदा"
   }
 }
