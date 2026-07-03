@@ -3,6 +3,8 @@ import { z } from 'zod';
 import prisma from '../utils/prisma';
 import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
+import { buildZatcaTlvBase64 } from '../utils/zatca';
+import QRCode from 'qrcode';
 
 const invoiceSchema = z.object({
   invoiceType: z.enum(['SALES', 'PURCHASE', 'CREDIT_NOTE', 'DEBIT_NOTE']),
@@ -96,6 +98,21 @@ export const createInvoice = async (req: any, res: Response, next: NextFunction)
     const prefix = data.invoiceType === 'SALES' ? 'INV' : data.invoiceType === 'PURCHASE' ? 'PINV' : 'CN';
     const invoiceNumber = generateInvoiceNumber(prefix, count + 1);
 
+    // Generate ZATCA Phase 1 QR for sales invoices (Saudi e-invoicing compliance)
+    let zatcaQrCode: string | undefined;
+    if (data.invoiceType === 'SALES') {
+      const company = await prisma.company.findUnique({ where: { id: companyId } });
+      if (company) {
+        zatcaQrCode = buildZatcaTlvBase64({
+          sellerName: company.name,
+          vatNumber: company.taxId || '',
+          timestamp: new Date(data.invoiceDate),
+          invoiceTotal: totalAmount,
+          vatTotal: totalTax,
+        });
+      }
+    }
+
     const invoice = await prisma.invoice.create({
       data: {
         invoiceNumber,
@@ -111,6 +128,7 @@ export const createInvoice = async (req: any, res: Response, next: NextFunction)
         balanceDue: totalAmount,
         notes: data.notes,
         terms: data.terms,
+        zatcaQrCode,
         companyId,
         createdById: req.user.userId,
         items: {
@@ -269,6 +287,24 @@ export const cancelInvoice = async (req: any, res: Response, next: NextFunction)
     }
 
     res.json(successResponse(invoice, 'Invoice cancelled'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Returns the ZATCA QR as a scannable PNG data URL for a sales invoice.
+export const getInvoiceZatcaQr = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const invoice = await prisma.invoice.findUnique({ where: { id } });
+    if (!invoice) throw new AppError('Invoice not found', 404);
+    if (!invoice.zatcaQrCode) {
+      throw new AppError('This invoice has no ZATCA QR code (only sales invoices are compliance-tagged)', 400);
+    }
+
+    const dataUrl = await QRCode.toDataURL(invoice.zatcaQrCode, { width: 256, margin: 1 });
+
+    res.json(successResponse({ qrDataUrl: dataUrl, tlvBase64: invoice.zatcaQrCode }));
   } catch (error) {
     next(error);
   }
