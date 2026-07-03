@@ -2,7 +2,8 @@
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
