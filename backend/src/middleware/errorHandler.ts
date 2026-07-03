@@ -16,18 +16,30 @@ export class AppError extends Error {
   }
 }
 
+const SENSITIVE_FIELDS = ['password', 'currentPassword', 'newPassword', 'token', 'refreshToken'];
+
+// Redact sensitive fields before logging so secrets never end up in log files.
+const redactBody = (body: unknown): unknown => {
+  if (!body || typeof body !== 'object') return body;
+  const clone: Record<string, unknown> = { ...(body as Record<string, unknown>) };
+  for (const field of SENSITIVE_FIELDS) {
+    if (field in clone) clone[field] = '[REDACTED]';
+  }
+  return clone;
+};
+
 export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   logger.error({
     error: err.message,
     stack: err.stack,
     path: req.path,
     method: req.method,
-    body: req.body,
+    body: redactBody(req.body),
     query: req.query,
     user: (req as any).user?.id,
   });

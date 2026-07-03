@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../utils/prisma';
 import { successResponse } from '../utils/response';

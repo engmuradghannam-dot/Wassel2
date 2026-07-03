@@ -3,7 +3,7 @@ import { z } from 'zod';
 import prisma from '../utils/prisma';
 import { hashPassword, comparePassword } from '../utils/password';
 import { generateToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
-import { successResponse, errorResponse } from '../utils/response';
+import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
 
 const registerSchema = z.object({
