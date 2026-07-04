@@ -40,6 +40,17 @@ async function main() {
     },
   });
 
+  // Without this, the seeded admin has no CompanyMember row and gets
+  // "Company ID required" on every company-scoped endpoint despite having
+  // just "created" the demo company.
+  await prisma.companyMember.create({
+    data: {
+      userId: admin.id,
+      companyId: company.id,
+      role: 'ADMIN',
+    },
+  });
+
   console.log('Seed complete:');
   console.log(`  Admin email:    ${ADMIN_EMAIL}`);
   console.log(`  Admin password: ${ADMIN_PASSWORD}`);

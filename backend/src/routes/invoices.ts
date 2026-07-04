@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { createInvoice, getInvoices, getInvoice, updateInvoice, submitInvoice, cancelInvoice, getInvoiceZatcaQr } from '../controllers/invoice';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createInvoice);
 router.get('/', getInvoices);

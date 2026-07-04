@@ -4,10 +4,11 @@ import {
   createWorkOrder, getWorkOrders, completeWorkOrder,
   createJobCard, getJobCards, updateJobCardStatus,
 } from '../controllers/manufacturing';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/boms', createBOM);
 router.get('/boms', getBOMs);

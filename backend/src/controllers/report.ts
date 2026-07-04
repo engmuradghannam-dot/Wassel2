@@ -4,7 +4,7 @@ import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
 
 function requireCompanyId(req: any): string {
-  const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+  const companyId = req.companyId!;
   if (!companyId) throw new AppError('Company ID required', 400);
   return companyId;
 }

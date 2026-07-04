@@ -66,6 +66,7 @@ model User {
   createdQualityInspections QualityInspection[] @relation("QICreatedBy")
   createdIssues Issue[] @relation("IssueCreatedBy")
   assignedTodos Todo[]
+  companyMemberships CompanyMember[]
 
   @@map("users")
 }
@@ -81,6 +82,23 @@ model Session {
   userAgent String?
 
   @@map("sessions")
+}
+
+// Explicit membership table: which users can access which companies, and
+// with what role inside that company. This is the single source of truth
+// used to validate every companyId a request touches — a user may belong to
+// more than one company, but only the ones listed here.
+model CompanyMember {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, companyId])
+  @@map("company_members")
 }
 
 enum UserRole {
@@ -176,6 +194,7 @@ model Company {
   workflows    Workflow[]
   printFormats PrintFormat[]
   customReports CustomReport[]
+  members      CompanyMember[]
 
   @@map("companies")
 }
@@ -360,7 +379,7 @@ enum AccountStatus {
 
 model JournalEntry {
   id          String   @id @default(uuid())
-  entryNumber String   @unique
+  entryNumber String
   entryDate   DateTime
   reference   String?
   description String?
@@ -385,6 +404,8 @@ model JournalEntry {
 
   // Relations
   lines       JournalEntryLine[]
+
+  @@unique([companyId, entryNumber])
 
   @@map("journal_entries")
 }
@@ -419,7 +440,7 @@ enum JournalStatus {
 
 model Customer {
   id          String   @id @default(uuid())
-  code        String   @unique
+  code        String
   name        String
   nameAr      String?
 
@@ -471,6 +492,8 @@ model Customer {
   deliveryNotes DeliveryNote[]
   loyaltyPoints LoyaltyPoint[]
 
+  @@unique([companyId, code])
+
   @@map("customers")
 }
 
@@ -492,7 +515,7 @@ enum CustomerStatus {
 
 model Supplier {
   id          String   @id @default(uuid())
-  code        String   @unique
+  code        String
   name        String
   nameAr      String?
 
@@ -541,6 +564,8 @@ model Supplier {
   rfqs        RequestForQuotation[]
   purchaseReceipts PurchaseReceipt[]
 
+  @@unique([companyId, code])
+
   @@map("suppliers")
 }
 
@@ -562,7 +587,7 @@ enum SupplierStatus {
 
 model Item {
   id          String   @id @default(uuid())
-  code        String   @unique
+  code        String
   name        String
   nameAr      String?
   description String?
@@ -614,6 +639,8 @@ model Item {
   qualityInspections QualityInspection[]
   stockReconciliationItems StockReconciliationItem[]
 
+  @@unique([companyId, code])
+
   @@map("items")
 }
 
@@ -638,7 +665,7 @@ enum ItemStatus {
 
 model StockEntry {
   id          String   @id @default(uuid())
-  entryNumber String   @unique
+  entryNumber String
   entryDate   DateTime
   entryType   StockEntryType
   reference   String?
@@ -658,6 +685,8 @@ model StockEntry {
 
   // Relations
   items       StockEntryItem[]
+
+  @@unique([companyId, entryNumber])
 
   @@map("stock_entries")
 }
@@ -748,7 +777,7 @@ model BinCard {
 
 model Invoice {
   id          String   @id @default(uuid())
-  invoiceNumber String @unique
+  invoiceNumber String
   invoiceDate DateTime
   dueDate     DateTime
 
@@ -790,6 +819,8 @@ model Invoice {
   // Relations
   items       InvoiceItem[]
   payments    Payment[]
+
+  @@unique([companyId, invoiceNumber])
 
   @@map("invoices")
 }
@@ -843,7 +874,7 @@ enum PaymentStatus {
 
 model SalesOrder {
   id          String   @id @default(uuid())
-  orderNumber String   @unique
+  orderNumber String
   orderDate   DateTime
   deliveryDate DateTime?
 
@@ -871,12 +902,14 @@ model SalesOrder {
   // Relations
   items       OrderItem[]
 
+  @@unique([companyId, orderNumber])
+
   @@map("sales_orders")
 }
 
 model PurchaseOrder {
   id          String   @id @default(uuid())
-  orderNumber String   @unique
+  orderNumber String
   orderDate   DateTime
   deliveryDate DateTime?
 
@@ -903,6 +936,8 @@ model PurchaseOrder {
 
   // Relations
   items       OrderItem[]
+
+  @@unique([companyId, orderNumber])
 
   @@map("purchase_orders")
 }
@@ -992,7 +1027,7 @@ enum PaymentStatus2 {
 
 model Employee {
   id          String   @id @default(uuid())
-  employeeNumber String @unique
+  employeeNumber String
 
   // Personal
   firstName   String
@@ -1045,6 +1080,8 @@ model Employee {
   shiftAssignments ShiftAssignment[]
   expenseClaims ExpenseClaim[]
   performanceReviews PerformanceReview[]
+
+  @@unique([companyId, employeeNumber])
 
   @@map("employees")
 }
@@ -1196,7 +1233,7 @@ enum PayrollStatus {
 
 model Project {
   id          String   @id @default(uuid())
-  projectCode String   @unique
+  projectCode String
   name        String
   description String?
 
@@ -1228,6 +1265,8 @@ model Project {
   tasks       Task[]
   timesheets  Timesheet[]
   expenseClaims ProjectExpenseClaim[]
+
+  @@unique([companyId, projectCode])
 
   @@map("projects")
 }
@@ -1420,7 +1459,7 @@ enum OpportunityStage {
 
 model Asset {
   id            String   @id @default(uuid())
-  assetNumber   String   @unique
+  assetNumber   String
   assetName     String
   assetNameAr   String?
   assetCategory String
@@ -1455,6 +1494,8 @@ model Asset {
   movements   AssetMovement[]
   maintenanceRecords AssetMaintenance[]
 
+  @@unique([companyId, assetNumber])
+
   @@map("assets")
 }
 
@@ -1476,7 +1517,7 @@ enum AssetStatus {
 
 model Quotation {
   id          String   @id @default(uuid())
-  quotationNumber String @unique
+  quotationNumber String
   quotationDate DateTime
   validUntil  DateTime
 
@@ -1503,6 +1544,8 @@ model Quotation {
   createdBy   User     @relation("QuotationCreatedBy", fields: [createdById], references: [id])
 
   items       QuotationItem[]
+
+  @@unique([companyId, quotationNumber])
 
   @@map("quotations")
 }
@@ -1534,7 +1577,7 @@ enum QuotationStatus {
 
 model DeliveryNote {
   id          String   @id @default(uuid())
-  deliveryNumber String @unique
+  deliveryNumber String
   deliveryDate DateTime
 
   customerId  String
@@ -1555,6 +1598,8 @@ model DeliveryNote {
   createdBy   User     @relation("DeliveryNoteCreatedBy", fields: [createdById], references: [id])
 
   items       DeliveryNoteItem[]
+
+  @@unique([companyId, deliveryNumber])
 
   @@map("delivery_notes")
 }
@@ -1583,7 +1628,7 @@ enum DeliveryStatus {
 
 model RequestForQuotation {
   id          String   @id @default(uuid())
-  rfqNumber   String   @unique
+  rfqNumber   String
   rfqDate     DateTime
 
   supplierId  String
@@ -1601,6 +1646,8 @@ model RequestForQuotation {
   createdBy   User     @relation("RfqCreatedBy", fields: [createdById], references: [id])
 
   items       RfqItem[]
+
+  @@unique([companyId, rfqNumber])
 
   @@map("requests_for_quotation")
 }
@@ -1627,7 +1674,7 @@ enum RfqStatus {
 
 model PurchaseReceipt {
   id          String   @id @default(uuid())
-  receiptNumber String @unique
+  receiptNumber String
   receiptDate DateTime
 
   supplierId  String
@@ -1651,6 +1698,8 @@ model PurchaseReceipt {
 
   items       PurchaseReceiptItem[]
 
+  @@unique([companyId, receiptNumber])
+
   @@map("purchase_receipts")
 }
 
@@ -1673,7 +1722,7 @@ model PurchaseReceiptItem {
 
 model StockReconciliation {
   id          String   @id @default(uuid())
-  reconciliationNumber String @unique
+  reconciliationNumber String
   postingDate DateTime
   purpose     String?
   status      StockReconciliationStatus @default(DRAFT)
@@ -1688,6 +1737,8 @@ model StockReconciliation {
   createdBy   User     @relation("StockReconciliationCreatedBy", fields: [createdById], references: [id])
 
   items       StockReconciliationItem[]
+
+  @@unique([companyId, reconciliationNumber])
 
   @@map("stock_reconciliations")
 }
@@ -1790,7 +1841,7 @@ model LoyaltyPoint {
 
 model BOM {
   id          String   @id @default(uuid())
-  bomNumber   String   @unique
+  bomNumber   String
   quantity    Decimal  @db.Decimal(18, 4)
   isActive    Boolean  @default(true)
   isDefault   Boolean  @default(false)
@@ -1806,6 +1857,8 @@ model BOM {
 
   rawMaterials BOMRawMaterial[]
   workOrders   WorkOrder[]
+
+  @@unique([companyId, bomNumber])
 
   @@map("boms")
 }
@@ -1826,7 +1879,7 @@ model BOMRawMaterial {
 
 model WorkOrder {
   id          String   @id @default(uuid())
-  workOrderNumber String @unique
+  workOrderNumber String
   quantity    Decimal  @db.Decimal(18, 4)
   producedQuantity Decimal @default(0) @db.Decimal(18, 4)
   plannedStartDate DateTime
@@ -1848,6 +1901,8 @@ model WorkOrder {
   createdBy   User     @relation("WorkOrderCreatedBy", fields: [createdById], references: [id])
 
   jobCards    JobCard[]
+
+  @@unique([companyId, workOrderNumber])
 
   @@map("work_orders")
 }
@@ -1889,7 +1944,7 @@ enum JobCardStatus {
 
 model ProductionPlan {
   id          String   @id @default(uuid())
-  planNumber  String   @unique
+  planNumber  String
   postingDate DateTime
   status      ProductionPlanStatus @default(DRAFT)
   totalPlannedQty Decimal @default(0) @db.Decimal(18, 4)
@@ -1901,6 +1956,8 @@ model ProductionPlan {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   items       ProductionPlanItem[]
+
+  @@unique([companyId, planNumber])
 
   @@map("production_plans")
 }
@@ -1928,7 +1985,7 @@ enum ProductionPlanStatus {
 
 model SubcontractingOrder {
   id          String   @id @default(uuid())
-  orderNumber String   @unique
+  orderNumber String
   supplierId  String
   status      SubcontractStatus @default(DRAFT)
   createdAt   DateTime @default(now())
@@ -1938,6 +1995,8 @@ model SubcontractingOrder {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   items       SubcontractingOrderItem[]
+
+  @@unique([companyId, orderNumber])
 
   @@map("subcontracting_orders")
 }
@@ -1968,7 +2027,7 @@ enum SubcontractStatus {
 
 model QualityInspection {
   id          String   @id @default(uuid())
-  qiNumber    String   @unique
+  qiNumber    String
   inspectionType String
   referenceType  String
   referenceName  String?
@@ -1986,6 +2045,8 @@ model QualityInspection {
   createdBy   User     @relation("QICreatedBy", fields: [createdById], references: [id])
 
   readings    QualityInspectionReading[]
+
+  @@unique([companyId, qiNumber])
 
   @@map("quality_inspections")
 }
@@ -2230,7 +2291,7 @@ model ProjectExpenseClaim {
 
 model Issue {
   id          String   @id @default(uuid())
-  issueNumber String   @unique
+  issueNumber String
   subject     String
   description String?
   issueType   String   @default("Technical")
@@ -2247,6 +2308,8 @@ model Issue {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdById String
   createdBy   User     @relation("IssueCreatedBy", fields: [createdById], references: [id])
+
+  @@unique([companyId, issueNumber])
 
   @@map("issues")
 }
@@ -2345,7 +2408,7 @@ model DataImportLog {
 
 model WebPage {
   id          String   @id @default(uuid())
-  route       String   @unique
+  route       String
   title       String
   content     String?
   metaDescription String?
@@ -2359,13 +2422,15 @@ model WebPage {
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  @@unique([companyId, route])
+
   @@map("web_pages")
 }
 
 model BlogPost {
   id          String   @id @default(uuid())
   title       String
-  slug        String   @unique
+  slug        String
   content     String?
   excerpt     String?
   author      String?
@@ -2380,6 +2445,8 @@ model BlogPost {
 
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, slug])
 
   @@map("blog_posts")
 }

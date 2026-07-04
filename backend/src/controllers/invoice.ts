@@ -35,7 +35,7 @@ function generateInvoiceNumber(prefix: string, sequence: number): string {
 export const createInvoice = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = invoiceSchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
 
     if (!companyId) {
       throw new AppError('Company ID required', 400);
@@ -164,7 +164,7 @@ export const createInvoice = async (req: any, res: Response, next: NextFunction)
 
 export const getInvoices = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId;
+    const companyId = req.companyId!;
     const type = req.query.type;
     const status = req.query.status;
     const page = parseInt(req.query.page as string) || 1;

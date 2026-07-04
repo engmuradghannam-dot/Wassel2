@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { createAccount, getAccounts, updateAccount, deleteAccount } from '../controllers/accounting';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createAccount);
 router.get('/', getAccounts);

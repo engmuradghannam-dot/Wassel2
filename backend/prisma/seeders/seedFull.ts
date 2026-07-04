@@ -33,7 +33,7 @@ async function main() {
     { employeeNumber: 'EMP-003', firstName: 'خالد', lastName: 'العتيبي', nameAr: 'خالد العتيبي', email: 'khalid.otaibi@wassel.local', department: 'المستودعات', designation: 'أمين مستودع', basicSalary: 6500 },
   ];
   for (const e of employeesData) {
-    const exists = await prisma.employee.findUnique({ where: { employeeNumber: e.employeeNumber } });
+    const exists = await prisma.employee.findUnique({ where: { companyId_employeeNumber: { companyId: company.id, employeeNumber: e.employeeNumber } } });
     if (!exists) {
       await prisma.employee.create({
         data: { ...e, totalSalary: e.basicSalary, dateOfJoining: new Date('2026-01-01'), companyId: company.id },
@@ -49,7 +49,7 @@ async function main() {
   ];
   const customers = [];
   for (const c of customersData) {
-    let cust = await prisma.customer.findUnique({ where: { code: c.code } });
+    let cust = await prisma.customer.findUnique({ where: { companyId_code: { companyId: company.id, code: c.code } } });
     if (!cust) {
       cust = await prisma.customer.create({ data: { ...c, companyId: company.id, createdById: admin.id } });
       console.log(`Created customer: ${c.nameAr}`);
@@ -64,7 +64,7 @@ async function main() {
   ];
   const suppliers = [];
   for (const s of suppliersData) {
-    let sup = await prisma.supplier.findUnique({ where: { code: s.code } });
+    let sup = await prisma.supplier.findUnique({ where: { companyId_code: { companyId: company.id, code: s.code } } });
     if (!sup) {
       sup = await prisma.supplier.create({ data: { ...s, companyId: company.id, createdById: admin.id } });
       console.log(`Created supplier: ${s.nameAr}`);
@@ -80,7 +80,7 @@ async function main() {
   ];
   const items = [];
   for (const i of itemsData) {
-    let item = await prisma.item.findUnique({ where: { code: i.code } });
+    let item = await prisma.item.findUnique({ where: { companyId_code: { companyId: company.id, code: i.code } } });
     if (!item) {
       item = await prisma.item.create({ data: { ...i, companyId: company.id, createdById: admin.id } });
       console.log(`Created item: ${i.nameAr}`);
@@ -90,7 +90,7 @@ async function main() {
 
   // ---------- Sales Order ----------
   const soNumber = 'SO-DEMO-001';
-  let salesOrder = await prisma.salesOrder.findUnique({ where: { orderNumber: soNumber } });
+  let salesOrder = await prisma.salesOrder.findUnique({ where: { companyId_orderNumber: { companyId: company.id, orderNumber: soNumber } } });
   if (!salesOrder) {
     const qty = 2;
     const unitPrice = Number(items[0].sellingPrice);
@@ -117,7 +117,7 @@ async function main() {
 
   // ---------- Purchase Order ----------
   const poNumber = 'PO-DEMO-001';
-  let purchaseOrder = await prisma.purchaseOrder.findUnique({ where: { orderNumber: poNumber } });
+  let purchaseOrder = await prisma.purchaseOrder.findUnique({ where: { companyId_orderNumber: { companyId: company.id, orderNumber: poNumber } } });
   if (!purchaseOrder) {
     const qty = 5;
     const unitPrice = Number(items[0].standardCost);
@@ -144,7 +144,7 @@ async function main() {
 
   // ---------- Submitted Sales Invoice with ZATCA QR ----------
   const invNumber = 'INV-DEMO-001';
-  let invoice = await prisma.invoice.findUnique({ where: { invoiceNumber: invNumber } });
+  let invoice = await prisma.invoice.findUnique({ where: { companyId_invoiceNumber: { companyId: company.id, invoiceNumber: invNumber } } });
   if (!invoice) {
     const qty = 2;
     const unitPrice = Number(items[1].sellingPrice);

@@ -26,12 +26,16 @@ const employeeSchema = z.object({
   transportAllowance: z.number().min(0).default(0),
   otherAllowance: z.number().min(0).default(0),
   branchId: z.string().optional(),
+  // Optional: link this HR record to an existing login (User) so that person
+  // can actually sign in and access this company through the app, not just
+  // exist as a payroll record.
+  userId: z.string().optional(),
 });
 
 export const createEmployee = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = employeeSchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
 
     if (!companyId) {
       throw new AppError('Company ID required', 400);
@@ -40,15 +44,29 @@ export const createEmployee = async (req: any, res: Response, next: NextFunction
     const totalSalary = data.basicSalary + data.housingAllowance + data.transportAllowance + data.otherAllowance;
     const employeeNumber = data.employeeNumber || `EMP-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
-    const employee = await prisma.employee.create({
-      data: {
-        ...data,
-        employeeNumber,
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-        dateOfJoining: new Date(data.dateOfJoining),
-        totalSalary,
-        companyId,
-      },
+    const employee = await prisma.$transaction(async (tx) => {
+      const created = await tx.employee.create({
+        data: {
+          ...data,
+          employeeNumber,
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+          dateOfJoining: new Date(data.dateOfJoining),
+          totalSalary,
+          companyId,
+        },
+      });
+
+      // If this employee is linked to a User account, give that user actual
+      // access to this company too (idempotent — safe if it already exists).
+      if (data.userId) {
+        await tx.companyMember.upsert({
+          where: { userId_companyId: { userId: data.userId, companyId } },
+          create: { userId: data.userId, companyId, role: 'USER' },
+          update: {},
+        });
+      }
+
+      return created;
     });
 
     res.status(201).json(successResponse(employee, 'Employee created successfully'));
@@ -59,7 +77,7 @@ export const createEmployee = async (req: any, res: Response, next: NextFunction
 
 export const getEmployees = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId;
+    const companyId = req.companyId!;
     const department = req.query.department;
     const status = req.query.status;
     const page = parseInt(req.query.page as string) || 1;

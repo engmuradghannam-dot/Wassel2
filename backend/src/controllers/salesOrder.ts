@@ -31,7 +31,7 @@ function generateOrderNumber(sequence: number): string {
 export const createSalesOrder = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = salesOrderSchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     let subtotal = 0;
@@ -100,7 +100,7 @@ export const createSalesOrder = async (req: any, res: Response, next: NextFuncti
 
 export const getSalesOrders = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
     const status = req.query.status as string | undefined;
 

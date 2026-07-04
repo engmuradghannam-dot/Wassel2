@@ -4,10 +4,11 @@ import {
   createOpportunity, getOpportunities, updateOpportunityStage,
   getCRMDashboard,
 } from '../controllers/crm';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/leads', createLead);
 router.get('/leads', getLeads);

@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { createEmployee, getEmployees, getEmployee, updateEmployee, deleteEmployee } from '../controllers/employee';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createEmployee);
 router.get('/', getEmployees);

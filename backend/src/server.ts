@@ -5,7 +5,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 
@@ -41,6 +40,15 @@ import reportRoutes from './routes/reports';
 import crmRoutes from './routes/crm';
 import assetRoutes from './routes/assets';
 import manufacturingRoutes from './routes/manufacturing';
+import manufacturingExtraRoutes from './routes/manufacturingExtra';
+import quotationRoutes from './routes/quotations';
+import rfqRoutes from './routes/rfqs';
+import deliveryNoteRoutes from './routes/deliveryNotes';
+import issueRoutes from './routes/issues';
+import recruitmentRoutes from './routes/recruitment';
+import performanceReviewRoutes from './routes/performanceReviews';
+import projectExpenseClaimRoutes from './routes/projectExpenseClaims';
+import maintenanceRoutes from './routes/maintenance';
 
 dotenv.config();
 
@@ -101,6 +109,15 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/crm', crmRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/manufacturing', manufacturingRoutes);
+app.use('/api/manufacturing', manufacturingExtraRoutes);
+app.use('/api/quotations', quotationRoutes);
+app.use('/api/rfqs', rfqRoutes);
+app.use('/api/delivery-notes', deliveryNoteRoutes);
+app.use('/api/issues', issueRoutes);
+app.use('/api/recruitment', recruitmentRoutes);
+app.use('/api/performance-reviews', performanceReviewRoutes);
+app.use('/api/project-expense-claims', projectExpenseClaimRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 
 // Static files (uploads)
 app.use('/uploads', express.static('uploads'));

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../utils/prisma';
 import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
+import { generateToken, generateRefreshToken } from '../utils/jwt';
 
 const companySchema = z.object({
   name: z.string().min(2),
@@ -29,17 +30,48 @@ export const createCompany = async (req: any, res: Response, next: NextFunction)
   try {
     const data = companySchema.parse(req.body);
 
-    const company = await prisma.company.create({
-      data: {
-        ...data,
-        createdById: req.user.userId,
-      },
+    // Create the company and immediately make the creator a member with
+    // ADMIN rights inside it. Without this, the user who just created the
+    // company would have no CompanyMember row and would be locked out of
+    // every company-scoped endpoint right after creating it.
+    const company = await prisma.$transaction(async (tx) => {
+      const created = await tx.company.create({
+        data: {
+          ...data,
+          createdById: req.user.userId,
+        },
+      });
+
+      await tx.companyMember.create({
+        data: {
+          userId: req.user.userId,
+          companyId: created.id,
+          role: 'ADMIN',
+        },
+      });
+
+      return created;
     });
 
     // Create default Chart of Accounts
     await createDefaultChartOfAccounts(company.id);
 
-    res.status(201).json(successResponse(company, 'Company created successfully'));
+    // Reissue tokens so the new company is usable immediately without
+    // requiring the user to log out and back in.
+    const token = generateToken({
+      userId: req.user.userId,
+      email: req.user.email,
+      role: req.user.role,
+      companyId: company.id,
+    });
+    const refreshToken = generateRefreshToken({
+      userId: req.user.userId,
+      email: req.user.email,
+      role: req.user.role,
+      companyId: company.id,
+    });
+
+    res.status(201).json(successResponse({ company, token, refreshToken }, 'Company created successfully'));
   } catch (error) {
     next(error);
   }
@@ -47,8 +79,16 @@ export const createCompany = async (req: any, res: Response, next: NextFunction)
 
 export const getCompanies = async (req: any, res: Response, next: NextFunction) => {
   try {
+    // Only companies this user actually belongs to — previously this
+    // returned every active company in the whole system to any logged-in
+    // user, regardless of tenant.
+    const where =
+      req.user.role === 'SUPER_ADMIN'
+        ? { status: 'ACTIVE' as const }
+        : { status: 'ACTIVE' as const, members: { some: { userId: req.user.userId } } };
+
     const companies = await prisma.company.findMany({
-      where: { status: 'ACTIVE' },
+      where,
       include: {
         _count: {
           select: { branches: true, employees: true, customers: true },
@@ -63,9 +103,22 @@ export const getCompanies = async (req: any, res: Response, next: NextFunction) 
   }
 };
 
+// Shared guard: SUPER_ADMIN can touch any company; everyone else must have
+// an actual CompanyMember row for the company in the URL params.
+async function assertCompanyAccess(req: any, companyId: string) {
+  if (req.user.role === 'SUPER_ADMIN') return;
+  const membership = await prisma.companyMember.findUnique({
+    where: { userId_companyId: { userId: req.user.userId, companyId } },
+  });
+  if (!membership) {
+    throw new AppError('You do not have access to this company', 403);
+  }
+}
+
 export const getCompany = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
+    await assertCompanyAccess(req, id);
 
     const company = await prisma.company.findUnique({
       where: { id },
@@ -102,6 +155,7 @@ export const getCompany = async (req: any, res: Response, next: NextFunction) =>
 export const updateCompany = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
+    await assertCompanyAccess(req, id);
     const data = companySchema.partial().parse(req.body);
 
     const company = await prisma.company.update({
@@ -118,6 +172,7 @@ export const updateCompany = async (req: any, res: Response, next: NextFunction)
 export const deleteCompany = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
+    await assertCompanyAccess(req, id);
 
     await prisma.company.update({
       where: { id },

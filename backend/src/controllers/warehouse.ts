@@ -23,7 +23,7 @@ function generateCode(prefix: string) {
 export const createWarehouse = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = warehouseSchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const warehouse = await prisma.warehouse.create({
@@ -39,7 +39,7 @@ export const createWarehouse = async (req: any, res: Response, next: NextFunctio
 
 export const getWarehouses = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const warehouses = await prisma.warehouse.findMany({
@@ -77,7 +77,7 @@ export const deleteWarehouse = async (req: any, res: Response, next: NextFunctio
 // Stock levels per warehouse (BinCard)
 export const getStockLevels = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
     const warehouseId = req.query.warehouseId as string | undefined;
 

@@ -33,6 +33,12 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     const hashedPassword = await hashPassword(data.password);
 
+    // Bootstrap: if this is the very first user in the whole system, promote
+    // them to SUPER_ADMIN so there is always a way to create the first
+    // company without needing manual DB access. Every subsequent registration
+    // stays a regular USER.
+    const isFirstUser = (await prisma.user.count()) === 0;
+
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -40,6 +46,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
+        role: isFirstUser ? 'SUPER_ADMIN' : 'USER',
       },
       select: {
         id: true,
@@ -79,7 +86,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const user = await prisma.user.findUnique({
       where: { email: data.email },
-      include: { employee: true },
+      include: { companyMemberships: { orderBy: { createdAt: 'asc' }, take: 1 } },
     });
 
     if (!user) {
@@ -102,18 +109,23 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       data: { lastLoginAt: new Date() },
     });
 
+    // Default company is just a convenience hint for the frontend — every
+    // request still re-validates membership via resolveCompany, so this is
+    // never trusted on its own.
+    const defaultCompanyId = user.companyMemberships[0]?.companyId;
+
     const token = generateToken({
       userId: user.id,
       email: user.email,
       role: user.role,
-      companyId: user.employee?.companyId,
+      companyId: defaultCompanyId,
     });
 
     const refreshToken = generateRefreshToken({
       userId: user.id,
       email: user.email,
       role: user.role,
-      companyId: user.employee?.companyId,
+      companyId: defaultCompanyId,
     });
 
     res.json(successResponse({
@@ -145,16 +157,21 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
+      include: { companyMemberships: { orderBy: { createdAt: 'asc' }, take: 1 } },
     });
 
     if (!user || user.status !== 'ACTIVE') {
       throw new AppError('Invalid refresh token', 401);
     }
 
+    // Keep the company context alive across refreshes — previously this was
+    // dropped on every refresh, silently kicking the user out of their
+    // company context until they logged in again.
     const newToken = generateToken({
       userId: user.id,
       email: user.email,
       role: user.role,
+      companyId: user.companyMemberships[0]?.companyId,
     });
 
     res.json(successResponse({ token: newToken }, 'Token refreshed'));

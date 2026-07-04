@@ -7,9 +7,18 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get('/', authorize('SUPER_ADMIN', 'ADMIN'), async (req, res, next) => {
+router.get('/', authorize('SUPER_ADMIN', 'ADMIN'), async (req: any, res, next) => {
   try {
+    // SUPER_ADMIN is a platform-level role and can see everyone. A plain
+    // company ADMIN previously saw every user in the entire system too —
+    // now they only see users who share a company with them.
+    const where =
+      req.user.role === 'SUPER_ADMIN'
+        ? {}
+        : { companyMemberships: { some: { company: { members: { some: { userId: req.user.userId } } } } } };
+
     const users = await prisma.user.findMany({
+      where,
       select: {
         id: true,
         email: true,

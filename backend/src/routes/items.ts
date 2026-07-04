@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { createItem, getItems, getItem, updateItem, deleteItem } from '../controllers/item';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createItem);
 router.get('/', getItems);

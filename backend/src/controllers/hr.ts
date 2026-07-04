@@ -50,7 +50,7 @@ export const createAttendance = async (req: any, res: Response, next: NextFuncti
 
 export const getAttendance = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
     const employeeId = req.query.employeeId as string | undefined;
 
@@ -99,7 +99,7 @@ export const createLeave = async (req: any, res: Response, next: NextFunction) =
 
 export const getLeaves = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const leaves = await prisma.leave.findMany({
@@ -189,7 +189,7 @@ export const createPayroll = async (req: any, res: Response, next: NextFunction)
 
 export const getPayrolls = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const payrolls = await prisma.payroll.findMany({
@@ -235,6 +235,149 @@ export const getEndOfServiceEstimate = async (req: any, res: Response, next: Nex
       estimatedEndOfService: Math.round(estimate * 100) / 100,
       note: 'تقدير أولي حسب نظام العمل السعودي - لا يغني عن الحساب الرسمي عند نهاية الخدمة الفعلية',
     }));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ==================== Performance Reviews ====================
+
+const performanceReviewSchema = z.object({
+  employeeId: z.string(),
+  reviewPeriod: z.string(),
+  reviewDate: z.string().datetime(),
+  goals: z.string().optional(),
+  achievements: z.string().optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+  feedback: z.string().optional(),
+});
+
+export const createPerformanceReview = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const data = performanceReviewSchema.parse(req.body);
+    const companyId = req.companyId!;
+
+    const employee = await prisma.employee.findFirst({ where: { id: data.employeeId, companyId } });
+    if (!employee) throw new AppError('Employee not found in this company', 404);
+
+    const review = await prisma.performanceReview.create({
+      data: { ...data, reviewDate: new Date(data.reviewDate), reviewedById: req.user.userId },
+    });
+
+    res.status(201).json(successResponse(review, 'Performance review created'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPerformanceReviews = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const companyId = req.companyId!;
+    const employeeId = req.query.employeeId as string | undefined;
+
+    const reviews = await prisma.performanceReview.findMany({
+      where: { employee: { companyId }, ...(employeeId ? { employeeId } : {}) },
+      include: { employee: { select: { firstName: true, lastName: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json(successResponse(reviews));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ==================== Job Openings & Applicants ====================
+
+const jobOpeningSchema = z.object({
+  jobTitle: z.string().min(2),
+  department: z.string().optional(),
+  designation: z.string().optional(),
+  description: z.string().optional(),
+  requirements: z.string().optional(),
+  noOfPositions: z.number().int().positive().default(1),
+});
+
+export const createJobOpening = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const data = jobOpeningSchema.parse(req.body);
+    const companyId = req.companyId!;
+
+    const opening = await prisma.jobOpening.create({ data: { ...data, companyId } });
+    res.status(201).json(successResponse(opening, 'Job opening created'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getJobOpenings = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const companyId = req.companyId!;
+    const openings = await prisma.jobOpening.findMany({
+      where: { companyId },
+      include: { _count: { select: { applicants: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(successResponse(openings));
+  } catch (error) {
+    next(error);
+  }
+};
+
+const jobApplicantSchema = z.object({
+  jobOpeningId: z.string(),
+  applicantName: z.string().min(2),
+  email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().optional(),
+  resumeUrl: z.string().optional(),
+  coverLetter: z.string().optional(),
+});
+
+export const createJobApplicant = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const data = jobApplicantSchema.parse(req.body);
+    const companyId = req.companyId!;
+
+    const opening = await prisma.jobOpening.findFirst({ where: { id: data.jobOpeningId, companyId } });
+    if (!opening) throw new AppError('Job opening not found in this company', 404);
+
+    const applicant = await prisma.jobApplicant.create({ data });
+    res.status(201).json(successResponse(applicant, 'Applicant added'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getJobApplicants = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const companyId = req.companyId!;
+    const jobOpeningId = req.query.jobOpeningId as string | undefined;
+
+    const applicants = await prisma.jobApplicant.findMany({
+      where: { jobOpening: { companyId }, ...(jobOpeningId ? { jobOpeningId } : {}) },
+      include: { jobOpening: { select: { jobTitle: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json(successResponse(applicants));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateJobApplicantStatus = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const companyId = req.companyId!;
+    const { id } = req.params;
+    const { status } = z.object({
+      status: z.enum(['APPLIED', 'SCREENING', 'INTERVIEW_SCHEDULED', 'INTERVIEWED', 'OFFERED', 'HIRED', 'REJECTED']),
+    }).parse(req.body);
+
+    const existing = await prisma.jobApplicant.findFirst({ where: { id, jobOpening: { companyId } } });
+    if (!existing) throw new AppError('Applicant not found', 404);
+
+    const applicant = await prisma.jobApplicant.update({ where: { id }, data: { status } });
+    res.json(successResponse(applicant, 'Applicant status updated'));
   } catch (error) {
     next(error);
   }

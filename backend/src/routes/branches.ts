@@ -1,12 +1,15 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth';
+import { createBranch, getBranches, getBranch, updateBranch, deleteBranch } from '../controllers/branch';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
-// Placeholder - will implement controllers
-router.get('/', async (req, res) => {
-  res.json({ success: true, message: 'Branches endpoint', data: [] });
-});
+router.post('/', createBranch);
+router.get('/', getBranches);
+router.get('/:id', getBranch);
+router.put('/:id', updateBranch);
+router.delete('/:id', deleteBranch);
 
 export default router;

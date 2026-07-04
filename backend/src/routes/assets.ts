@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { createAsset, getAssets, depreciateAsset, disposeAsset, getAssetCategories } from '../controllers/asset';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createAsset);
 router.get('/', getAssets);

@@ -20,7 +20,7 @@ const leadSchema = z.object({
 export const createLead = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = leadSchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const lead = await prisma.lead.create({
@@ -40,7 +40,7 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
 
 export const getLeads = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId;
+    const companyId = req.companyId!;
     const status = req.query.status;
     const where: any = { companyId };
     if (status) where.status = status;
@@ -74,7 +74,7 @@ export const updateLeadStatus = async (req: any, res: Response, next: NextFuncti
 export const convertLead = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
 
     const lead = await prisma.lead.findUnique({ where: { id } });
     if (!lead) throw new AppError('Lead not found', 404);
@@ -121,7 +121,7 @@ const opportunitySchema = z.object({
 export const createOpportunity = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = opportunitySchema.parse(req.body);
-    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
+    const companyId = req.companyId!;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const opportunity = await prisma.opportunity.create({
@@ -141,7 +141,7 @@ export const createOpportunity = async (req: any, res: Response, next: NextFunct
 
 export const getOpportunities = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId;
+    const companyId = req.companyId!;
     const stage = req.query.stage;
     const where: any = { companyId };
     if (stage) where.stage = stage;
@@ -182,7 +182,7 @@ export const updateOpportunityStage = async (req: any, res: Response, next: Next
 // CRM Dashboard
 export const getCRMDashboard = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId;
+    const companyId = req.companyId!;
 
     const [leadsByStatus, opportunitiesByStage, totalPipeline] = await Promise.all([
       prisma.lead.groupBy({

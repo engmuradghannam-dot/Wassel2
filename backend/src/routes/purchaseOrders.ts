@@ -3,10 +3,11 @@ import {
   createPurchaseOrder, getPurchaseOrders, getPurchaseOrder,
   submitPurchaseOrder, cancelPurchaseOrder,
 } from '../controllers/purchaseOrder';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createPurchaseOrder);
 router.get('/', getPurchaseOrders);

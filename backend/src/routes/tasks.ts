@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { createTask, getTasks, updateTaskStatus } from '../controllers/project';
-import { authenticate } from '../middleware/auth';
+import { authenticate, resolveCompany } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticate);
+router.use(resolveCompany);
 
 router.post('/', createTask);
 router.get('/', getTasks);
