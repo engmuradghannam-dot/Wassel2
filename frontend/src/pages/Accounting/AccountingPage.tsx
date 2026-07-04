@@ -30,7 +30,18 @@ const typeLabel: Record<string, string> = {
   ASSET: 'أصول', LIABILITY: 'خصوم', EQUITY: 'حقوق ملكية', INCOME: 'إيرادات', EXPENSE: 'مصروفات',
 };
 
-const emptyAccountForm = { code: '', name: '', nameAr: '', type: 'ASSET', accountType: 'CURRENT_ASSET', openingBalance: 0 };
+function getAccountDepth(account: any, allAccounts: any[], visited = new Set<string>()): number {
+  if (!account.parentId || visited.has(account.id)) return 0;
+  visited.add(account.id);
+  const parent = allAccounts.find((a) => a.id === account.parentId);
+  if (!parent) return 0;
+  return 1 + getAccountDepth(parent, allAccounts, visited);
+}
+
+const emptyAccountForm = {
+  code: '', name: '', nameAr: '', type: 'ASSET', accountType: 'CURRENT_ASSET',
+  openingBalance: 0, parentId: '', isGroup: false, isBank: false, bankAccount: '', bankName: '',
+};
 
 export const AccountingPage = () => {
   const { selectedCompany } = useAuthStore();
@@ -55,7 +66,13 @@ export const AccountingPage = () => {
 
   const handleAccountSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createAccount({ ...accountForm, openingBalance: Number(accountForm.openingBalance) });
+    await createAccount({
+      ...accountForm,
+      openingBalance: Number(accountForm.openingBalance),
+      parentId: accountForm.parentId || undefined,
+      bankAccount: accountForm.isBank ? accountForm.bankAccount : undefined,
+      bankName: accountForm.isBank ? accountForm.bankName : undefined,
+    });
     setAccountForm(emptyAccountForm);
     setIsAccountModalOpen(false);
   };
@@ -131,22 +148,36 @@ export const AccountingPage = () => {
                   <th className="table-header-cell">الكود</th>
                   <th className="table-header-cell">اسم الحساب</th>
                   <th className="table-header-cell">النوع</th>
+                  <th className="table-header-cell">خصائص</th>
                   <th className="table-header-cell">الرصيد الحالي</th>
                 </tr>
               </thead>
               <tbody className="table-body">
-                {accountsLoading && <tr><td className="table-cell" colSpan={4}>جاري التحميل...</td></tr>}
+                {accountsLoading && <tr><td className="table-cell" colSpan={5}>جاري التحميل...</td></tr>}
                 {!accountsLoading && accounts.length === 0 && (
-                  <tr><td className="table-cell text-secondary-500" colSpan={4}>لا يوجد حسابات بعد</td></tr>
+                  <tr><td className="table-cell text-secondary-500" colSpan={5}>لا يوجد حسابات بعد</td></tr>
                 )}
-                {accounts.map((acc) => (
-                  <tr key={acc.id}>
-                    <td className="table-cell">{acc.code}</td>
-                    <td className="table-cell font-medium">{acc.name}</td>
-                    <td className="table-cell">{typeLabel[acc.type]}</td>
-                    <td className="table-cell">{formatCurrency(acc.currentBalance, acc.currency)}</td>
-                  </tr>
-                ))}
+                {accounts.map((acc: any) => {
+                  const depth = getAccountDepth(acc, accounts);
+                  return (
+                    <tr key={acc.id}>
+                      <td className="table-cell">{acc.code}</td>
+                      <td className="table-cell">
+                        <span style={{ paddingInlineStart: `${depth * 1.25}rem` }} className={acc.isGroup ? 'font-bold' : 'font-medium'}>
+                          {acc.name}
+                        </span>
+                      </td>
+                      <td className="table-cell">{typeLabel[acc.type]}</td>
+                      <td className="table-cell">
+                        <div className="flex gap-1">
+                          {acc.isGroup && <span className="badge-info text-xs">مجموعة</span>}
+                          {acc.isBank && <span className="badge-success text-xs">بنكي</span>}
+                        </div>
+                      </td>
+                      <td className="table-cell">{formatCurrency(acc.currentBalance, acc.currency)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -236,9 +267,40 @@ export const AccountingPage = () => {
             </select>
           </div>
           <div>
+            <label className="block text-sm font-medium mb-1">الحساب الأب (اختياري)</label>
+            <select className="input" value={accountForm.parentId} onChange={(e) => setAccountForm({ ...accountForm, parentId: e.target.value })}>
+              <option value="">بدون — حساب رئيسي</option>
+              {accounts.filter((a: any) => a.isGroup).map((a: any) => (
+                <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium mb-1">الرصيد الافتتاحي</label>
             <input type="number" step="0.01" className="input" value={accountForm.openingBalance} onChange={(e) => setAccountForm({ ...accountForm, openingBalance: e.target.value })} />
           </div>
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={accountForm.isGroup} onChange={(e) => setAccountForm({ ...accountForm, isGroup: e.target.checked })} />
+              حساب مجموعة (يحتوي حسابات فرعية)
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={accountForm.isBank} onChange={(e) => setAccountForm({ ...accountForm, isBank: e.target.checked })} />
+              حساب بنكي
+            </label>
+          </div>
+          {accountForm.isBank && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">اسم البنك</label>
+                <input className="input" value={accountForm.bankName} onChange={(e) => setAccountForm({ ...accountForm, bankName: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رقم الحساب / الآيبان</label>
+                <input className="input" value={accountForm.bankAccount} onChange={(e) => setAccountForm({ ...accountForm, bankAccount: e.target.value })} />
+              </div>
+            </div>
+          )}
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" className="btn-secondary" onClick={() => setIsAccountModalOpen(false)}>إلغاء</button>
             <button type="submit" disabled={accountSaving} className="btn-primary">{accountSaving ? 'جاري الحفظ...' : 'حفظ'}</button>

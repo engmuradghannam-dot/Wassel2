@@ -21,9 +21,9 @@ import { PaymentsPage } from './pages/Payments/PaymentsPage';
 import { PurchaseReceiptsPage } from './pages/PurchaseReceipts/PurchaseReceiptsPage';
 import { EmployeesPage } from './pages/Employees/EmployeesPage';
 import { ReportsPage } from './pages/Reports/ReportsPage';
+import { CompaniesPage } from './pages/Companies/CompaniesPage';
 
 // Placeholder pages (data model exists, controllers/UI still pending - next phase)
-const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
 const tabLabels: Record<string, string> = {
   bom: 'قوائم المواد (BOM)', workOrders: 'أوامر الإنتاج', jobCards: 'بطاقات العمل',
   attendance: 'الحضور', leaves: 'الإجازات', payroll: 'الرواتب',
