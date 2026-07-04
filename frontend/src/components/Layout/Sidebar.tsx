@@ -148,7 +148,7 @@ const GroupNavItem = ({
 }) => {
   const { t } = useTranslation();
   const [flyoutOpen, setFlyoutOpen] = useState(false);
-  const [flyoutPos, setFlyoutPos] = useState({ top: 0, right: 0 });
+  const [flyoutPos, setFlyoutPos] = useState<{ top: number; right?: number; left?: number }>({ top: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -171,7 +171,12 @@ const GroupNavItem = ({
       // Position the flyout just to the left of the sidebar button, at the
       // same vertical position — a fixed position element so it escapes the
       // scrollable nav's clipping instead of being cut off.
-      setFlyoutPos({ top: rect.top, right: window.innerWidth - rect.left + 8 });
+      const isRtl = document.documentElement.dir === 'rtl';
+      setFlyoutPos(
+        isRtl
+          ? { top: rect.top, right: window.innerWidth - rect.left + 8 }
+          : { top: rect.top, left: rect.right + 8 }
+      );
     }
     setFlyoutOpen((v) => !v);
   };
@@ -186,7 +191,7 @@ const GroupNavItem = ({
         title={t(entry.labelKey)}
       >
         <entry.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
-        {sidebarOpen && <span className="mr-3 flex-1 text-right animate-fade-in">{t(entry.labelKey)}</span>}
+        {sidebarOpen && <span className="ms-3 flex-1 text-start animate-fade-in">{t(entry.labelKey)}</span>}
       </button>
 
       {/* Flyout panel — pops out to the side, like a Windows Start menu category flyout.
@@ -195,7 +200,7 @@ const GroupNavItem = ({
         <div
           ref={panelRef}
           className="fixed z-50 w-56 bg-white rounded-xl shadow-lg border border-secondary-200 py-2"
-          style={{ top: flyoutPos.top, right: flyoutPos.right }}
+          style={{ top: flyoutPos.top, right: flyoutPos.right, left: flyoutPos.left }}
         >
           <div className="px-4 py-1.5 text-xs font-semibold text-secondary-400">{t(entry.labelKey)}</div>
           {entry.children.map((child) => (
@@ -210,7 +215,7 @@ const GroupNavItem = ({
               }
             >
               <child.icon className="w-4 h-4 flex-shrink-0" />
-              <span className="mr-2">{t(child.labelKey)}</span>
+              <span className="ms-2">{t(child.labelKey)}</span>
             </NavLink>
           ))}
         </div>
@@ -227,7 +232,7 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`fixed top-0 right-0 z-40 h-screen bg-white border-l border-secondary-200 transition-all duration-300 ${
+      className={`fixed top-0 start-0 z-40 h-screen bg-white border-e border-secondary-200 transition-all duration-300 ${
         sidebarOpen ? 'w-64' : 'w-20'
       }`}
     >
@@ -269,7 +274,7 @@ export const Sidebar = () => {
                 title={!sidebarOpen ? t(entry.labelKey) : undefined}
               >
                 <entry.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-secondary-400'}`} />
-                {sidebarOpen && <span className="mr-3 animate-fade-in">{t(entry.labelKey)}</span>}
+                {sidebarOpen && <span className="ms-3 animate-fade-in">{t(entry.labelKey)}</span>}
               </NavLink>
             );
           }
@@ -282,14 +287,14 @@ export const Sidebar = () => {
       </nav>
 
       {/* Logout */}
-      <div className="absolute bottom-0 right-0 left-0 p-3 border-t border-secondary-200 bg-white">
+      <div className="absolute bottom-0 start-0 end-0 p-3 border-t border-secondary-200 bg-white">
         <button
           onClick={logout}
           className="flex items-center w-full px-4 py-3 text-sm font-medium text-danger-600 rounded-lg hover:bg-danger-50 transition-colors"
           title={!sidebarOpen ? t('common.logout') : undefined}
         >
           <ArrowRightOnRectangleIcon className="w-5 h-5 flex-shrink-0" />
-          {sidebarOpen && <span className="mr-3 animate-fade-in">{t('common.logout')}</span>}
+          {sidebarOpen && <span className="ms-3 animate-fade-in">{t('common.logout')}</span>}
         </button>
       </div>
     </aside>

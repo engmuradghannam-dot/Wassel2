@@ -27,18 +27,18 @@ export const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-secondary-200 transition-all duration-300 ${
-        sidebarOpen ? 'mr-64' : 'mr-20'
+        sidebarOpen ? 'ms-64' : 'ms-20'
       }`}
     >
       <div className="flex items-center justify-between h-full px-6">
         {/* Search */}
         <div className="flex-1 max-w-xl">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary-400" />
+            <MagnifyingGlassIcon className="absolute end-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary-400" />
             <input
               type="text"
               placeholder={t('common.search') + '...'}
-              className="input pr-10 w-full"
+              className="input pe-10 w-full"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@ export const Header = () => {
             </button>
 
             {showCompanyDropdown && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
+              <div className="absolute top-full start-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
                 {companies?.map((company: any) => (
                   <button
                     key={company.id}
@@ -72,7 +72,7 @@ export const Header = () => {
                       selectedCompany?.id === company.id ? 'bg-primary-50 text-primary-700' : 'text-secondary-700'
                     }`}
                   >
-                    <BuildingOfficeIcon className="w-5 h-5 ml-2" />
+                    <BuildingOfficeIcon className="w-5 h-5 me-2" />
                     {company.name}
                   </button>
                 ))}
@@ -91,7 +91,7 @@ export const Header = () => {
             </button>
 
             {showNotifications && (
-              <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
+              <div className="absolute top-full start-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
                 <div className="px-4 py-2 border-b border-secondary-200">
                   <h3 className="text-sm font-semibold text-secondary-900">{t('header.notifications')}</h3>
                 </div>
@@ -113,7 +113,7 @@ export const Header = () => {
               ) : (
                 <UserCircleIcon className="w-8 h-8 text-secondary-400" />
               )}
-              <div className="hidden md:block text-right">
+              <div className="hidden md:block text-end">
                 <p className="text-sm font-medium text-secondary-900">
                   {user?.firstName} {user?.lastName}
                 </p>
@@ -122,7 +122,7 @@ export const Header = () => {
             </button>
 
             {showProfile && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
+              <div className="absolute top-full start-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 z-50">
                 <a href="/profile" className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50">
                   {t('header.profile')}
                 </a>
@@ -130,7 +130,7 @@ export const Header = () => {
                   {t('header.settings')}
                 </a>
                 <hr className="my-1 border-secondary-200" />
-                <button className="block w-full text-right px-4 py-2 text-sm text-danger-600 hover:bg-danger-50">
+                <button className="block w-full text-start px-4 py-2 text-sm text-danger-600 hover:bg-danger-50">
                   {t('header.logout')}
                 </button>
               </div>

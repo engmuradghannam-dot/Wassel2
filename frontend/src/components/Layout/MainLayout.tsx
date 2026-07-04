@@ -16,7 +16,7 @@ export const MainLayout = () => {
 
       <main
         className={`pt-16 min-h-screen transition-all duration-300 ${
-          sidebarOpen ? 'mr-64' : 'mr-20'
+          sidebarOpen ? 'ms-64' : 'ms-20'
         }`}
       >
         <div className="p-6">
