@@ -420,3 +420,19 @@ export interface JournalEntry {
   status: 'DRAFT' | 'POSTED' | 'CANCELLED';
   createdAt: string;
 }
+
+export interface SalesOrder {
+  id: string;
+  orderNumber: string;
+  orderDate: string;
+  deliveryDate?: string;
+  customerId: string;
+  customer?: Customer;
+  subtotal: number;
+  discountAmount: number;
+  taxAmount: number;
+  totalAmount: number;
+  status: 'DRAFT' | 'SUBMITTED' | 'CONFIRMED' | 'PARTIALLY_FULFILLED' | 'FULFILLED' | 'CANCELLED';
+  notes?: string;
+  createdAt: string;
+}

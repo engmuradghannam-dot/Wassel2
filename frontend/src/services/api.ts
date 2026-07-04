@@ -128,8 +128,8 @@ export const employeeApi = {
     api.get('/employees', params),
   getById: (id: string) => 
     api.get(`/employees/${id}`),
-  create: (data: any) => 
-    api.post('/employees', data),
+  create: (data: any, companyId?: string) => 
+    api.post('/employees', data, companyId ? { companyId } : undefined),
   update: (id: string, data: any) => 
     api.put(`/employees/${id}`, data),
   delete: (id: string) => 
@@ -285,4 +285,38 @@ export const journalEntryApi = {
 export const zatcaApi = {
   getInvoiceQr: (invoiceId: string) =>
     api.get(`/invoices/${invoiceId}/zatca-qr`),
+};
+
+// Sales Order API
+export const salesOrderApi = {
+  getAll: (params?: any) => api.get('/sales-orders', params),
+  getById: (id: string) => api.get(`/sales-orders/${id}`),
+  create: (data: any, companyId?: string) =>
+    api.post('/sales-orders', data, companyId ? { companyId } : undefined),
+  submit: (id: string) => api.post(`/sales-orders/${id}/submit`),
+  cancel: (id: string) => api.post(`/sales-orders/${id}/cancel`),
+};
+
+// Payment API
+export const paymentApi = {
+  getAll: (params?: any) => api.get('/payments', params),
+  create: (data: any) => api.post('/payments', data),
+};
+
+// Reports API
+export const reportApi = {
+  trialBalance: (params?: any) => api.get('/reports/trial-balance', params),
+  profitAndLoss: (params?: any) => api.get('/reports/profit-and-loss', params),
+  balanceSheet: (params?: any) => api.get('/reports/balance-sheet', params),
+  stock: (params?: any) => api.get('/reports/stock', params),
+  sales: (params?: any) => api.get('/reports/sales', params),
+  payroll: (params?: any) => api.get('/reports/payroll', params),
+};
+
+// Purchase Receipt API
+export const purchaseReceiptApi = {
+  getAll: (params?: any) => api.get('/purchase-receipts', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/purchase-receipts', data, companyId ? { companyId } : undefined),
+  submit: (id: string) => api.post(`/purchase-receipts/${id}/submit`),
 };

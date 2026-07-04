@@ -5,7 +5,7 @@ import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
 
 const employeeSchema = z.object({
-  employeeNumber: z.string(),
+  employeeNumber: z.string().optional(),
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   nameAr: z.string().optional(),
@@ -38,10 +38,12 @@ export const createEmployee = async (req: any, res: Response, next: NextFunction
     }
 
     const totalSalary = data.basicSalary + data.housingAllowance + data.transportAllowance + data.otherAllowance;
+    const employeeNumber = data.employeeNumber || `EMP-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
     const employee = await prisma.employee.create({
       data: {
         ...data,
+        employeeNumber,
         dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
         dateOfJoining: new Date(data.dateOfJoining),
         totalSalary,

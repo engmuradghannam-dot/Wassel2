@@ -16,11 +16,17 @@ import { WarehousesPage } from './pages/Warehouses/WarehousesPage';
 import { StockEntriesPage } from './pages/StockEntries/StockEntriesPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrders/PurchaseOrdersPage';
 import { AccountingPage } from './pages/Accounting/AccountingPage';
+import { SalesOrdersPage } from './pages/SalesOrders/SalesOrdersPage';
+import { PaymentsPage } from './pages/Payments/PaymentsPage';
+import { PurchaseReceiptsPage } from './pages/PurchaseReceipts/PurchaseReceiptsPage';
+import { EmployeesPage } from './pages/Employees/EmployeesPage';
+import { ReportsPage } from './pages/Reports/ReportsPage';
 
-// Placeholder pages (not built yet)
+// Placeholder pages (data model exists, controllers/UI still pending - next phase)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
-const EmployeesPage = () => <div className="card"><h1 className="text-2xl font-bold">الموظفين</h1></div>;
-const ReportsPage = () => <div className="card"><h1 className="text-2xl font-bold">التقارير</h1></div>;
+const ManufacturingPage = () => <div className="card"><h1 className="text-2xl font-bold">التصنيع</h1><p className="text-secondary-500 mt-2">قيد الإنشاء - BOM وأوامر الإنتاج وبطاقات العمل</p></div>;
+const HRPage = () => <div className="card"><h1 className="text-2xl font-bold">الحضور والإجازات والرواتب</h1><p className="text-secondary-500 mt-2">قيد الإنشاء</p></div>;
+const ProjectsPage = () => <div className="card"><h1 className="text-2xl font-bold">المشاريع</h1><p className="text-secondary-500 mt-2">قيد الإنشاء - المهام والجداول الزمنية</p></div>;
 const SettingsPage = () => <div className="card"><h1 className="text-2xl font-bold">الإعدادات</h1></div>;
 
 function App() {
@@ -39,6 +45,12 @@ function App() {
         <Route path="/suppliers" element={<SuppliersPage />} />
         <Route path="/items" element={<ItemsPage />} />
         <Route path="/invoices" element={<InvoicesPage />} />
+        <Route path="/sales-orders" element={<SalesOrdersPage />} />
+        <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/purchase-receipts" element={<PurchaseReceiptsPage />} />
+        <Route path="/manufacturing" element={<ManufacturingPage />} />
+        <Route path="/hr" element={<HRPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/crm" element={<CRMPage />} />
         <Route path="/assets" element={<AssetsPage />} />
         <Route path="/inventory" element={<WarehousesPage />} />

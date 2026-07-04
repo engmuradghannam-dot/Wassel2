@@ -21,6 +21,12 @@ import {
   ArchiveBoxIcon,
   BanknotesIcon,
   CalculatorIcon,
+  CreditCardIcon,
+  InboxArrowDownIcon,
+  WrenchScrewdriverIcon,
+  ClipboardDocumentListIcon,
+  ClockIcon,
+  BriefcaseIcon,
 } from '@heroicons/react/24/outline';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -47,13 +53,23 @@ const navigation: NavEntry[] = [
   { key: 'dashboard', labelKey: 'nav.dashboard', href: '/dashboard', icon: HomeIcon },
   { key: 'companies', labelKey: 'nav.companies', href: '/companies', icon: BuildingOfficeIcon },
   {
+    key: 'accountingGroup',
+    labelKey: 'nav.accountingGroup',
+    icon: CalculatorIcon,
+    children: [
+      { key: 'accounting', labelKey: 'nav.chartOfAccounts', href: '/accounting', icon: CalculatorIcon },
+      { key: 'generalLedger', labelKey: 'nav.generalLedger', href: '/reports', icon: DocumentTextIcon },
+    ],
+  },
+  {
     key: 'salesGroup',
     labelKey: 'nav.sales',
     icon: BanknotesIcon,
     children: [
-      { key: 'crm', labelKey: 'nav.crm', href: '/crm', icon: PhoneArrowUpRightIcon },
       { key: 'customers', labelKey: 'nav.customers', href: '/customers', icon: UsersIcon },
+      { key: 'salesOrders', labelKey: 'nav.salesOrders', href: '/sales-orders', icon: DocumentTextIcon },
       { key: 'invoices', labelKey: 'nav.invoices', href: '/invoices', icon: DocumentTextIcon },
+      { key: 'payments', labelKey: 'nav.payments', href: '/payments', icon: CreditCardIcon },
     ],
   },
   {
@@ -63,14 +79,7 @@ const navigation: NavEntry[] = [
     children: [
       { key: 'suppliers', labelKey: 'nav.suppliers', href: '/suppliers', icon: TruckIcon },
       { key: 'purchaseOrders', labelKey: 'nav.purchaseOrders', href: '/purchase-orders', icon: DocumentTextIcon },
-    ],
-  },
-  {
-    key: 'accountingGroup',
-    labelKey: 'nav.accountingGroup',
-    icon: CalculatorIcon,
-    children: [
-      { key: 'accounting', labelKey: 'nav.accounting', href: '/accounting', icon: CalculatorIcon },
+      { key: 'purchaseReceipts', labelKey: 'nav.purchaseReceipts', href: '/purchase-receipts', icon: InboxArrowDownIcon },
     ],
   },
   {
@@ -81,7 +90,17 @@ const navigation: NavEntry[] = [
       { key: 'items', labelKey: 'nav.items', href: '/items', icon: CubeIcon },
       { key: 'inventory', labelKey: 'nav.inventory', href: '/inventory', icon: ShoppingCartIcon },
       { key: 'stockEntries', labelKey: 'nav.stockEntries', href: '/stock-entries', icon: ShoppingCartIcon },
-      { key: 'assets', labelKey: 'nav.assets', href: '/assets', icon: ArchiveBoxIcon },
+      { key: 'stockLedger', labelKey: 'nav.stockLedger', href: '/reports', icon: DocumentTextIcon },
+    ],
+  },
+  {
+    key: 'manufacturingGroup',
+    labelKey: 'nav.manufacturingGroup',
+    icon: WrenchScrewdriverIcon,
+    children: [
+      { key: 'bom', labelKey: 'nav.bom', href: '/manufacturing', icon: WrenchScrewdriverIcon },
+      { key: 'workOrders', labelKey: 'nav.workOrders', href: '/manufacturing', icon: ClipboardDocumentListIcon },
+      { key: 'jobCards', labelKey: 'nav.jobCards', href: '/manufacturing', icon: ClipboardDocumentListIcon },
     ],
   },
   {
@@ -90,6 +109,28 @@ const navigation: NavEntry[] = [
     icon: UsersIcon,
     children: [
       { key: 'employees', labelKey: 'nav.employees', href: '/employees', icon: UsersIcon },
+      { key: 'attendance', labelKey: 'nav.attendance', href: '/hr', icon: ClockIcon },
+      { key: 'leaves', labelKey: 'nav.leaves', href: '/hr', icon: ClockIcon },
+      { key: 'payroll', labelKey: 'nav.payroll', href: '/hr', icon: BriefcaseIcon },
+    ],
+  },
+  { key: 'crm', labelKey: 'nav.crm', href: '/crm', icon: PhoneArrowUpRightIcon },
+  {
+    key: 'assetsGroup',
+    labelKey: 'nav.assetsGroup',
+    icon: ArchiveBoxIcon,
+    children: [
+      { key: 'assets', labelKey: 'nav.fixedAssets', href: '/assets', icon: ArchiveBoxIcon },
+    ],
+  },
+  {
+    key: 'projectsGroup',
+    labelKey: 'nav.projectsGroup',
+    icon: BriefcaseIcon,
+    children: [
+      { key: 'projects', labelKey: 'nav.projects', href: '/projects', icon: BriefcaseIcon },
+      { key: 'tasks', labelKey: 'nav.tasks', href: '/projects', icon: ClipboardDocumentListIcon },
+      { key: 'timesheets', labelKey: 'nav.timesheets', href: '/projects', icon: ClockIcon },
     ],
   },
   { key: 'reports', labelKey: 'nav.reports', href: '/reports', icon: ChartBarIcon },
