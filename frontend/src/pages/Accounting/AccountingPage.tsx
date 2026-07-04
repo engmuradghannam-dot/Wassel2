@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PlusIcon, CheckCircleIcon, XCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAccounts, useJournalEntries } from '../../hooks/useAccounting';
 import { useAuthStore } from '../../store/authStore';
@@ -33,7 +34,13 @@ const emptyAccountForm = { code: '', name: '', nameAr: '', type: 'ASSET', accoun
 
 export const AccountingPage = () => {
   const { selectedCompany } = useAuthStore();
-  const [tab, setTab] = useState<'accounts' | 'journal'>('accounts');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'journal' ? 'journal' : 'accounts';
+  const [tab, setTabState] = useState<'accounts' | 'journal'>(initialTab);
+  const setTab = (t: 'accounts' | 'journal') => {
+    setTabState(t);
+    setSearchParams({ tab: t });
+  };
 
   const { accounts, isLoading: accountsLoading, createAccount, isSaving: accountSaving } = useAccounts();
   const { journalEntries, isLoading: jeLoading, createJournalEntry, postJournalEntry, cancelJournalEntry, isSaving: jeSaving } = useJournalEntries();

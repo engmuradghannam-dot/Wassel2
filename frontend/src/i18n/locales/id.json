@@ -42,7 +42,19 @@
     "projectsGroup": "Proyek",
     "projects": "Proyek",
     "tasks": "Tugas",
-    "timesheets": "Lembar Waktu"
+    "timesheets": "Lembar Waktu",
+    "journalEntries": "Entri Jurnal",
+    "leads": "Prospek",
+    "opportunities": "Peluang",
+    "conversion": "Konversi",
+    "depreciation": "Penyusutan",
+    "disposal": "Penghapusan",
+    "trialBalance": "Neraca Saldo",
+    "profitAndLoss": "Laba Rugi",
+    "balanceSheetReport": "Neraca",
+    "stockReport": "Laporan Stok",
+    "salesReport": "Laporan Penjualan",
+    "payrollReport": "Laporan Penggajian"
   },
   "auth": {
     "login": "Masuk",

@@ -42,7 +42,19 @@
     "projectsGroup": "परियोजनाएं",
     "projects": "परियोजनाएं",
     "tasks": "कार्य",
-    "timesheets": "समय पत्रक"
+    "timesheets": "समय पत्रक",
+    "journalEntries": "जर्नल प्रविष्टियाँ",
+    "leads": "संभावित ग्राहक",
+    "opportunities": "अवसर",
+    "conversion": "रूपांतरण",
+    "depreciation": "मूल्यह्रास",
+    "disposal": "निपटान",
+    "trialBalance": "तलपट",
+    "profitAndLoss": "लाभ और हानि",
+    "balanceSheetReport": "बैलेंस शीट",
+    "stockReport": "स्टॉक रिपोर्ट",
+    "salesReport": "बिक्री रिपोर्ट",
+    "payrollReport": "वेतन रिपोर्ट"
   },
   "auth": {
     "login": "लॉगिन",

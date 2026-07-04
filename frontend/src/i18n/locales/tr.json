@@ -42,7 +42,19 @@
     "projectsGroup": "Projeler",
     "projects": "Projeler",
     "tasks": "Görevler",
-    "timesheets": "Zaman Çizelgeleri"
+    "timesheets": "Zaman Çizelgeleri",
+    "journalEntries": "Yevmiye Kayıtları",
+    "leads": "Potansiyel Müşteriler",
+    "opportunities": "Fırsatlar",
+    "conversion": "Dönüşüm",
+    "depreciation": "Amortisman",
+    "disposal": "Elden Çıkarma",
+    "trialBalance": "Mizan",
+    "profitAndLoss": "Kar ve Zarar",
+    "balanceSheetReport": "Bilanço",
+    "stockReport": "Stok Raporu",
+    "salesReport": "Satış Raporu",
+    "payrollReport": "Bordro Raporu"
   },
   "auth": {
     "login": "Giriş Yap",

@@ -42,7 +42,19 @@
     "projectsGroup": "প্রকল্প",
     "projects": "প্রকল্প",
     "tasks": "কাজ",
-    "timesheets": "টাইমশিট"
+    "timesheets": "টাইমশিট",
+    "journalEntries": "জার্নাল এন্ট্রি",
+    "leads": "সম্ভাব্য গ্রাহক",
+    "opportunities": "সুযোগসমূহ",
+    "conversion": "রূপান্তর",
+    "depreciation": "অবচয়",
+    "disposal": "নিষ্পত্তি",
+    "trialBalance": "ট্রায়াল ব্যালেন্স",
+    "profitAndLoss": "লাভ ও ক্ষতি",
+    "balanceSheetReport": "ব্যালেন্স শীট",
+    "stockReport": "স্টক রিপোর্ট",
+    "salesReport": "বিক্রয় রিপোর্ট",
+    "payrollReport": "বেতন রিপোর্ট"
   },
   "auth": {
     "login": "লগইন",

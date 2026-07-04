@@ -42,7 +42,19 @@
     "projectsGroup": "项目",
     "projects": "项目",
     "tasks": "任务",
-    "timesheets": "工时表"
+    "timesheets": "工时表",
+    "journalEntries": "日记账分录",
+    "leads": "潜在客户",
+    "opportunities": "销售机会",
+    "conversion": "转化",
+    "depreciation": "折旧",
+    "disposal": "处置",
+    "trialBalance": "试算表",
+    "profitAndLoss": "损益表",
+    "balanceSheetReport": "资产负债表",
+    "stockReport": "库存报表",
+    "salesReport": "销售报表",
+    "payrollReport": "薪资报表"
   },
   "auth": {
     "login": "登录",

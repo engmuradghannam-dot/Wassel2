@@ -42,7 +42,19 @@
     "projectsGroup": "المشاريع",
     "projects": "المشاريع",
     "tasks": "المهام",
-    "timesheets": "الجداول الزمنية"
+    "timesheets": "الجداول الزمنية",
+    "journalEntries": "القيود اليومية",
+    "leads": "العملاء المحتملون",
+    "opportunities": "الفرص البيعية",
+    "conversion": "تحويل لعميل",
+    "depreciation": "الإهلاك",
+    "disposal": "الاستبعاد",
+    "trialBalance": "ميزان المراجعة",
+    "profitAndLoss": "الأرباح والخسائر",
+    "balanceSheetReport": "الميزانية العمومية",
+    "stockReport": "تقرير المخزون",
+    "salesReport": "تقرير المبيعات",
+    "payrollReport": "تقرير الرواتب"
   },
   "auth": {
     "login": "تسجيل الدخول",

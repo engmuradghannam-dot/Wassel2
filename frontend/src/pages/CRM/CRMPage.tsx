@@ -1,5 +1,6 @@
 // MuradERP CRM Page (Leads + Opportunities)
 import { useState, FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PlusIcon, ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import { useLeads, useOpportunities } from '../../hooks/useCRM';
@@ -14,7 +15,13 @@ const emptyOppForm = { opportunityName: '', expectedAmount: 0, probability: 20, 
 export const CRMPage = () => {
   const { t, i18n } = useTranslation();
   const { selectedCompany } = useAuthStore();
-  const [tab, setTab] = useState<'leads' | 'opportunities'>('leads');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'opportunities' ? 'opportunities' : 'leads';
+  const [tab, setTabState] = useState<'leads' | 'opportunities'>(initialTab);
+  const setTab = (t: 'leads' | 'opportunities') => {
+    setTabState(t);
+    setSearchParams({ tab: t });
+  };
 
   const { leads, isLoading: leadsLoading, createLead, updateLeadStatus, convertLead, isSaving: leadSaving } = useLeads();
   const { opportunities, isLoading: oppLoading, createOpportunity, updateOpportunityStage, isSaving: oppSaving } = useOpportunities();

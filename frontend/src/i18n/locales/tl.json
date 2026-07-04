@@ -42,7 +42,19 @@
     "projectsGroup": "Mga Proyekto",
     "projects": "Mga Proyekto",
     "tasks": "Mga Gawain",
-    "timesheets": "Timesheets"
+    "timesheets": "Timesheets",
+    "journalEntries": "Journal Entries",
+    "leads": "Mga Prospect",
+    "opportunities": "Mga Oportunidad",
+    "conversion": "Conversion",
+    "depreciation": "Depreciation",
+    "disposal": "Pagtatapon",
+    "trialBalance": "Trial Balance",
+    "profitAndLoss": "Kita at Lugi",
+    "balanceSheetReport": "Balance Sheet",
+    "stockReport": "Stock Report",
+    "salesReport": "Sales Report",
+    "payrollReport": "Payroll Report"
   },
   "auth": {
     "login": "Mag-login",

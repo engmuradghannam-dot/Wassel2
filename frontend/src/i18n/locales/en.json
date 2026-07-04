@@ -42,7 +42,19 @@
     "projectsGroup": "Projects",
     "projects": "Projects",
     "tasks": "Tasks",
-    "timesheets": "Timesheets"
+    "timesheets": "Timesheets",
+    "journalEntries": "Journal Entries",
+    "leads": "Leads",
+    "opportunities": "Opportunities",
+    "conversion": "Conversion",
+    "depreciation": "Depreciation",
+    "disposal": "Disposal",
+    "trialBalance": "Trial Balance",
+    "profitAndLoss": "Profit & Loss",
+    "balanceSheetReport": "Balance Sheet",
+    "stockReport": "Stock Report",
+    "salesReport": "Sales Report",
+    "payrollReport": "Payroll Report"
   },
   "auth": {
     "login": "Login",

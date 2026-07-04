@@ -42,7 +42,19 @@
     "projectsGroup": "پراجیکٹس",
     "projects": "پراجیکٹس",
     "tasks": "ٹاسکس",
-    "timesheets": "ٹائم شیٹس"
+    "timesheets": "ٹائم شیٹس",
+    "journalEntries": "جرنل اندراجات",
+    "leads": "ممکنہ گاہک",
+    "opportunities": "مواقع",
+    "conversion": "تبدیلی",
+    "depreciation": "فرسودگی",
+    "disposal": "ضیاع",
+    "trialBalance": "ٹرائل بیلنس",
+    "profitAndLoss": "منافع اور نقصان",
+    "balanceSheetReport": "بیلنس شیٹ",
+    "stockReport": "اسٹاک رپورٹ",
+    "salesReport": "سیلز رپورٹ",
+    "payrollReport": "تنخواہ رپورٹ"
   },
   "auth": {
     "login": "لاگ ان",

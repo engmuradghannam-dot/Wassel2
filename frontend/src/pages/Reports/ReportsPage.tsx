@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useReport } from '../../hooks/useReports';
 import { useAuthStore } from '../../store/authStore';
 import { formatCurrency } from '../../utils/currency';
@@ -16,7 +17,15 @@ const tabs: { key: ReportTab; label: string }[] = [
 
 export const ReportsPage = () => {
   const { selectedCompany } = useAuthStore();
-  const [tab, setTab] = useState<ReportTab>('trialBalance');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const validTabs: ReportTab[] = ['trialBalance', 'profitAndLoss', 'balanceSheet', 'stock', 'sales', 'payroll'];
+  const paramTab = searchParams.get('tab') as ReportTab | null;
+  const initialTab = paramTab && validTabs.includes(paramTab) ? paramTab : 'trialBalance';
+  const [tab, setTabState] = useState<ReportTab>(initialTab);
+  const setTab = (t: ReportTab) => {
+    setTabState(t);
+    setSearchParams({ tab: t });
+  };
   const { data, isLoading } = useReport(tab);
 
   if (!selectedCompany) {

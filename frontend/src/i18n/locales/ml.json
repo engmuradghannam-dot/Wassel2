@@ -42,7 +42,19 @@
     "projectsGroup": "പ്രോജക്ടുകൾ",
     "projects": "പ്രോജക്ടുകൾ",
     "tasks": "ജോലികൾ",
-    "timesheets": "ടൈംഷീറ്റുകൾ"
+    "timesheets": "ടൈംഷീറ്റുകൾ",
+    "journalEntries": "ജേണൽ എൻട്രികൾ",
+    "leads": "സാധ്യതയുള്ള ഉപഭോക്താക്കൾ",
+    "opportunities": "അവസരങ്ങൾ",
+    "conversion": "പരിവർത്തനം",
+    "depreciation": "മൂല്യശോഷണം",
+    "disposal": "നിർമാർജനം",
+    "trialBalance": "ട്രയൽ ബാലൻസ്",
+    "profitAndLoss": "ലാഭനഷ്ടം",
+    "balanceSheetReport": "ബാലൻസ് ഷീറ്റ്",
+    "stockReport": "സ്റ്റോക്ക് റിപ്പോർട്ട്",
+    "salesReport": "സെയിൽസ് റിപ്പോർട്ട്",
+    "payrollReport": "ശമ്പള റിപ്പോർട്ട്"
   },
   "auth": {
     "login": "ലോഗിൻ",

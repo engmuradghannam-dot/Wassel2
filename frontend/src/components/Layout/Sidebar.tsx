@@ -57,8 +57,9 @@ const navigation: NavEntry[] = [
     labelKey: 'nav.accountingGroup',
     icon: CalculatorIcon,
     children: [
-      { key: 'accounting', labelKey: 'nav.chartOfAccounts', href: '/accounting', icon: CalculatorIcon },
-      { key: 'generalLedger', labelKey: 'nav.generalLedger', href: '/reports', icon: DocumentTextIcon },
+      { key: 'chartOfAccounts', labelKey: 'nav.chartOfAccounts', href: '/accounting?tab=accounts', icon: CalculatorIcon },
+      { key: 'journalEntries', labelKey: 'nav.journalEntries', href: '/accounting?tab=journal', icon: DocumentTextIcon },
+      { key: 'generalLedger', labelKey: 'nav.generalLedger', href: '/reports?tab=trialBalance', icon: DocumentTextIcon },
     ],
   },
   {
@@ -88,9 +89,9 @@ const navigation: NavEntry[] = [
     icon: CubeIcon,
     children: [
       { key: 'items', labelKey: 'nav.items', href: '/items', icon: CubeIcon },
-      { key: 'inventory', labelKey: 'nav.inventory', href: '/inventory', icon: ShoppingCartIcon },
+      { key: 'warehouses', labelKey: 'nav.inventory', href: '/inventory', icon: ShoppingCartIcon },
       { key: 'stockEntries', labelKey: 'nav.stockEntries', href: '/stock-entries', icon: ShoppingCartIcon },
-      { key: 'stockLedger', labelKey: 'nav.stockLedger', href: '/reports', icon: DocumentTextIcon },
+      { key: 'stockLedger', labelKey: 'nav.stockLedger', href: '/reports?tab=stock', icon: DocumentTextIcon },
     ],
   },
   {
@@ -98,9 +99,9 @@ const navigation: NavEntry[] = [
     labelKey: 'nav.manufacturingGroup',
     icon: WrenchScrewdriverIcon,
     children: [
-      { key: 'bom', labelKey: 'nav.bom', href: '/manufacturing', icon: WrenchScrewdriverIcon },
-      { key: 'workOrders', labelKey: 'nav.workOrders', href: '/manufacturing', icon: ClipboardDocumentListIcon },
-      { key: 'jobCards', labelKey: 'nav.jobCards', href: '/manufacturing', icon: ClipboardDocumentListIcon },
+      { key: 'bom', labelKey: 'nav.bom', href: '/manufacturing?tab=bom', icon: WrenchScrewdriverIcon },
+      { key: 'workOrders', labelKey: 'nav.workOrders', href: '/manufacturing?tab=workOrders', icon: ClipboardDocumentListIcon },
+      { key: 'jobCards', labelKey: 'nav.jobCards', href: '/manufacturing?tab=jobCards', icon: ClipboardDocumentListIcon },
     ],
   },
   {
@@ -109,18 +110,29 @@ const navigation: NavEntry[] = [
     icon: UsersIcon,
     children: [
       { key: 'employees', labelKey: 'nav.employees', href: '/employees', icon: UsersIcon },
-      { key: 'attendance', labelKey: 'nav.attendance', href: '/hr', icon: ClockIcon },
-      { key: 'leaves', labelKey: 'nav.leaves', href: '/hr', icon: ClockIcon },
-      { key: 'payroll', labelKey: 'nav.payroll', href: '/hr', icon: BriefcaseIcon },
+      { key: 'attendance', labelKey: 'nav.attendance', href: '/hr?tab=attendance', icon: ClockIcon },
+      { key: 'leaves', labelKey: 'nav.leaves', href: '/hr?tab=leaves', icon: ClockIcon },
+      { key: 'payroll', labelKey: 'nav.payroll', href: '/hr?tab=payroll', icon: BriefcaseIcon },
     ],
   },
-  { key: 'crm', labelKey: 'nav.crm', href: '/crm', icon: PhoneArrowUpRightIcon },
+  {
+    key: 'crmGroup',
+    labelKey: 'nav.crm',
+    icon: PhoneArrowUpRightIcon,
+    children: [
+      { key: 'leads', labelKey: 'nav.leads', href: '/crm?tab=leads', icon: PhoneArrowUpRightIcon },
+      { key: 'opportunities', labelKey: 'nav.opportunities', href: '/crm?tab=opportunities', icon: BanknotesIcon },
+      { key: 'conversion', labelKey: 'nav.conversion', href: '/crm?tab=leads', icon: UsersIcon },
+    ],
+  },
   {
     key: 'assetsGroup',
     labelKey: 'nav.assetsGroup',
     icon: ArchiveBoxIcon,
     children: [
-      { key: 'assets', labelKey: 'nav.fixedAssets', href: '/assets', icon: ArchiveBoxIcon },
+      { key: 'fixedAssets', labelKey: 'nav.fixedAssets', href: '/assets', icon: ArchiveBoxIcon },
+      { key: 'depreciation', labelKey: 'nav.depreciation', href: '/assets', icon: ArchiveBoxIcon },
+      { key: 'disposal', labelKey: 'nav.disposal', href: '/assets', icon: ArchiveBoxIcon },
     ],
   },
   {
@@ -128,12 +140,24 @@ const navigation: NavEntry[] = [
     labelKey: 'nav.projectsGroup',
     icon: BriefcaseIcon,
     children: [
-      { key: 'projects', labelKey: 'nav.projects', href: '/projects', icon: BriefcaseIcon },
-      { key: 'tasks', labelKey: 'nav.tasks', href: '/projects', icon: ClipboardDocumentListIcon },
-      { key: 'timesheets', labelKey: 'nav.timesheets', href: '/projects', icon: ClockIcon },
+      { key: 'projects', labelKey: 'nav.projects', href: '/projects?tab=projects', icon: BriefcaseIcon },
+      { key: 'tasks', labelKey: 'nav.tasks', href: '/projects?tab=tasks', icon: ClipboardDocumentListIcon },
+      { key: 'timesheets', labelKey: 'nav.timesheets', href: '/projects?tab=timesheets', icon: ClockIcon },
     ],
   },
-  { key: 'reports', labelKey: 'nav.reports', href: '/reports', icon: ChartBarIcon },
+  {
+    key: 'reportsGroup',
+    labelKey: 'nav.reports',
+    icon: ChartBarIcon,
+    children: [
+      { key: 'trialBalance', labelKey: 'nav.trialBalance', href: '/reports?tab=trialBalance', icon: ChartBarIcon },
+      { key: 'profitAndLoss', labelKey: 'nav.profitAndLoss', href: '/reports?tab=profitAndLoss', icon: ChartBarIcon },
+      { key: 'balanceSheet', labelKey: 'nav.balanceSheetReport', href: '/reports?tab=balanceSheet', icon: ChartBarIcon },
+      { key: 'stockReport', labelKey: 'nav.stockReport', href: '/reports?tab=stock', icon: ChartBarIcon },
+      { key: 'salesReport', labelKey: 'nav.salesReport', href: '/reports?tab=sales', icon: ChartBarIcon },
+      { key: 'payrollReport', labelKey: 'nav.payrollReport', href: '/reports?tab=payroll', icon: ChartBarIcon },
+    ],
+  },
   { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
 ];
 
@@ -147,6 +171,8 @@ const GroupNavItem = ({
   isActive: boolean;
 }) => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const currentFullPath = location.pathname + location.search;
   const [flyoutOpen, setFlyoutOpen] = useState(false);
   const [flyoutPos, setFlyoutPos] = useState<{ top: number; right?: number; left?: number }>({ top: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -203,21 +229,22 @@ const GroupNavItem = ({
           style={{ top: flyoutPos.top, right: flyoutPos.right, left: flyoutPos.left }}
         >
           <div className="px-4 py-1.5 text-xs font-semibold text-secondary-400">{t(entry.labelKey)}</div>
-          {entry.children.map((child) => (
-            <NavLink
-              key={child.key}
-              to={child.href}
-              onClick={() => setFlyoutOpen(false)}
-              className={({ isActive: childActive }) =>
-                `flex items-center px-4 py-2.5 text-sm transition-colors ${
+          {entry.children.map((child) => {
+            const childActive = currentFullPath === child.href;
+            return (
+              <NavLink
+                key={child.key}
+                to={child.href}
+                onClick={() => setFlyoutOpen(false)}
+                className={`flex items-center px-4 py-2.5 text-sm transition-colors ${
                   childActive ? 'bg-primary-50 text-primary-700' : 'text-secondary-700 hover:bg-secondary-50'
-                }`
-              }
-            >
-              <child.icon className="w-4 h-4 flex-shrink-0" />
-              <span className="ms-2">{t(child.labelKey)}</span>
-            </NavLink>
-          ))}
+                }`}
+              >
+                <child.icon className="w-4 h-4 flex-shrink-0" />
+                <span className="ms-2">{t(child.labelKey)}</span>
+              </NavLink>
+            );
+          })}
         </div>
       )}
     </div>
@@ -265,7 +292,7 @@ export const Sidebar = () => {
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto h-[calc(100vh-8rem)]">
         {navigation.map((entry) => {
           if (!isGroup(entry)) {
-            const isActive = location.pathname.startsWith(entry.href);
+            const isActive = location.pathname.startsWith(entry.href.split('?')[0]);
             return (
               <NavLink
                 key={entry.key}
@@ -279,7 +306,7 @@ export const Sidebar = () => {
             );
           }
 
-          const groupHasActiveChild = entry.children.some((c) => location.pathname.startsWith(c.href));
+          const groupHasActiveChild = entry.children.some((c) => location.pathname.startsWith(c.href.split('?')[0]));
           return (
             <GroupNavItem key={entry.key} entry={entry} sidebarOpen={sidebarOpen} isActive={groupHasActiveChild} />
           );

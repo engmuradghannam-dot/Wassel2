@@ -1,7 +1,7 @@
 // MuradERP App Component
 // Proprietary - All Rights Reserved © 2026 Murad Ghannam
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { MainLayout } from './components/Layout/MainLayout';
 import { LoginPage } from './pages/Auth/Login';
@@ -24,9 +24,28 @@ import { ReportsPage } from './pages/Reports/ReportsPage';
 
 // Placeholder pages (data model exists, controllers/UI still pending - next phase)
 const CompaniesPage = () => <div className="card"><h1 className="text-2xl font-bold">الشركات</h1></div>;
-const ManufacturingPage = () => <div className="card"><h1 className="text-2xl font-bold">التصنيع</h1><p className="text-secondary-500 mt-2">قيد الإنشاء - BOM وأوامر الإنتاج وبطاقات العمل</p></div>;
-const HRPage = () => <div className="card"><h1 className="text-2xl font-bold">الحضور والإجازات والرواتب</h1><p className="text-secondary-500 mt-2">قيد الإنشاء</p></div>;
-const ProjectsPage = () => <div className="card"><h1 className="text-2xl font-bold">المشاريع</h1><p className="text-secondary-500 mt-2">قيد الإنشاء - المهام والجداول الزمنية</p></div>;
+const tabLabels: Record<string, string> = {
+  bom: 'قوائم المواد (BOM)', workOrders: 'أوامر الإنتاج', jobCards: 'بطاقات العمل',
+  attendance: 'الحضور', leaves: 'الإجازات', payroll: 'الرواتب',
+  projects: 'المشاريع', tasks: 'المهام', timesheets: 'الجداول الزمنية',
+};
+
+const PendingModulePage = ({ title }: { title: string }) => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get('tab');
+  const sectionLabel = tab ? tabLabels[tab] || tab : null;
+  return (
+    <div className="card">
+      <h1 className="text-2xl font-bold">{title}{sectionLabel ? ` - ${sectionLabel}` : ''}</h1>
+      <p className="text-secondary-500 mt-2">
+        قيد الإنشاء — البيانات جاهزة بالخلفية، وواجهة الاستخدام قادمة بالمرحلة الجاية
+      </p>
+    </div>
+  );
+};
+const ManufacturingPage = () => <PendingModulePage title="التصنيع" />;
+const HRPage = () => <PendingModulePage title="الموارد البشرية" />;
+const ProjectsPage = () => <PendingModulePage title="المشاريع" />;
 const SettingsPage = () => <div className="card"><h1 className="text-2xl font-bold">الإعدادات</h1></div>;
 
 function App() {
