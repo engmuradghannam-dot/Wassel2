@@ -32,7 +32,7 @@ const DECREASING_TYPES = new Set(['ISSUE']);
 export const createStockEntry = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = stockEntrySchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const warehouse = await prisma.warehouse.findUnique({ where: { id: data.warehouseId } });
@@ -79,7 +79,7 @@ export const createStockEntry = async (req: any, res: Response, next: NextFuncti
 
 export const getStockEntries = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const entries = await prisma.stockEntry.findMany({

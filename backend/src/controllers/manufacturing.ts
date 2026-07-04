@@ -27,7 +27,7 @@ const bomSchema = z.object({
 export const createBOM = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = bomSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const rawMaterials = data.rawMaterials.map((rm) => ({
@@ -58,7 +58,7 @@ export const createBOM = async (req: any, res: Response, next: NextFunction) => 
 
 export const getBOMs = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const boms = await prisma.bOM.findMany({
@@ -89,7 +89,7 @@ const workOrderSchema = z.object({
 export const createWorkOrder = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = workOrderSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const workOrder = await prisma.workOrder.create({
@@ -116,7 +116,7 @@ export const createWorkOrder = async (req: any, res: Response, next: NextFunctio
 
 export const getWorkOrders = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const workOrders = await prisma.workOrder.findMany({

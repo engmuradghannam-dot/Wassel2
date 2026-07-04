@@ -50,7 +50,7 @@ export const createAttendance = async (req: any, res: Response, next: NextFuncti
 
 export const getAttendance = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
     const employeeId = req.query.employeeId as string | undefined;
 
@@ -99,7 +99,7 @@ export const createLeave = async (req: any, res: Response, next: NextFunction) =
 
 export const getLeaves = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const leaves = await prisma.leave.findMany({
@@ -189,7 +189,7 @@ export const createPayroll = async (req: any, res: Response, next: NextFunction)
 
 export const getPayrolls = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const payrolls = await prisma.payroll.findMany({

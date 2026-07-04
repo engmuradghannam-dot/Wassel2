@@ -26,7 +26,7 @@ const projectSchema = z.object({
 export const createProject = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = projectSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const project = await prisma.project.create({
@@ -49,7 +49,7 @@ export const createProject = async (req: any, res: Response, next: NextFunction)
 
 export const getProjects = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const projects = await prisma.project.findMany({
@@ -129,7 +129,7 @@ export const createTask = async (req: any, res: Response, next: NextFunction) =>
 export const getTasks = async (req: any, res: Response, next: NextFunction) => {
   try {
     const projectId = req.query.projectId as string | undefined;
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const tasks = await prisma.task.findMany({
@@ -196,7 +196,7 @@ export const createTimesheet = async (req: any, res: Response, next: NextFunctio
 export const getTimesheets = async (req: any, res: Response, next: NextFunction) => {
   try {
     const projectId = req.query.projectId as string | undefined;
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const timesheets = await prisma.timesheet.findMany({

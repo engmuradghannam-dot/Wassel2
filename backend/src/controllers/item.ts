@@ -30,7 +30,7 @@ function generateCode(prefix: string) {
 export const createItem = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = itemSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
 
     if (!companyId) {
       throw new AppError('Company ID required', 400);
@@ -56,7 +56,7 @@ export const createItem = async (req: any, res: Response, next: NextFunction) =>
 
 export const getItems = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) {
       throw new AppError('Company ID required', 400);
     }

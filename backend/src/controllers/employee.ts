@@ -31,7 +31,7 @@ const employeeSchema = z.object({
 export const createEmployee = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = employeeSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
 
     if (!companyId) {
       throw new AppError('Company ID required', 400);

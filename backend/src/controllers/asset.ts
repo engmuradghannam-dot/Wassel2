@@ -23,7 +23,7 @@ const assetSchema = z.object({
 export const createAsset = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = assetSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const assetNumber = `AST-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2,6).toUpperCase()}`;

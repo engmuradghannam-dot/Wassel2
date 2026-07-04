@@ -28,7 +28,7 @@ const accountSchema = z.object({
 export const createAccount = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = accountSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const account = await prisma.account.create({
@@ -48,7 +48,7 @@ export const createAccount = async (req: any, res: Response, next: NextFunction)
 
 export const getAccounts = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const accounts = await prisma.account.findMany({
@@ -110,7 +110,7 @@ function generateEntryNumber(sequence: number): string {
 export const createJournalEntry = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = journalEntrySchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     for (const line of data.lines) {
@@ -156,7 +156,7 @@ export const createJournalEntry = async (req: any, res: Response, next: NextFunc
 
 export const getJournalEntries = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const entries = await prisma.journalEntry.findMany({

@@ -4,7 +4,7 @@ import { successResponse } from '../utils/response';
 
 export const getDashboardStats = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
 
     if (!companyId) {
       return res.json(successResponse({

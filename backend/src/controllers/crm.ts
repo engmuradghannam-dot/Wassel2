@@ -20,7 +20,7 @@ const leadSchema = z.object({
 export const createLead = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = leadSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const lead = await prisma.lead.create({
@@ -74,7 +74,7 @@ export const updateLeadStatus = async (req: any, res: Response, next: NextFuncti
 export const convertLead = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
 
     const lead = await prisma.lead.findUnique({ where: { id } });
     if (!lead) throw new AppError('Lead not found', 404);
@@ -121,7 +121,7 @@ const opportunitySchema = z.object({
 export const createOpportunity = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = opportunitySchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const opportunity = await prisma.opportunity.create({

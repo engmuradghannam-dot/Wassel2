@@ -66,7 +66,7 @@ export const createPayment = async (req: any, res: Response, next: NextFunction)
 
 export const getPayments = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const payments = await prisma.payment.findMany({

@@ -28,7 +28,7 @@ function generateReceiptNumber(sequence: number): string {
 export const createPurchaseReceipt = async (req: any, res: Response, next: NextFunction) => {
   try {
     const data = receiptSchema.parse(req.body);
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const count = await prisma.purchaseReceipt.count({ where: { companyId } });
@@ -58,7 +58,7 @@ export const createPurchaseReceipt = async (req: any, res: Response, next: NextF
 
 export const getPurchaseReceipts = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const companyId = req.query.companyId || req.user?.companyId;
+    const companyId = req.body?.companyId || req.query.companyId || req.user?.companyId;
     if (!companyId) throw new AppError('Company ID required', 400);
 
     const receipts = await prisma.purchaseReceipt.findMany({
