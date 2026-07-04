@@ -8,7 +8,7 @@ import { AppError } from '../middleware/errorHandler';
 const leadSchema = z.object({
   leadName: z.string().min(2),
   companyName: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().or(z.literal('')),
   phone: z.string().optional(),
   mobile: z.string().optional(),
   source: z.string().optional(),
@@ -26,6 +26,7 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
     const lead = await prisma.lead.create({
       data: {
         ...data,
+        email: data.email || undefined,
         companyId,
         createdById: req.user.userId,
       },

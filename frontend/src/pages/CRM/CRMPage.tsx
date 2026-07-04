@@ -47,7 +47,7 @@ export const CRMPage = () => {
 
   const handleLeadSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createLead(leadForm);
+    await createLead({ ...leadForm, email: leadForm.email || undefined });
     setLeadForm(emptyLeadForm);
     setIsLeadModalOpen(false);
   };

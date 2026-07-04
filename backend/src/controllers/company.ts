@@ -10,7 +10,7 @@ const companySchema = z.object({
   legalName: z.string().optional(),
   taxId: z.string().optional(),
   commercialReg: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().or(z.literal('')),
   phone: z.string().optional(),
   website: z.string().optional(),
   address: z.string().optional(),
