@@ -194,14 +194,19 @@ const GroupNavItem = ({
   const openFlyout = () => {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (rect) {
-      // Position the flyout just to the left of the sidebar button, at the
+      // Position the flyout just to the side of the sidebar button, at the
       // same vertical position — a fixed position element so it escapes the
-      // scrollable nav's clipping instead of being cut off.
+      // scrollable nav's clipping instead of being cut off. Clamp the top so
+      // the panel never runs past the bottom of the viewport (e.g. for
+      // groups near the bottom of the sidebar, like Reports).
       const isRtl = document.documentElement.dir === 'rtl';
+      const estimatedHeight = 44 + entry.children.length * 44 + 16;
+      const maxTop = Math.max(8, window.innerHeight - estimatedHeight - 8);
+      const top = Math.min(rect.top, maxTop);
       setFlyoutPos(
         isRtl
-          ? { top: rect.top, right: window.innerWidth - rect.left + 8 }
-          : { top: rect.top, left: rect.right + 8 }
+          ? { top, right: window.innerWidth - rect.left + 8 }
+          : { top, left: rect.right + 8 }
       );
     }
     setFlyoutOpen((v) => !v);
@@ -225,7 +230,7 @@ const GroupNavItem = ({
       {flyoutOpen && (
         <div
           ref={panelRef}
-          className="fixed z-50 w-56 bg-white rounded-xl shadow-lg border border-secondary-200 py-2"
+          className="fixed z-50 w-56 bg-white rounded-xl shadow-lg border border-secondary-200 py-2 max-h-[80vh] overflow-y-auto"
           style={{ top: flyoutPos.top, right: flyoutPos.right, left: flyoutPos.left }}
         >
           <div className="px-4 py-1.5 text-xs font-semibold text-secondary-400">{t(entry.labelKey)}</div>
