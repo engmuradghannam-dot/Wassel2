@@ -10,6 +10,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seeders/seed.ts",
+    "db:seed-demo": "tsx prisma/seeders/seedDemo.ts",
     "db:studio": "prisma studio",
     "test": "jest",
     "lint": "eslint src --ext .ts",

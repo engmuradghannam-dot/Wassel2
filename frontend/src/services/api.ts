@@ -320,3 +320,56 @@ export const purchaseReceiptApi = {
     api.post('/purchase-receipts', data, companyId ? { companyId } : undefined),
   submit: (id: string) => api.post(`/purchase-receipts/${id}/submit`),
 };
+
+// Manufacturing API
+export const manufacturingApi = {
+  getBOMs: (params?: any) => api.get('/manufacturing/boms', params),
+  createBOM: (data: any, companyId?: string) =>
+    api.post('/manufacturing/boms', data, companyId ? { companyId } : undefined),
+  getWorkOrders: (params?: any) => api.get('/manufacturing/work-orders', params),
+  createWorkOrder: (data: any, companyId?: string) =>
+    api.post('/manufacturing/work-orders', data, companyId ? { companyId } : undefined),
+  completeWorkOrder: (id: string) => api.post(`/manufacturing/work-orders/${id}/complete`),
+  getJobCards: (params?: any) => api.get('/manufacturing/job-cards', params),
+  createJobCard: (data: any) => api.post('/manufacturing/job-cards', data),
+  updateJobCardStatus: (id: string, status: string) => api.put(`/manufacturing/job-cards/${id}/status`, { status }),
+};
+
+// Projects API
+export const projectApi = {
+  getAll: (params?: any) => api.get('/projects', params),
+  create: (data: any, companyId?: string) =>
+    api.post('/projects', data, companyId ? { companyId } : undefined),
+  update: (id: string, data: any) => api.put(`/projects/${id}`, data),
+  delete: (id: string) => api.delete(`/projects/${id}`),
+};
+
+export const taskApi = {
+  getAll: (params?: any) => api.get('/tasks', params),
+  create: (data: any) => api.post('/tasks', data),
+  updateStatus: (id: string, status: string) => api.put(`/tasks/${id}/status`, { status }),
+};
+
+export const timesheetApi = {
+  getAll: (params?: any) => api.get('/projects/timesheets', params),
+  create: (data: any) => api.post('/projects/timesheets', data),
+};
+
+// HR API
+export const attendanceApi = {
+  getAll: (params?: any) => api.get('/attendance', params),
+  create: (data: any) => api.post('/attendance', data),
+};
+
+export const leaveApi = {
+  getAll: (params?: any) => api.get('/leaves', params),
+  create: (data: any) => api.post('/leaves', data),
+  updateStatus: (id: string, status: string) => api.put(`/leaves/${id}/status`, { status }),
+};
+
+export const payrollApi = {
+  getAll: (params?: any) => api.get('/payrolls', params),
+  create: (data: any) => api.post('/payrolls', data),
+  markPaid: (id: string) => api.post(`/payrolls/${id}/mark-paid`),
+  getEndOfService: (employeeId: string) => api.get(`/payrolls/end-of-service/${employeeId}`),
+};
