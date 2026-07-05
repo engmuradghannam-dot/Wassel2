@@ -4,7 +4,7 @@ import prisma from '../src/utils/prisma';
 
 describe('Auth API', () => {
   const testUser = {
-    email: `test_${Date.now()}@example.com`,
+    email: `authtest_${Date.now()}@example.com`,
     password: 'TestPassword123!',
     firstName: 'Test',
     lastName: 'User',
@@ -14,7 +14,7 @@ describe('Auth API', () => {
   let authToken: string;
 
   afterAll(async () => {
-    await prisma.user.deleteMany({ where: { email: { contains: 'test_' } } });
+    await prisma.user.deleteMany({ where: { email: { contains: 'authtest_' } } });
     await prisma.$disconnect();
   });
 
@@ -26,7 +26,7 @@ describe('Auth API', () => {
         .expect(201);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.email).toBe(testUser.email);
+      expect(res.body.data.user.email).toBe(testUser.email);
       expect(res.body.data.token).toBeDefined();
     });
 

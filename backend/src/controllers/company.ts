@@ -118,7 +118,6 @@ async function assertCompanyAccess(req: any, companyId: string) {
 export const getCompany = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    await assertCompanyAccess(req, id);
 
     const company = await prisma.company.findUnique({
       where: { id },
@@ -145,6 +144,8 @@ export const getCompany = async (req: any, res: Response, next: NextFunction) =>
     if (!company) {
       throw new AppError('Company not found', 404);
     }
+
+    await assertCompanyAccess(req, id);
 
     res.json(successResponse(company));
   } catch (error) {

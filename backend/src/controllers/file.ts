@@ -1,5 +1,4 @@
 import { Response, NextFunction } from 'express';
-import { z } from 'zod';
 import prisma from '../utils/prisma';
 import { successResponse } from '../utils/response';
 import { AppError } from '../middleware/errorHandler';
@@ -14,6 +13,7 @@ export const uploadFile = async (req: any, res: Response, next: NextFunction) =>
     if (!req.file) throw new AppError('No file uploaded', 400);
     const { entityType, entityId } = req.body;
     const file = req.file;
+    const companyId = req.companyId!;
 
     const fileRecord = await prisma.fileAttachment.create({
       data: {
@@ -25,6 +25,7 @@ export const uploadFile = async (req: any, res: Response, next: NextFunction) =>
         url: `/uploads/${file.filename}`,
         entityType: entityType || 'GENERAL',
         entityId: entityId || null,
+        companyId,
         uploadedBy: req.user.userId,
       },
     });
@@ -37,8 +38,9 @@ export const uploadFile = async (req: any, res: Response, next: NextFunction) =>
 
 export const getFiles = async (req: any, res: Response, next: NextFunction) => {
   try {
+    const companyId = req.companyId!;
     const { entityType, entityId } = req.query;
-    const where: any = {};
+    const where: any = { companyId };
     if (entityType) where.entityType = entityType;
     if (entityId) where.entityId = entityId;
 
@@ -56,7 +58,8 @@ export const getFiles = async (req: any, res: Response, next: NextFunction) => {
 export const deleteFile = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const file = await prisma.fileAttachment.findUnique({ where: { id } });
+    const companyId = req.companyId!;
+    const file = await prisma.fileAttachment.findFirst({ where: { id, companyId } });
     if (!file) throw new AppError('File not found', 404);
     if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
     await prisma.fileAttachment.delete({ where: { id } });
@@ -69,7 +72,8 @@ export const deleteFile = async (req: any, res: Response, next: NextFunction) =>
 export const downloadFile = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const file = await prisma.fileAttachment.findUnique({ where: { id } });
+    const companyId = req.companyId!;
+    const file = await prisma.fileAttachment.findFirst({ where: { id, companyId } });
     if (!file) throw new AppError('File not found', 404);
     res.download(file.path, file.originalName);
   } catch (error) {

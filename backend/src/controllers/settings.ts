@@ -50,7 +50,7 @@ export const getCompanySettings = async (req: any, res: Response, next: NextFunc
       where: { id: companyId },
       select: {
         id: true, name: true, nameAr: true, taxId: true, logo: true,
-        address: true, phone: true, email: true, defaultCurrency: true,
+        address: true, phone: true, email: true, currency: true,
         fiscalYearStart: true, fiscalYearEnd: true,
       },
     });

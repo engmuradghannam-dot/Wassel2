@@ -35,6 +35,9 @@ model User {
   sessions      Session[]
   auditLogs     AuditLog[]
   notifications Notification[]
+  uploadedFiles FileAttachment[]
+  zakatCalculations ZakatCalculation[]
+  dataImportLogs DataImportLog[]
 
   // Employee relation
   employee      Employee?
@@ -195,6 +198,11 @@ model Company {
   printFormats PrintFormat[]
   customReports CustomReport[]
   members      CompanyMember[]
+  auditLogs    AuditLog[]
+  fileAttachments FileAttachment[]
+  systemSettings SystemSetting[]
+  zakatCalculations ZakatCalculation[]
+  dataImportLogs DataImportLog[]
 
   @@map("companies")
 }
@@ -1339,14 +1347,19 @@ model AuditLog {
   entityType  String   // Company, Invoice, etc.
   entityId    String?
 
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
   oldValues   Json?
   newValues   Json?
+  details     Json?
 
   ipAddress   String?
   userAgent   String?
 
   createdAt   DateTime @default(now())
 
+  @@index([companyId])
   @@map("audit_logs")
 }
 
@@ -1375,6 +1388,78 @@ enum NotificationType {
   SUCCESS
   WARNING
   ERROR
+  APPROVAL
+}
+
+model FileAttachment {
+  id           String   @id @default(uuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  url          String
+
+  entityType   String   @default("GENERAL")
+  entityId     String?
+
+  companyId    String?
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  uploadedBy   String
+  uploader     User     @relation(fields: [uploadedBy], references: [id])
+
+  createdAt    DateTime @default(now())
+
+  @@index([companyId])
+  @@index([entityType, entityId])
+  @@map("file_attachments")
+}
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String
+  value       Json
+  category    String   @default("GENERAL")
+  isGlobal    Boolean  @default(false)
+
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([key, companyId])
+  @@map("system_settings")
+}
+
+model ZakatCalculation {
+  id             String   @id @default(uuid())
+  year           Int
+  hijriYear      String?
+
+  cash           Decimal  @default(0) @db.Decimal(18, 2)
+  inventory      Decimal  @default(0) @db.Decimal(18, 2)
+  receivables    Decimal  @default(0) @db.Decimal(18, 2)
+  investments    Decimal  @default(0) @db.Decimal(18, 2)
+  goldSilver     Decimal  @default(0) @db.Decimal(18, 2)
+  debts          Decimal  @default(0) @db.Decimal(18, 2)
+
+  totalAssets    Decimal  @default(0) @db.Decimal(18, 2)
+  netAssets      Decimal  @default(0) @db.Decimal(18, 2)
+  zakatAmount    Decimal  @default(0) @db.Decimal(18, 2)
+  nisabThreshold Decimal  @default(85000) @db.Decimal(18, 2)
+
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  calculatedBy   String
+  calculator     User     @relation(fields: [calculatedBy], references: [id])
+
+  createdAt      DateTime @default(now())
+
+  @@unique([companyId, year])
+  @@map("zakat_calculations")
 }
 
 model Lead {
@@ -2396,9 +2481,17 @@ model DataImportLog {
   failedRecords Int    @default(0)
   status      String   @default("Pending")
   errorLog    String?
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@index([companyId])
   @@map("data_import_logs")
 }
 

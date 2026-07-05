@@ -8,15 +8,14 @@ const workflowSchema = z.object({
   name: z.string().min(2),
   documentType: z.string().min(1),
   states: z.array(z.object({
-    name: z.string(),
-    isStart: z.boolean().optional(),
-    isEnd: z.boolean().optional(),
+    state: z.string(),
+    style: z.string().optional(),
   })),
   transitions: z.array(z.object({
-    fromState: z.string(),
-    toState: z.string(),
-    requiredRole: z.string().optional(),
-    condition: z.string().optional(),
+    state: z.string(),
+    action: z.string(),
+    nextState: z.string(),
+    allowedRoles: z.array(z.string()).optional(),
   })),
 });
 
@@ -32,25 +31,22 @@ export const createWorkflow = async (req: any, res: Response, next: NextFunction
 
     const workflow = await prisma.workflow.create({
       data: {
-        name: data.name,
-        documentType: data.documentType,
+        workflowName: data.name,
+        doctype: data.documentType,
         companyId,
         isActive: true,
         states: {
-          create: data.states.map((s, i) => ({
-            name: s.name,
-            order: i,
-            isStart: s.isStart || false,
-            isEnd: s.isEnd || false,
+          create: data.states.map((s) => ({
+            state: s.state,
+            style: s.style || 'Info',
           })),
         },
         transitions: {
-          create: data.transitions.map((t, i) => ({
-            fromState: t.fromState,
-            toState: t.toState,
-            order: i,
-            requiredRole: t.requiredRole,
-            condition: t.condition,
+          create: data.transitions.map((t) => ({
+            state: t.state,
+            action: t.action,
+            nextState: t.nextState,
+            allowedRoles: t.allowedRoles || [],
           })),
         },
       },
@@ -83,17 +79,17 @@ export const submitForApproval = async (req: any, res: Response, next: NextFunct
     const userId = req.user.userId;
 
     const workflow = await prisma.workflow.findFirst({
-      where: { id: workflowId, companyId, documentType },
+      where: { id: workflowId, companyId, doctype: documentType },
       include: { states: true },
     });
     if (!workflow) throw new AppError('Workflow not found', 404);
+    if (workflow.states.length === 0) throw new AppError('Workflow has no states', 400);
 
-    const startState = workflow.states.find(s => s.isStart);
-    if (!startState) throw new AppError('Workflow has no start state', 400);
+    const startState = workflow.states[0];
 
     const notification = await prisma.notification.create({
       data: {
-        userId: workflow.createdBy || userId,
+        userId,
         title: `Approval Request: ${documentType}`,
         message: `Document ${documentId} is pending approval`,
         type: 'APPROVAL',
@@ -112,10 +108,12 @@ export const processApproval = async (req: any, res: Response, next: NextFunctio
     const { id } = req.params;
     const { action, comment } = approvalActionSchema.parse(req.body);
     const userId = req.user.userId;
+    const companyId = req.companyId!;
 
     await prisma.auditLog.create({
       data: {
         userId,
+        companyId,
         action: `APPROVAL_${action}`,
         entityType: 'APPROVAL',
         entityId: id,
@@ -133,7 +131,7 @@ export const getPendingApprovals = async (req: any, res: Response, next: NextFun
   try {
     const userId = req.user.userId;
     const notifications = await prisma.notification.findMany({
-      where: { userId, type: 'APPROVAL', read: false },
+      where: { userId, type: 'APPROVAL', isRead: false },
       orderBy: { createdAt: 'desc' },
     });
     res.json(successResponse(notifications));

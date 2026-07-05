@@ -76,8 +76,8 @@ export const getZakatReport = async (req: any, res: Response, next: NextFunction
     if (!calculation) return res.json(successResponse(null, 'No zakat calculation found'));
 
     const accounts = await prisma.account.findMany({
-      where: { companyId, accountType: { in: ['ASSET', 'LIABILITY'] } },
-      select: { name: true, accountType: true, balance: true },
+      where: { companyId, accountType: { in: ['CURRENT_ASSET', 'FIXED_ASSET', 'INTANGIBLE_ASSET', 'CURRENT_LIABILITY', 'LONG_TERM_LIABILITY'] } },
+      select: { name: true, accountType: true, currentBalance: true },
     });
 
     res.json(successResponse({ calculation, accountSummary: accounts, generatedAt: new Date().toISOString() }));

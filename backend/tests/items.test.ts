@@ -8,15 +8,15 @@ describe('Items API', () => {
   let itemId: string;
 
   const testItem = {
-    itemCode: `ITEM-${Date.now()}`,
+    code: `ITEM-${Date.now()}`,
     name: 'Test Item',
     nameAr: 'صنف تجريبي',
     description: 'Test item description',
-    unitPrice: 100,
-    costPrice: 50,
-    uom: 'piece',
-    category: 'Electronics',
-    itemType: 'PRODUCT',
+    sellingPrice: 100,
+    standardCost: 50,
+    unitOfMeasure: 'PCS',
+    itemGroup: 'Electronics',
+    itemType: 'INVENTORY',
   };
 
   beforeAll(async () => {
@@ -37,10 +37,11 @@ describe('Items API', () => {
       .send({
         name: 'Item Test Company',
         taxId: '3333333333',
-        defaultCurrency: 'SAR',
+        currency: 'SAR',
       });
 
-    companyId = companyRes.body.data.id;
+    companyId = companyRes.body.data.company.id;
+    authToken = companyRes.body.data.token;
   });
 
   afterAll(async () => {
@@ -94,11 +95,11 @@ describe('Items API', () => {
       const res = await request(app)
         .put(`/api/items/${itemId}`)
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ unitPrice: 150 })
+        .send({ sellingPrice: 150 })
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.unitPrice).toBe(150);
+      expect(Number(res.body.data.sellingPrice)).toBe(150);
     });
   });
 

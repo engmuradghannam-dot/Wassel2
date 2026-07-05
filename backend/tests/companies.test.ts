@@ -13,7 +13,7 @@ describe('Companies API', () => {
     address: '123 Test Street',
     phone: '+966501234567',
     email: 'test@company.com',
-    defaultCurrency: 'SAR',
+    currency: 'SAR',
   };
 
   beforeAll(async () => {
@@ -31,8 +31,12 @@ describe('Companies API', () => {
   });
 
   afterAll(async () => {
-    await prisma.company.deleteMany({ where: { name: { contains: 'Test Company' } } });
-    await prisma.user.deleteMany({ where: { email: { contains: 'company_test_' } } });
+    const users = await prisma.user.findMany({ where: { email: { contains: 'company_test_' } }, select: { id: true } });
+    const userIds = users.map((u) => u.id);
+    if (userIds.length > 0) {
+      await prisma.company.deleteMany({ where: { createdById: { in: userIds } } });
+    }
+    await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.$disconnect();
   });
 
@@ -45,8 +49,9 @@ describe('Companies API', () => {
         .expect(201);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.name).toBe(testCompany.name);
-      companyId = res.body.data.id;
+      expect(res.body.data.company.name).toBe(testCompany.name);
+      companyId = res.body.data.company.id;
+      authToken = res.body.data.token;
     });
 
     it('should not create company without auth', async () => {

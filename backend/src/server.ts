@@ -168,8 +168,9 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`
+if (process.env.NODE_ENV !== 'test') {
+  httpServer.listen(PORT, () => {
+    console.log(`
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║           MuradERP Server v1.0.0                            ║
@@ -180,7 +181,8 @@ httpServer.listen(PORT, () => {
 ║           Environment: ${process.env.NODE_ENV || 'development'}                    ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
-  `);
-});
+    `);
+  });
+}
 
-export { io };
+export { io, app, httpServer };

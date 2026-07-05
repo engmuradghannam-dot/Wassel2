@@ -37,10 +37,11 @@ describe('Customers API', () => {
       .send({
         name: 'Customer Test Company',
         taxId: '1111111111',
-        defaultCurrency: 'SAR',
+        currency: 'SAR',
       });
 
-    companyId = companyRes.body.data.id;
+    companyId = companyRes.body.data.company.id;
+    authToken = companyRes.body.data.token;
   });
 
   afterAll(async () => {
@@ -63,12 +64,11 @@ describe('Customers API', () => {
       customerId = res.body.data.id;
     });
 
-    it('should not create customer without companyId', async () => {
+    it('should not create customer without auth', async () => {
       const res = await request(app)
         .post('/api/customers')
-        .set('Authorization', `Bearer ${authToken}`)
-        .send(testCustomer)
-        .expect(400);
+        .send({ ...testCustomer, companyId })
+        .expect(401);
 
       expect(res.body.success).toBe(false);
     });
@@ -108,7 +108,7 @@ describe('Customers API', () => {
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.creditLimit).toBe(20000);
+      expect(Number(res.body.data.creditLimit)).toBe(20000);
     });
   });
 

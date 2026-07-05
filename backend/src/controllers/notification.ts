@@ -9,7 +9,7 @@ export const getNotifications = async (req: any, res: Response, next: NextFuncti
     const { unreadOnly } = req.query;
 
     const where: any = { userId };
-    if (unreadOnly === 'true') where.read = false;
+    if (unreadOnly === 'true') where.isRead = false;
 
     const notifications = await prisma.notification.findMany({
       where,
@@ -18,7 +18,7 @@ export const getNotifications = async (req: any, res: Response, next: NextFuncti
     });
 
     const unreadCount = await prisma.notification.count({
-      where: { userId, read: false },
+      where: { userId, isRead: false },
     });
 
     res.json(successResponse({ notifications, unreadCount }));
@@ -34,7 +34,7 @@ export const markAsRead = async (req: any, res: Response, next: NextFunction) =>
 
     const notification = await prisma.notification.updateMany({
       where: { id, userId },
-      data: { read: true, readAt: new Date() },
+      data: { isRead: true, readAt: new Date() },
     });
 
     if (notification.count === 0) throw new AppError('Notification not found', 404);
@@ -48,8 +48,8 @@ export const markAllAsRead = async (req: any, res: Response, next: NextFunction)
   try {
     const userId = req.user.userId;
     await prisma.notification.updateMany({
-      where: { userId, read: false },
-      data: { read: true, readAt: new Date() },
+      where: { userId, isRead: false },
+      data: { isRead: true, readAt: new Date() },
     });
     res.json(successResponse(null, 'All notifications marked as read'));
   } catch (error) {
@@ -72,7 +72,7 @@ export const createNotification = async (req: any, res: Response, next: NextFunc
   try {
     const { userId, title, message, type, link } = req.body;
     const notification = await prisma.notification.create({
-      data: { userId, title, message, type, link, read: false },
+      data: { userId, title, message, type, link, isRead: false },
     });
     res.status(201).json(successResponse(notification, 'Notification created'));
   } catch (error) {

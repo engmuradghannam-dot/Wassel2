@@ -53,11 +53,13 @@ export const importData = async (req: any, res: Response, next: NextFunction) =>
       data: {
         companyId,
         userId,
-        entityType,
+        importType: 'MANUAL',
+        doctype: entityType,
         totalRecords: data.length,
-        successCount: results.created,
-        failedCount: results.failed,
-        errors: results.errors,
+        successRecords: results.created,
+        failedRecords: results.failed,
+        status: results.failed > 0 ? 'Completed with errors' : 'Completed',
+        errorLog: results.errors.length > 0 ? results.errors.join('; ') : null,
       },
     });
 

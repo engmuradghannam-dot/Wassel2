@@ -35,10 +35,11 @@ describe('Suppliers API', () => {
       .send({
         name: 'Supplier Test Company',
         taxId: '2222222222',
-        defaultCurrency: 'SAR',
+        currency: 'SAR',
       });
 
-    companyId = companyRes.body.data.id;
+    companyId = companyRes.body.data.company.id;
+    authToken = companyRes.body.data.token;
   });
 
   afterAll(async () => {

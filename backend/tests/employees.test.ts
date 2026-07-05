@@ -8,15 +8,15 @@ describe('Employees API', () => {
   let employeeId: string;
 
   const testEmployee = {
-    employeeId: `EMP-${Date.now()}`,
+    employeeNumber: `EMP-${Date.now()}`,
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@test.com',
     phone: '+966501234567',
     department: 'IT',
     designation: 'Developer',
-    joinDate: new Date().toISOString().split('T')[0],
-    salary: 10000,
+    dateOfJoining: new Date().toISOString(),
+    basicSalary: 10000,
     employmentType: 'FULL_TIME',
   };
 
@@ -38,16 +38,21 @@ describe('Employees API', () => {
       .send({
         name: 'Employee Test Company',
         taxId: '5555555555',
-        defaultCurrency: 'SAR',
+        currency: 'SAR',
       });
 
-    companyId = companyRes.body.data.id;
+    companyId = companyRes.body.data.company.id;
+    authToken = companyRes.body.data.token;
   });
 
   afterAll(async () => {
     await prisma.employee.deleteMany({ where: { firstName: 'John', lastName: 'Doe' } });
-    await prisma.company.deleteMany({ where: { name: { contains: 'Employee Test Company' } } });
-    await prisma.user.deleteMany({ where: { email: { contains: 'employee_test_' } } });
+    const users = await prisma.user.findMany({ where: { email: { contains: 'employee_test_' } }, select: { id: true } });
+    const userIds = users.map((u) => u.id);
+    if (userIds.length > 0) {
+      await prisma.company.deleteMany({ where: { createdById: { in: userIds } } });
+    }
+    await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.$disconnect();
   });
 
@@ -95,11 +100,11 @@ describe('Employees API', () => {
       const res = await request(app)
         .put(`/api/employees/${employeeId}`)
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ salary: 12000 })
+        .send({ basicSalary: 12000 })
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.salary).toBe(12000);
+      expect(Number(res.body.data.basicSalary)).toBe(12000);
     });
   });
 

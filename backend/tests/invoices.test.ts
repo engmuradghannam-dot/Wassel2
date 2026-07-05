@@ -6,26 +6,8 @@ describe('Invoices API', () => {
   let authToken: string;
   let companyId: string;
   let customerId: string;
+  let itemId: string;
   let invoiceId: string;
-
-  const testInvoice = {
-    invoiceNumber: `INV-${Date.now()}`,
-    invoiceDate: new Date().toISOString().split('T')[0],
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    totalAmount: 1000,
-    taxAmount: 150,
-    discountAmount: 0,
-    netAmount: 1150,
-    status: 'DRAFT',
-    items: [
-      {
-        itemId: 'test-item-id',
-        quantity: 2,
-        unitPrice: 500,
-        total: 1000,
-      },
-    ],
-  };
 
   beforeAll(async () => {
     const userRes = await request(app)
@@ -45,10 +27,11 @@ describe('Invoices API', () => {
       .send({
         name: 'Invoice Test Company',
         taxId: '4444444444',
-        defaultCurrency: 'SAR',
+        currency: 'SAR',
       });
 
-    companyId = companyRes.body.data.id;
+    companyId = companyRes.body.data.company.id;
+    authToken = companyRes.body.data.token;
 
     const customerRes = await request(app)
       .post('/api/customers')
@@ -61,10 +44,23 @@ describe('Invoices API', () => {
       });
 
     customerId = customerRes.body.data.id;
+
+    const itemRes = await request(app)
+      .post('/api/items')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        code: `INV-ITEM-${Date.now()}`,
+        name: 'Invoice Test Item',
+        sellingPrice: 500,
+        companyId,
+      });
+
+    itemId = itemRes.body.data.id;
   });
 
   afterAll(async () => {
-    await prisma.invoice.deleteMany({ where: { invoiceNumber: { contains: 'INV-' } } });
+    await prisma.invoice.deleteMany({ where: { companyId } });
+    await prisma.item.deleteMany({ where: { name: { contains: 'Invoice Test Item' } } });
     await prisma.customer.deleteMany({ where: { name: { contains: 'Invoice Test Customer' } } });
     await prisma.company.deleteMany({ where: { name: { contains: 'Invoice Test Company' } } });
     await prisma.user.deleteMany({ where: { email: { contains: 'invoice_test_' } } });
@@ -77,14 +73,23 @@ describe('Invoices API', () => {
         .post('/api/invoices')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          ...testInvoice,
+          invoiceType: 'SALES',
+          invoiceDate: new Date().toISOString(),
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           companyId,
           customerId,
+          items: [
+            {
+              itemId,
+              quantity: 2,
+              unitPrice: 500,
+            },
+          ],
         })
         .expect(201);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.invoiceNumber).toBe(testInvoice.invoiceNumber);
+      expect(res.body.data.invoiceNumber).toBeDefined();
       invoiceId = res.body.data.id;
     });
   });
