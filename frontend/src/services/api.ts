@@ -373,3 +373,97 @@ export const payrollApi = {
   markPaid: (id: string) => api.post(`/payrolls/${id}/mark-paid`),
   getEndOfService: (employeeId: string) => api.get(`/payrolls/end-of-service/${employeeId}`),
 };
+
+// Notifications API
+export const notificationApi = {
+  getAll: (params?: any) => api.get('/notifications', params),
+  markAsRead: (id: string) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: () => api.put('/notifications/read-all'),
+  delete: (id: string) => api.delete(`/notifications/${id}`),
+};
+
+// Approvals API
+export const approvalApi = {
+  getWorkflows: (params?: any) => api.get('/approvals/workflows', params),
+  createWorkflow: (data: any, companyId?: string) =>
+    api.post('/approvals/workflows', data, companyId ? { companyId } : undefined),
+  submitForApproval: (data: any) => api.post('/approvals/submit', data),
+  processApproval: (id: string, data: any) => api.post(`/approvals/${id}/action`, data),
+  getPending: () => api.get('/approvals/pending'),
+};
+
+// Email API
+export const emailApi = {
+  send: (data: any) => api.post('/emails/send', data),
+  sendBulk: (data: any) => api.post('/emails/send-bulk', data),
+  getTemplates: () => api.get('/emails/templates'),
+  testConnection: () => api.get('/emails/test-connection'),
+};
+
+// Export API
+export const exportApi = {
+  toCSV: (data: any) => api.post('/exports/csv', data),
+  toPDF: (data: any) => api.post('/exports/pdf', data),
+  toExcel: (data: any) => api.post('/exports/excel', data),
+  getFormats: () => api.get('/exports/formats'),
+};
+
+// Import API
+export const importApi = {
+  importData: (data: any, companyId?: string) =>
+    api.post('/imports', data, companyId ? { companyId } : undefined),
+  getLogs: (params?: any) => api.get('/imports/logs', params),
+  getTemplate: (entityType: string) => api.get(`/imports/template/${entityType}`),
+};
+
+// Files API
+export const fileApi = {
+  upload: (formData: FormData) => api.post('/files/upload', formData),
+  getAll: (params?: any) => api.get('/files', params),
+  download: (id: string) => api.get(`/files/${id}/download`),
+  delete: (id: string) => api.delete(`/files/${id}`),
+};
+
+// Activity Logs API
+export const activityLogApi = {
+  getAll: (params?: any) => api.get('/activity-logs', params),
+  getUserActivity: (id: string) => api.get(`/activity-logs/user/${id}`),
+  log: (data: any) => api.post('/activity-logs', data),
+};
+
+// Settings API
+export const settingsApi = {
+  getAll: (params?: any) => api.get('/settings', params),
+  update: (data: any) => api.put('/settings', data),
+  getCompany: () => api.get('/settings/company'),
+  updateCompany: (data: any) => api.put('/settings/company', data),
+};
+
+// Zakat API
+export const zakatApi = {
+  calculate: (data: any, companyId?: string) =>
+    api.post('/zakat/calculate', data, companyId ? { companyId } : undefined),
+  getHistory: (params?: any) => api.get('/zakat/history', params),
+  getReport: (year: string) => api.get(`/zakat/report/${year}`),
+};
+
+// Branch API
+export const branchApi = {
+  getAll: (params?: any) => api.get('/branches', params),
+  getById: (id: string) => api.get(`/branches/${id}`),
+  create: (data: any, companyId?: string) =>
+    api.post('/branches', data, companyId ? { companyId } : undefined),
+  update: (id: string, data: any) => api.put(`/branches/${id}`, data),
+  delete: (id: string) => api.delete(`/branches/${id}`),
+};
+
+// User API
+export const userApi = {
+  getAll: (params?: any) => api.get('/users', params),
+  getById: (id: string) => api.get(`/users/${id}`),
+  update: (id: string, data: any) => api.put(`/users/${id}`, data),
+  updateRole: (id: string, data: any) => api.put(`/users/${id}/role`, data),
+  delete: (id: string) => api.delete(`/users/${id}`),
+  getProfile: () => api.get('/users/profile'),
+  updateProfile: (data: any) => api.put('/users/profile', data),
+};
