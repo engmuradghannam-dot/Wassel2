@@ -6,9 +6,16 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  size?: 'md' | 'lg' | 'xl';
 }
 
-export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+const sizeClasses: Record<string, string> = {
+  md: 'max-w-lg',
+  lg: 'max-w-3xl',
+  xl: 'max-w-5xl',
+};
+
+export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -18,7 +25,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className={`relative bg-white rounded-xl shadow-lg w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto`}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-secondary-200 sticky top-0 bg-white">
           <h2 className="text-lg font-bold">{title}</h2>
           <button onClick={onClose} className="text-secondary-400 hover:text-secondary-600">
