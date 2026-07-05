@@ -21,6 +21,7 @@ const bomSchema = z.object({
     itemId: z.string(),
     quantity: z.number().positive(),
     rate: z.number().min(0),
+    isSubAssembly: z.boolean().default(false),
   })).min(1),
 });
 
@@ -35,6 +36,7 @@ export const createBOM = async (req: any, res: Response, next: NextFunction) => 
       quantity: rm.quantity,
       rate: rm.rate,
       amount: rm.quantity * rm.rate,
+      isSubAssembly: rm.isSubAssembly,
     }));
 
     const bom = await prisma.bOM.create({
@@ -51,6 +53,95 @@ export const createBOM = async (req: any, res: Response, next: NextFunction) => 
     });
 
     res.status(201).json(successResponse(bom, 'BOM created'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Recursively explodes a BOM into its full multi-level component tree.
+// Sub-assemblies (raw materials that are themselves manufactured items with
+// their own default BOM) are expanded down to raw, purchasable components,
+// with quantities multiplied through each level.
+async function explodeBomRecursive(itemId: string, companyId: string, multiplier: number, depth: number, seen: Set<string>): Promise<any[]> {
+  if (depth > 10) {
+    throw new AppError('BOM explosion exceeded maximum depth (possible circular reference)', 400);
+  }
+  if (seen.has(itemId)) {
+    throw new AppError('Circular BOM reference detected', 400);
+  }
+
+  const bom = await prisma.bOM.findFirst({
+    where: { itemId, companyId, isDefault: true },
+    include: { rawMaterials: { include: { item: true } } },
+  });
+
+  if (!bom) return [];
+
+  const nextSeen = new Set(seen);
+  nextSeen.add(itemId);
+
+  const result: any[] = [];
+  for (const rm of bom.rawMaterials) {
+    const requiredQty = Number(rm.quantity) * multiplier;
+
+    if (rm.isSubAssembly) {
+      const subComponents = await explodeBomRecursive(rm.itemId, companyId, requiredQty, depth + 1, nextSeen);
+      if (subComponents.length > 0) {
+        result.push({
+          itemId: rm.itemId,
+          itemCode: rm.item.code,
+          itemName: rm.item.name,
+          quantity: requiredQty,
+          level: depth + 1,
+          isSubAssembly: true,
+        });
+        result.push(...subComponents);
+        continue;
+      }
+    }
+
+    result.push({
+      itemId: rm.itemId,
+      itemCode: rm.item.code,
+      itemName: rm.item.name,
+      quantity: requiredQty,
+      rate: Number(rm.rate),
+      amount: requiredQty * Number(rm.rate),
+      level: depth + 1,
+      isSubAssembly: false,
+    });
+  }
+
+  return result;
+}
+
+export const explodeBOM = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const companyId = req.companyId!;
+    const quantity = Number(req.query.quantity) || 1;
+
+    const bom = await prisma.bOM.findFirst({ where: { id, companyId }, include: { item: true } });
+    if (!bom) throw new AppError('BOM not found', 404);
+
+    const flat: any[] = [];
+    for (const rm of await prisma.bOMRawMaterial.findMany({ where: { bomId: id }, include: { item: true } })) {
+      const requiredQty = Number(rm.quantity) * quantity;
+      if (rm.isSubAssembly) {
+        const subComponents = await explodeBomRecursive(rm.itemId, companyId, requiredQty, 1, new Set([bom.itemId]));
+        flat.push({ itemId: rm.itemId, itemCode: rm.item.code, itemName: rm.item.name, quantity: requiredQty, level: 1, isSubAssembly: true });
+        flat.push(...subComponents);
+      } else {
+        flat.push({ itemId: rm.itemId, itemCode: rm.item.code, itemName: rm.item.name, quantity: requiredQty, rate: Number(rm.rate), amount: requiredQty * Number(rm.rate), level: 1, isSubAssembly: false });
+      }
+    }
+
+    res.json(successResponse({
+      bomId: bom.id,
+      finishedItem: { id: bom.item.id, code: bom.item.code, name: bom.item.name },
+      requestedQuantity: quantity,
+      components: flat,
+    }, 'BOM exploded'));
   } catch (error) {
     next(error);
   }

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  createBOM, getBOMs,
+  createBOM, getBOMs, explodeBOM,
   createWorkOrder, getWorkOrders, completeWorkOrder,
   createJobCard, getJobCards, updateJobCardStatus,
 } from '../controllers/manufacturing';
@@ -12,6 +12,7 @@ router.use(resolveCompany);
 
 router.post('/boms', createBOM);
 router.get('/boms', getBOMs);
+router.get('/boms/:id/explode', explodeBOM);
 
 router.post('/work-orders', createWorkOrder);
 router.get('/work-orders', getWorkOrders);

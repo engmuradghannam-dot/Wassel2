@@ -38,6 +38,7 @@ model User {
   uploadedFiles FileAttachment[]
   zakatCalculations ZakatCalculation[]
   dataImportLogs DataImportLog[]
+  mrpRuns       MRPRun[]
 
   // Employee relation
   employee      Employee?
@@ -159,6 +160,11 @@ model Company {
   createdById String
   createdBy   User     @relation("CompanyCreatedBy", fields: [createdById], references: [id])
 
+  // Consolidation - group company hierarchy
+  parentCompanyId String?
+  parentCompany   Company? @relation("CompanyGroup", fields: [parentCompanyId], references: [id])
+  subsidiaries    Company[] @relation("CompanyGroup")
+
   // Relations
   branches    Branch[]
   warehouses  Warehouse[]
@@ -203,6 +209,18 @@ model Company {
   systemSettings SystemSetting[]
   zakatCalculations ZakatCalculation[]
   dataImportLogs DataImportLog[]
+  contacts     Contact[]
+  bankDetails  BankDetail[] @relation("CompanyBankDetails")
+  ownBankDetails BankDetail[] @relation("CompanyOwnBankDetails")
+  partnerFunctions PartnerFunction[]
+  mrpRuns      MRPRun[]
+  plannedOrders PlannedOrder[]
+  batches      Batch[]
+  serialNumbers SerialNumber[]
+  priceLists   PriceList[]
+  costCenters  CostCenter[]
+  salesForecasts SalesForecast[]
+  iotDevices   IoTDevice[]
 
   @@map("companies")
 }
@@ -291,6 +309,9 @@ model Warehouse {
   purchaseReceipts PurchaseReceipt[]
   stockReconciliations StockReconciliation[]
   posProfiles   POSProfile[]
+  batches       Batch[]
+  serialNumbers SerialNumber[]
+  iotDevices    IoTDevice[]
 
   @@unique([companyId, code])
   @@map("warehouses")
@@ -430,6 +451,9 @@ model JournalEntryLine {
   amount      Decimal  @db.Decimal(18, 2)
   description String?
 
+  costCenterId String?
+  costCenter   CostCenter? @relation(fields: [costCenterId], references: [id])
+
   journalEntryId String
   journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
@@ -499,6 +523,9 @@ model Customer {
   quotations  Quotation[]
   deliveryNotes DeliveryNote[]
   loyaltyPoints LoyaltyPoint[]
+  contacts    Contact[]
+  bankDetails BankDetail[]
+  partnerFunctions PartnerFunction[]
 
   @@unique([companyId, code])
 
@@ -571,6 +598,9 @@ model Supplier {
   purchaseInvoices Invoice[]
   rfqs        RequestForQuotation[]
   purchaseReceipts PurchaseReceipt[]
+  contacts    Contact[]
+  bankDetails BankDetail[]
+  partnerFunctions PartnerFunction[]
 
   @@unique([companyId, code])
 
@@ -646,6 +676,13 @@ model Item {
   bomRawMaterials BOMRawMaterial[]
   qualityInspections QualityInspection[]
   stockReconciliationItems StockReconciliationItem[]
+  mrpExceptions MRPException[]
+  plannedOrders PlannedOrder[]
+  batches       Batch[]
+  serialNumbers SerialNumber[]
+  uomConversions UOMConversion[]
+  priceListItems PriceListItem[]
+  salesForecasts SalesForecast[]
 
   @@unique([companyId, code])
 
@@ -709,6 +746,8 @@ model StockEntryItem {
   totalCost   Decimal  @db.Decimal(18, 2)
 
   batchNo     String?
+  batchId     String?
+  batch       Batch?   @relation(fields: [batchId], references: [id])
   expiryDate  DateTime?
 
   stockEntryId String
@@ -812,6 +851,12 @@ model Invoice {
 
   notes       String?
   terms       String?
+  incoterm    Incoterm?
+
+  // Three-way matching (PO <-> Receipt <-> Invoice)
+  matchStatus String?  @default("UNMATCHED") // UNMATCHED, MATCHED, PARTIAL, MISMATCH
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
 
   // ZATCA Phase 1 compliance - base64 TLV-encoded QR code
   zatcaQrCode String?
@@ -898,6 +943,7 @@ model SalesOrder {
 
   notes       String?
   terms       String?
+  incoterm    Incoterm?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -933,6 +979,7 @@ model PurchaseOrder {
 
   notes       String?
   terms       String?
+  incoterm    Incoterm?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -944,6 +991,7 @@ model PurchaseOrder {
 
   // Relations
   items       OrderItem[]
+  invoices    Invoice[]
 
   @@unique([companyId, orderNumber])
 
@@ -1953,6 +2001,7 @@ model BOMRawMaterial {
   quantity    Decimal  @db.Decimal(18, 4)
   rate        Decimal  @db.Decimal(18, 4)
   amount      Decimal  @db.Decimal(18, 2)
+  isSubAssembly Boolean @default(false) // true if this raw material is itself a manufactured item with its own BOM (enables multi-level explosion)
 
   itemId      String
   item        Item     @relation(fields: [itemId], references: [id])
@@ -2631,4 +2680,437 @@ model CustomReport {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@map("custom_reports")
+}
+
+// ============================================
+// CONTACT PERSONS (linked to Customer/Supplier)
+// ============================================
+
+model Contact {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  designation String?
+  department  String?
+  email       String?
+  phone       String?
+  mobile      String?
+  isPrimary   Boolean  @default(false)
+  notes       String?
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  supplierId  String?
+  supplier    Supplier? @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([customerId])
+  @@index([supplierId])
+  @@map("contacts")
+}
+
+// ============================================
+// BANK DETAILS (IBAN / SWIFT)
+// ============================================
+
+model BankDetail {
+  id            String   @id @default(uuid())
+  accountName   String
+  accountNumber String?
+  iban          String?
+  swiftCode     String?
+  bankName      String
+  branchName    String?
+  currency      String   @default("SAR")
+  isPrimary     Boolean  @default(false)
+
+  companyId     String
+  company       Company  @relation("CompanyBankDetails", fields: [companyId], references: [id], onDelete: Cascade)
+
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  supplierId    String?
+  supplier      Supplier? @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  ownCompanyBankOf String? // if set, this is one of OUR company's own bank accounts
+  ownCompany    Company? @relation("CompanyOwnBankDetails", fields: [ownCompanyBankOf], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([customerId])
+  @@index([supplierId])
+  @@map("bank_details")
+}
+
+// ============================================
+// PARTNER FUNCTIONS (Sold-to / Bill-to / Ship-to / Ordering / Remit-to)
+// ============================================
+
+enum PartnerFunctionType {
+  SOLD_TO
+  BILL_TO
+  SHIP_TO
+  PAYER
+  ORDERING_ADDRESS
+  INVOICE_FROM
+  REMIT_TO
+}
+
+model PartnerFunction {
+  id          String   @id @default(uuid())
+  type        PartnerFunctionType
+  name        String
+  attentionOf String?
+  address     String?
+  city        String?
+  state       String?
+  country     String   @default("SA")
+  zipCode     String?
+  phone       String?
+  email       String?
+  isDefault   Boolean  @default(false)
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  supplierId  String?
+  supplier    Supplier? @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([customerId])
+  @@index([supplierId])
+  @@map("partner_functions")
+}
+
+// ============================================
+// MRP (Material Requirements Planning)
+// ============================================
+
+enum MRPRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model MRPRun {
+  id          String   @id @default(uuid())
+  runDate     DateTime @default(now())
+  status      MRPRunStatus @default(RUNNING)
+  planningHorizonDays Int  @default(30)
+  notes       String?
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  runById     String
+  runBy       User     @relation(fields: [runById], references: [id])
+
+  exceptions  MRPException[]
+  plannedOrders PlannedOrder[]
+
+  createdAt   DateTime @default(now())
+
+  @@index([companyId])
+  @@map("mrp_runs")
+}
+
+enum MRPExceptionType {
+  SHORTAGE
+  EXCESS
+  REORDER
+  OVERDUE
+}
+
+model MRPException {
+  id          String   @id @default(uuid())
+  type        MRPExceptionType
+  message     String
+  quantity    Decimal  @db.Decimal(18, 4)
+
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  mrpRunId    String
+  mrpRun      MRPRun   @relation(fields: [mrpRunId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@map("mrp_exceptions")
+}
+
+model PlannedOrder {
+  id            String   @id @default(uuid())
+  orderType     String   // PURCHASE or PRODUCTION
+  quantity      Decimal  @db.Decimal(18, 4)
+  suggestedDate DateTime
+  status        String   @default("PLANNED") // PLANNED, CONVERTED, CANCELLED
+
+  itemId        String
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  mrpRunId      String
+  mrpRun        MRPRun   @relation(fields: [mrpRunId], references: [id], onDelete: Cascade)
+
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+
+  @@index([companyId])
+  @@map("planned_orders")
+}
+
+// ============================================
+// BATCH & SERIAL NUMBER TRACKING
+// ============================================
+
+model Batch {
+  id            String   @id @default(uuid())
+  batchNumber   String
+  manufactureDate DateTime?
+  expiryDate    DateTime?
+  initialQuantity Decimal @db.Decimal(18, 4)
+  currentQuantity Decimal @db.Decimal(18, 4)
+  status        String   @default("ACTIVE") // ACTIVE, EXPIRED, CONSUMED
+
+  itemId        String
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  warehouseId   String?
+  warehouse     Warehouse? @relation(fields: [warehouseId], references: [id])
+
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  stockEntryItems StockEntryItem[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([companyId, itemId, batchNumber])
+  @@index([companyId])
+  @@map("batches")
+}
+
+enum SerialNumberStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  DEFECTIVE
+  RETURNED
+}
+
+model SerialNumber {
+  id            String   @id @default(uuid())
+  serialNo      String
+  status        SerialNumberStatus @default(AVAILABLE)
+  warrantyExpiry DateTime?
+
+  itemId        String
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  warehouseId   String?
+  warehouse     Warehouse? @relation(fields: [warehouseId], references: [id])
+
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  referenceType String?  // e.g. "Invoice", "DeliveryNote"
+  referenceId   String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([companyId, itemId, serialNo])
+  @@index([companyId])
+  @@map("serial_numbers")
+}
+
+// ============================================
+// ALTERNATIVE UNITS OF MEASURE
+// ============================================
+
+model UOMConversion {
+  id          String   @id @default(uuid())
+  uom         String   // e.g. "BOX", "CARTON", "DOZEN"
+  conversionFactor Decimal @db.Decimal(18, 6) // how many base UOM units in 1 of this UOM
+
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([itemId, uom])
+  @@map("uom_conversions")
+}
+
+// ============================================
+// PRICING PROCEDURE
+// ============================================
+
+model PriceList {
+  id            String   @id @default(uuid())
+  name          String
+  currency      String   @default("SAR")
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  customerGroup String?
+  validFrom     DateTime?
+  validTo       DateTime?
+
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  items         PriceListItem[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([companyId])
+  @@map("price_lists")
+}
+
+model PriceListItem {
+  id          String   @id @default(uuid())
+  price       Decimal  @db.Decimal(18, 4)
+  minQty      Decimal  @default(1) @db.Decimal(18, 4)
+
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  priceListId String
+  priceList   PriceList @relation(fields: [priceListId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([priceListId, itemId, minQty])
+  @@map("price_list_items")
+}
+
+// ============================================
+// INCOTERMS
+// ============================================
+
+enum Incoterm {
+  EXW
+  FCA
+  FAS
+  FOB
+  CFR
+  CIF
+  CPT
+  CIP
+  DAP
+  DPU
+  DDP
+}
+
+// ============================================
+// COST CENTERS
+// ============================================
+
+model CostCenter {
+  id          String   @id @default(uuid())
+  code        String
+  name        String
+  nameAr      String?
+  isGroup     Boolean  @default(false)
+  isActive    Boolean  @default(true)
+
+  parentId    String?
+  parent      CostCenter? @relation("CostCenterHierarchy", fields: [parentId], references: [id])
+  children    CostCenter[] @relation("CostCenterHierarchy")
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  journalEntryLines JournalEntryLine[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@map("cost_centers")
+}
+
+// ============================================
+// AI PREDICTIONS (Sales Forecasting)
+// ============================================
+
+model SalesForecast {
+  id            String   @id @default(uuid())
+  periodStart   DateTime
+  periodEnd     DateTime
+  method        String   @default("MOVING_AVERAGE") // MOVING_AVERAGE, LINEAR_REGRESSION
+  predictedAmount Decimal @db.Decimal(18, 2)
+  confidence    Decimal? @db.Decimal(5, 2) // 0-100
+
+  itemId        String?
+  item          Item?    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+
+  @@index([companyId])
+  @@map("sales_forecasts")
+}
+
+// ============================================
+// IoT INTEGRATION
+// ============================================
+
+enum IoTDeviceStatus {
+  ONLINE
+  OFFLINE
+  MAINTENANCE
+}
+
+model IoTDevice {
+  id          String   @id @default(uuid())
+  deviceCode  String
+  deviceType  String   // e.g. "TEMP_SENSOR", "RFID_READER", "WEIGHT_SCALE"
+  status      IoTDeviceStatus @default(OFFLINE)
+  lastSeenAt  DateTime?
+
+  warehouseId String?
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  readings    IoTReading[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([companyId, deviceCode])
+  @@index([companyId])
+  @@map("iot_devices")
+}
+
+model IoTReading {
+  id          String   @id @default(uuid())
+  metric      String   // e.g. "temperature", "humidity", "weight"
+  value       Decimal  @db.Decimal(18, 4)
+  unit        String?
+  recordedAt  DateTime @default(now())
+
+  deviceId    String
+  device      IoTDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@map("iot_readings")
 }

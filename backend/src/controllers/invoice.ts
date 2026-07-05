@@ -309,3 +309,78 @@ export const getInvoiceZatcaQr = async (req: any, res: Response, next: NextFunct
     next(error);
   }
 };
+
+// Three-way matching: compares a purchase invoice against its linked
+// Purchase Order and any Purchase Receipts (GRNs) raised against that PO,
+// checking that quantities and amounts line up within tolerance before the
+// invoice can be considered safe to pay.
+export const matchThreeWay = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const companyId = req.companyId!;
+    const tolerancePercent = Number(req.query.tolerance) || 2;
+
+    const invoice = await prisma.invoice.findFirst({
+      where: { id, companyId },
+      include: { items: true, purchaseOrder: { include: { items: true } } },
+    });
+    if (!invoice) throw new AppError('Invoice not found', 404);
+    if (!invoice.purchaseOrderId || !invoice.purchaseOrder) {
+      await prisma.invoice.update({ where: { id }, data: { matchStatus: 'UNMATCHED' } });
+      return res.json(successResponse({ matchStatus: 'UNMATCHED', reason: 'No linked purchase order' }));
+    }
+
+    const receipts = await prisma.purchaseReceipt.findMany({
+      where: { companyId, purchaseOrderId: invoice.purchaseOrderId },
+      include: { items: true },
+    });
+
+    const discrepancies: any[] = [];
+
+    for (const poItem of invoice.purchaseOrder.items) {
+      const invoiceLine = invoice.items.find((i) => i.itemId === poItem.itemId);
+      const receivedQty = receipts
+        .flatMap((r) => r.items)
+        .filter((ri) => ri.itemId === poItem.itemId)
+        .reduce((sum, ri) => sum + Number(ri.quantity), 0);
+
+      if (!invoiceLine) {
+        discrepancies.push({ itemId: poItem.itemId, issue: 'Invoiced but not on invoice line items' });
+        continue;
+      }
+
+      const invoicedQty = Number(invoiceLine.quantity);
+      const orderedQty = Number(poItem.quantity);
+
+      if (receivedQty === 0) {
+        discrepancies.push({ itemId: poItem.itemId, issue: 'No goods receipt found for this item', orderedQty, invoicedQty, receivedQty });
+        continue;
+      }
+
+      const qtyDiffPercent = Math.abs(invoicedQty - receivedQty) / receivedQty * 100;
+      if (qtyDiffPercent > tolerancePercent) {
+        discrepancies.push({
+          itemId: poItem.itemId,
+          issue: `Invoiced quantity (${invoicedQty}) differs from received quantity (${receivedQty}) by more than ${tolerancePercent}%`,
+          orderedQty, invoicedQty, receivedQty,
+        });
+      }
+
+      const priceDiffPercent = Math.abs(Number(invoiceLine.unitPrice) - Number(poItem.unitPrice)) / Number(poItem.unitPrice) * 100;
+      if (priceDiffPercent > tolerancePercent) {
+        discrepancies.push({
+          itemId: poItem.itemId,
+          issue: `Invoiced unit price (${invoiceLine.unitPrice}) differs from PO price (${poItem.unitPrice}) by more than ${tolerancePercent}%`,
+        });
+      }
+    }
+
+    const matchStatus = discrepancies.length === 0 ? 'MATCHED' : (discrepancies.length < invoice.purchaseOrder.items.length ? 'PARTIAL' : 'MISMATCH');
+
+    const updated = await prisma.invoice.update({ where: { id }, data: { matchStatus } });
+
+    res.json(successResponse({ matchStatus: updated.matchStatus, discrepancies }));
+  } catch (error) {
+    next(error);
+  }
+};

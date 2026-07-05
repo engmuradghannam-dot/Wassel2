@@ -62,6 +62,19 @@ import activityLogRoutes from './routes/activityLogs';
 import settingsRoutes from './routes/settings';
 import zakatRoutes from './routes/zakat';
 
+import contactRoutes from './routes/contacts';
+import bankDetailRoutes from './routes/bankDetails';
+import partnerFunctionRoutes from './routes/partnerFunctions';
+import mrpRoutes from './routes/mrp';
+import batchRoutes from './routes/batches';
+import serialNumberRoutes from './routes/serialNumbers';
+import uomConversionRoutes from './routes/uomConversions';
+import priceListRoutes from './routes/priceLists';
+import costCenterRoutes from './routes/costCenters';
+import consolidationRoutes from './routes/consolidation';
+import salesForecastRoutes from './routes/salesForecasts';
+import iotDeviceRoutes from './routes/iotDevices';
+
 dotenv.config();
 
 const app = express();
@@ -143,6 +156,19 @@ app.use('/api/files', fileRoutes);
 app.use('/api/activity-logs', activityLogRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/zakat', zakatRoutes);
+
+app.use('/api/contacts', contactRoutes);
+app.use('/api/bank-details', bankDetailRoutes);
+app.use('/api/partner-functions', partnerFunctionRoutes);
+app.use('/api/mrp', mrpRoutes);
+app.use('/api/batches', batchRoutes);
+app.use('/api/serial-numbers', serialNumberRoutes);
+app.use('/api/uom-conversions', uomConversionRoutes);
+app.use('/api/price-lists', priceListRoutes);
+app.use('/api/cost-centers', costCenterRoutes);
+app.use('/api/company-groups', consolidationRoutes);
+app.use('/api/sales-forecasts', salesForecastRoutes);
+app.use('/api/iot-devices', iotDeviceRoutes);
 
 // Static files (uploads)
 app.use('/uploads', express.static('uploads'));
