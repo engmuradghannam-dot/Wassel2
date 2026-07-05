@@ -33,6 +33,15 @@ import { ActivityLogsPage } from './pages/ActivityLogs/ActivityLogsPage';
 import { ZakatPage } from './pages/Zakat/ZakatPage';
 import { ApprovalsPage } from './pages/Approvals/ApprovalsPage';
 
+import { BusinessPartnersPage } from './pages/BusinessPartners/BusinessPartnersPage';
+import { MRPPage } from './pages/MRP/MRPPage';
+import { InventoryTrackingPage } from './pages/InventoryTracking/InventoryTrackingPage';
+import { PriceListsPage } from './pages/PriceLists/PriceListsPage';
+import { CostCentersPage } from './pages/CostCenters/CostCentersPage';
+import { ForecastPage } from './pages/Forecast/ForecastPage';
+import { IoTPage } from './pages/IoT/IoTPage';
+import { ConsolidationPage } from './pages/Consolidation/ConsolidationPage';
+
 // Placeholder pages (data model exists, controllers/UI still pending - next phase)
 
 function App() {
@@ -73,6 +82,14 @@ function App() {
         <Route path="/activity-logs" element={<ActivityLogsPage />} />
         <Route path="/zakat" element={<ZakatPage />} />
         <Route path="/approvals" element={<ApprovalsPage />} />
+        <Route path="/business-partners" element={<BusinessPartnersPage />} />
+        <Route path="/mrp" element={<MRPPage />} />
+        <Route path="/inventory-tracking" element={<InventoryTrackingPage />} />
+        <Route path="/price-lists" element={<PriceListsPage />} />
+        <Route path="/cost-centers" element={<CostCentersPage />} />
+        <Route path="/forecast" element={<ForecastPage />} />
+        <Route path="/iot-devices" element={<IoTPage />} />
+        <Route path="/consolidation" element={<ConsolidationPage />} />
             </Route>
     </Routes>
   );

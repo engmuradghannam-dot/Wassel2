@@ -32,6 +32,14 @@ import {
   DocumentMagnifyingGlassIcon,
   BuildingStorefrontIcon,
   CalculatorIcon as ZakatIcon,
+  UserGroupIcon,
+  ArrowPathIcon,
+  BeakerIcon,
+  TagIcon,
+  ChartPieIcon,
+  PresentationChartLineIcon,
+  CpuChipIcon,
+  BuildingLibraryIcon,
 } from '@heroicons/react/24/outline';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -163,6 +171,47 @@ const navigation: NavEntry[] = [
       { key: 'payrollReport', labelKey: 'nav.payrollReport', href: '/reports?tab=payroll', icon: ChartBarIcon },
     ],
   },
+  {
+    key: 'branchesGroup',
+    labelKey: 'nav.branches',
+    icon: BuildingStorefrontIcon,
+    children: [
+      { key: 'branches', labelKey: 'nav.branches', href: '/branches', icon: BuildingStorefrontIcon },
+    ],
+  },
+  {
+    key: 'partnersGroup',
+    labelKey: 'nav.partnersGroup',
+    icon: UserGroupIcon,
+    children: [
+      { key: 'businessPartners', labelKey: 'nav.businessPartners', href: '/business-partners', icon: UserGroupIcon },
+      { key: 'priceLists', labelKey: 'nav.priceLists', href: '/price-lists', icon: TagIcon },
+    ],
+  },
+  {
+    key: 'planningGroup',
+    labelKey: 'nav.planningGroup',
+    icon: ArrowPathIcon,
+    children: [
+      { key: 'mrp', labelKey: 'nav.mrp', href: '/mrp', icon: ArrowPathIcon },
+      { key: 'inventoryTracking', labelKey: 'nav.inventoryTracking', href: '/inventory-tracking', icon: BeakerIcon },
+      { key: 'forecast', labelKey: 'nav.forecast', href: '/forecast', icon: PresentationChartLineIcon },
+      { key: 'iotDevices', labelKey: 'nav.iotDevices', href: '/iot-devices', icon: CpuChipIcon },
+    ],
+  },
+  {
+    key: 'toolsGroup',
+    labelKey: 'nav.tools',
+    icon: CogIcon,
+    children: [
+      { key: 'approvals', labelKey: 'nav.approvals', href: '/approvals', icon: ShieldCheckIcon },
+      { key: 'activityLogs', labelKey: 'nav.activityLogs', href: '/activity-logs', icon: DocumentMagnifyingGlassIcon },
+      { key: 'zakat', labelKey: 'nav.zakat', href: '/zakat', icon: ZakatIcon },
+      { key: 'costCenters', labelKey: 'nav.costCenters', href: '/cost-centers', icon: ChartPieIcon },
+      { key: 'consolidation', labelKey: 'nav.consolidation', href: '/consolidation', icon: BuildingLibraryIcon },
+    ],
+  },
+  { key: 'notifications', labelKey: 'nav.notifications', href: '/notifications', icon: BellIcon },
   { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
 ];
 
@@ -336,25 +385,4 @@ export const Sidebar = () => {
       </div>
     </aside>
   );
-};  {
-    key: 'branchesGroup',
-    labelKey: 'nav.branches',
-    icon: BuildingStorefrontIcon,
-    children: [
-      { key: 'branches', labelKey: 'nav.branches', href: '/branches', icon: BuildingStorefrontIcon },
-    ],
-  },
-  {
-    key: 'toolsGroup',
-    labelKey: 'nav.tools',
-    icon: CogIcon,
-    children: [
-      { key: 'approvals', labelKey: 'nav.approvals', href: '/approvals', icon: ShieldCheckIcon },
-      { key: 'activityLogs', labelKey: 'nav.activityLogs', href: '/activity-logs', icon: DocumentMagnifyingGlassIcon },
-      { key: 'zakat', labelKey: 'nav.zakat', href: '/zakat', icon: ZakatIcon },
-    ],
-  },
-  { key: 'notifications', labelKey: 'nav.notifications', href: '/notifications', icon: BellIcon },
-  { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
-
-  
+};

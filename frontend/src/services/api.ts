@@ -48,27 +48,27 @@ class ApiService {
     );
   }
 
-  async get<T>(url: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  async get<T = any>(url: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
     const response = await this.client.get<ApiResponse<T>>(url, { params });
     return response.data;
   }
 
-  async post<T>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  async post<T = any>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
     const response = await this.client.post<ApiResponse<T>>(url, data, { params });
     return response.data;
   }
 
-  async put<T>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  async put<T = any>(url: string, data?: any, params?: Record<string, any>): Promise<ApiResponse<T>> {
     const response = await this.client.put<ApiResponse<T>>(url, data, { params });
     return response.data;
   }
 
-  async delete<T>(url: string): Promise<ApiResponse<T>> {
+  async delete<T = any>(url: string): Promise<ApiResponse<T>> {
     const response = await this.client.delete<ApiResponse<T>>(url);
     return response.data;
   }
 
-  async patch<T>(url: string, data?: any): Promise<ApiResponse<T>> {
+  async patch<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
     const response = await this.client.patch<ApiResponse<T>>(url, data);
     return response.data;
   }
@@ -466,4 +466,107 @@ export const userApi = {
   delete: (id: string) => api.delete(`/users/${id}`),
   getProfile: () => api.get('/users/profile'),
   updateProfile: (data: any) => api.put('/users/profile', data),
+};
+
+// Contacts API
+export const contactApi = {
+  getAll: (params?: any) => api.get('/contacts', params),
+  getById: (id: string) => api.get(`/contacts/${id}`),
+  create: (data: any) => api.post('/contacts', data),
+  update: (id: string, data: any) => api.put(`/contacts/${id}`, data),
+  delete: (id: string) => api.delete(`/contacts/${id}`),
+};
+
+// Bank Details API
+export const bankDetailApi = {
+  getAll: (params?: any) => api.get('/bank-details', params),
+  getById: (id: string) => api.get(`/bank-details/${id}`),
+  create: (data: any) => api.post('/bank-details', data),
+  update: (id: string, data: any) => api.put(`/bank-details/${id}`, data),
+  delete: (id: string) => api.delete(`/bank-details/${id}`),
+};
+
+// Partner Functions API
+export const partnerFunctionApi = {
+  getAll: (params?: any) => api.get('/partner-functions', params),
+  getById: (id: string) => api.get(`/partner-functions/${id}`),
+  create: (data: any) => api.post('/partner-functions', data),
+  update: (id: string, data: any) => api.put(`/partner-functions/${id}`, data),
+  delete: (id: string) => api.delete(`/partner-functions/${id}`),
+};
+
+// MRP API
+export const mrpApi = {
+  run: (data: any, companyId?: string) => api.post('/mrp/run', data, companyId ? { companyId } : undefined),
+  getRuns: (params?: any) => api.get('/mrp/runs', params),
+  getRun: (id: string) => api.get(`/mrp/runs/${id}`),
+  convertPlannedOrder: (id: string, data: any) => api.post(`/mrp/planned-orders/${id}/convert`, data),
+};
+
+// Batches API
+export const batchApi = {
+  getAll: (params?: any) => api.get('/batches', params),
+  getById: (id: string) => api.get(`/batches/${id}`),
+  create: (data: any) => api.post('/batches', data),
+  update: (id: string, data: any) => api.put(`/batches/${id}`, data),
+  delete: (id: string) => api.delete(`/batches/${id}`),
+};
+
+// Serial Numbers API
+export const serialNumberApi = {
+  getAll: (params?: any) => api.get('/serial-numbers', params),
+  create: (data: any) => api.post('/serial-numbers', data),
+  bulkCreate: (data: any) => api.post('/serial-numbers/bulk', data),
+  updateStatus: (id: string, data: any) => api.put(`/serial-numbers/${id}/status`, data),
+  delete: (id: string) => api.delete(`/serial-numbers/${id}`),
+};
+
+// UOM Conversions API
+export const uomConversionApi = {
+  getAll: (params?: any) => api.get('/uom-conversions', params),
+  create: (data: any) => api.post('/uom-conversions', data),
+  convert: (data: any) => api.post('/uom-conversions/convert', data),
+  delete: (id: string) => api.delete(`/uom-conversions/${id}`),
+};
+
+// Price Lists API
+export const priceListApi = {
+  getAll: (params?: any) => api.get('/price-lists', params),
+  getById: (id: string) => api.get(`/price-lists/${id}`),
+  create: (data: any) => api.post('/price-lists', data),
+  addItem: (id: string, data: any) => api.post(`/price-lists/${id}/items`, data),
+  resolvePrice: (params: any) => api.get('/price-lists/resolve-price', params),
+  delete: (id: string) => api.delete(`/price-lists/${id}`),
+};
+
+// Cost Centers API
+export const costCenterApi = {
+  getAll: (params?: any) => api.get('/cost-centers', params),
+  getById: (id: string) => api.get(`/cost-centers/${id}`),
+  getReport: (id: string) => api.get(`/cost-centers/${id}/report`),
+  create: (data: any) => api.post('/cost-centers', data),
+  update: (id: string, data: any) => api.put(`/cost-centers/${id}`, data),
+  delete: (id: string) => api.delete(`/cost-centers/${id}`),
+};
+
+// Consolidation / Company Groups API
+export const consolidationApi = {
+  setParent: (id: string, data: any) => api.put(`/company-groups/${id}/parent`, data),
+  getGroup: (id: string) => api.get(`/company-groups/${id}/group`),
+  getBalanceSheet: (id: string, data?: any) => api.post(`/company-groups/${id}/balance-sheet`, data || {}),
+};
+
+// Sales Forecasts (AI Predictions) API
+export const salesForecastApi = {
+  generate: (data: any, companyId?: string) => api.post('/sales-forecasts/generate', data, companyId ? { companyId } : undefined),
+  getAll: (params?: any) => api.get('/sales-forecasts', params),
+};
+
+// IoT Devices API
+export const iotDeviceApi = {
+  getAll: (params?: any) => api.get('/iot-devices', params),
+  create: (data: any) => api.post('/iot-devices', data),
+  ingestReading: (id: string, data: any) => api.post(`/iot-devices/${id}/readings`, data),
+  getReadings: (id: string) => api.get(`/iot-devices/${id}/readings`),
+  delete: (id: string) => api.delete(`/iot-devices/${id}`),
 };
