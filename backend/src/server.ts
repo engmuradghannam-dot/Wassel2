@@ -50,6 +50,8 @@ import performanceReviewRoutes from './routes/performanceReviews';
 import projectExpenseClaimRoutes from './routes/projectExpenseClaims';
 import maintenanceRoutes from './routes/maintenance';
 
+import { setupSwagger } from './swagger';
+
 import notificationRoutes from './routes/notifications';
 import approvalRoutes from './routes/approvals';
 import emailRoutes from './routes/emails';
@@ -85,6 +87,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('combined'));
 app.use(requestLogger);
 app.use(rateLimiter);
+
+// Swagger API Documentation
+setupSwagger(app);
 
 // Health check
 app.get('/health', (req, res) => {
