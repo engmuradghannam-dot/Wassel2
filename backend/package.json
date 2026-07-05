@@ -44,7 +44,9 @@
     "socket.io": "^4.7.5",
     "uuid": "^9.0.1",
     "winston": "^3.13.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "pdfkit": "^0.14.0",
+    "json2csv": "^6.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -65,7 +67,10 @@
     "prisma": "^5.15.0",
     "ts-jest": "^29.1.4",
     "tsx": "^4.15.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "@types/nodemailer": "^6.4.0",
+    "@types/pdfkit": "^0.13.0",
+    "@types/json2csv": "^5.0.0"
   },
   "engines": {
     "node": ">=20.0.0"
