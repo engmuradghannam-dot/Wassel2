@@ -27,6 +27,11 @@ import {
   ClipboardDocumentListIcon,
   ClockIcon,
   BriefcaseIcon,
+  BellIcon,
+  ShieldCheckIcon,
+  DocumentMagnifyingGlassIcon,
+  BuildingStorefrontIcon,
+  CalculatorIcon as ZakatIcon,
 } from '@heroicons/react/24/outline';
 import { useUIStore } from '../../store/uiStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -331,4 +336,25 @@ export const Sidebar = () => {
       </div>
     </aside>
   );
-};
+};  {
+    key: 'branchesGroup',
+    labelKey: 'nav.branches',
+    icon: BuildingStorefrontIcon,
+    children: [
+      { key: 'branches', labelKey: 'nav.branches', href: '/branches', icon: BuildingStorefrontIcon },
+    ],
+  },
+  {
+    key: 'toolsGroup',
+    labelKey: 'nav.tools',
+    icon: CogIcon,
+    children: [
+      { key: 'approvals', labelKey: 'nav.approvals', href: '/approvals', icon: ShieldCheckIcon },
+      { key: 'activityLogs', labelKey: 'nav.activityLogs', href: '/activity-logs', icon: DocumentMagnifyingGlassIcon },
+      { key: 'zakat', labelKey: 'nav.zakat', href: '/zakat', icon: ZakatIcon },
+    ],
+  },
+  { key: 'notifications', labelKey: 'nav.notifications', href: '/notifications', icon: BellIcon },
+  { key: 'settings', labelKey: 'nav.settings', href: '/settings', icon: CogIcon },
+
+  
