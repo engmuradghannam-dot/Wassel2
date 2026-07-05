@@ -8,6 +8,7 @@ const accountSchema = z.object({
   code: z.string().min(1),
   name: z.string().min(2),
   nameAr: z.string().optional(),
+  alternativeAccountNumber: z.string().optional(),
   type: z.enum(['ASSET', 'LIABILITY', 'EQUITY', 'INCOME', 'EXPENSE']),
   accountType: z.enum([
     'CURRENT_ASSET', 'FIXED_ASSET', 'INTANGIBLE_ASSET',
@@ -23,6 +24,12 @@ const accountSchema = z.object({
   bankName: z.string().optional(),
   currency: z.string().default('SAR'),
   openingBalance: z.number().default(0),
+  isReconciliationAccount: z.boolean().default(false),
+  reconciliationAccountType: z.enum(['CUSTOMER', 'SUPPLIER', 'ASSET']).optional(),
+  openItemManagement: z.boolean().default(false),
+  lineItemDisplay: z.boolean().default(true),
+  blockedForPosting: z.boolean().default(false),
+  taxCategory: z.string().optional(),
 });
 
 export const createAccount = async (req: any, res: Response, next: NextFunction) => {
@@ -97,6 +104,7 @@ const journalEntrySchema = z.object({
     creditAccountId: z.string().optional(),
     amount: z.number().positive(),
     description: z.string().optional(),
+    costCenterId: z.string().optional(),
   })).min(1),
 });
 
@@ -116,6 +124,20 @@ export const createJournalEntry = async (req: any, res: Response, next: NextFunc
     for (const line of data.lines) {
       if (!line.debitAccountId && !line.creditAccountId) {
         throw new AppError('Each line needs a debit or credit account', 400);
+      }
+      if (line.debitAccountId) {
+        const acct = await prisma.account.findFirst({ where: { id: line.debitAccountId, companyId } });
+        if (!acct) throw new AppError('Debit account not found', 404);
+        if (acct.blockedForPosting) throw new AppError(`Account ${acct.code} is blocked for posting`, 400);
+      }
+      if (line.creditAccountId) {
+        const acct = await prisma.account.findFirst({ where: { id: line.creditAccountId, companyId } });
+        if (!acct) throw new AppError('Credit account not found', 404);
+        if (acct.blockedForPosting) throw new AppError(`Account ${acct.code} is blocked for posting`, 400);
+      }
+      if (line.costCenterId) {
+        const cc = await prisma.costCenter.findFirst({ where: { id: line.costCenterId, companyId } });
+        if (!cc) throw new AppError('Cost center not found', 404);
       }
     }
 
@@ -142,6 +164,7 @@ export const createJournalEntry = async (req: any, res: Response, next: NextFunc
             creditAccountId: l.creditAccountId,
             amount: l.amount,
             description: l.description,
+            costCenterId: l.costCenterId,
           })),
         },
       },

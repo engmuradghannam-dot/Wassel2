@@ -39,6 +39,8 @@ model User {
   zakatCalculations ZakatCalculation[]
   dataImportLogs DataImportLog[]
   mrpRuns       MRPRun[]
+  customersAsSalesPerson Customer[] @relation("CustomerSalesPerson")
+  suppliersAsBuyer Supplier[] @relation("SupplierBuyer")
 
   // Employee relation
   employee      Employee?
@@ -331,6 +333,7 @@ model Account {
   code        String
   name        String
   nameAr      String?
+  alternativeAccountNumber String? // mapping to local statutory chart of accounts
 
   // Account Type
   type        AccountType
@@ -344,6 +347,14 @@ model Account {
   // Balance
   openingBalance Decimal @default(0) @db.Decimal(18, 2)
   currentBalance Decimal @default(0) @db.Decimal(18, 2)
+
+  // Control account settings (sub-ledger reconciliation, matching SAP FS00 "recon. account for account type")
+  isReconciliationAccount Boolean @default(false)
+  reconciliationAccountType String? // CUSTOMER, SUPPLIER, ASSET
+  openItemManagement Boolean @default(false)
+  lineItemDisplay    Boolean @default(true)
+  blockedForPosting  Boolean @default(false)
+  taxCategory        String? // relevant VAT category for this account, if any
 
   // Settings
   isGroup     Boolean     @default(false)
@@ -362,6 +373,8 @@ model Account {
   // Relations
   debitEntries  JournalEntryLine[] @relation("DebitAccount")
   creditEntries JournalEntryLine[] @relation("CreditAccount")
+  customersReconciled Customer[] @relation("CustomerReconciliationAccount")
+  suppliersReconciled Supplier[] @relation("SupplierReconciliationAccount")
 
   @@unique([companyId, code])
   @@map("accounts")
@@ -475,6 +488,11 @@ model Customer {
   code        String
   name        String
   nameAr      String?
+  searchTerm  String?  // short internal search key, distinct from the legal name
+  title       String?  // Mr./Mrs./Dr./Est. etc.
+  legalForm   String?  // LLC, Sole Proprietorship, Corporation, Government Entity...
+  industry    String?
+  language    String   @default("ar")
 
   // Contact
   email       String?
@@ -483,30 +501,58 @@ model Customer {
   fax         String?
   website     String?
 
-  // Address
+  // Address (Saudi National Address standard fields included alongside the generic ones)
   address     String?
+  buildingNumber String?
+  street      String?
+  district    String?  // "الحي"
+  additionalNumber String? // 4-digit National Address additional number
+  poBox       String?
   city        String?
   state       String?
+  region      String?  // SAP-style region distinct from state/province
   country     String   @default("SA")
   zipCode     String?
   latitude    Float?
   longitude   Float?
 
-  // Tax
+  // Tax / legal
   taxId       String?
+  vatRegistrationDate DateTime?
+  taxClassification String? // Standard-rated, zero-rated, exempt
   commercialReg String?
+  crExpiryDate DateTime?
 
-  // Financial
+  // Financial / credit management
   creditLimit     Decimal  @default(0) @db.Decimal(18, 2)
   currentBalance  Decimal  @default(0) @db.Decimal(18, 2)
   paymentTerms    Int      @default(30) // days
   currency        String   @default("SAR")
+  paymentMethod   String?  // BANK_TRANSFER, CHEQUE, CASH, CARD
+  riskCategory    String?  // LOW, MEDIUM, HIGH
+  dunningBlock    Boolean  @default(false)
+  paymentBlock    Boolean  @default(false)
+  reconciliationAccountId String?
+  reconciliationAccount   Account? @relation("CustomerReconciliationAccount", fields: [reconciliationAccountId], references: [id])
+
+  // Sales area data
+  salesPersonId   String?
+  salesPerson     User?    @relation("CustomerSalesPerson", fields: [salesPersonId], references: [id])
+  salesTerritory  String?
+  shippingCondition String? // STANDARD, EXPRESS, FREIGHT_COLLECT
+  deliveryPriority Int     @default(5)
+  incoterm        Incoterm?
+  defaultPriceListId String?
+  defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id])
+  completeDeliveryRequired Boolean @default(false)
 
   // Classification
   customerType    CustomerType @default(INDIVIDUAL)
   customerGroup   String?
+  customerClassification String? // ABC classification: A, B, C
 
   status      CustomerStatus @default(ACTIVE)
+  isBlacklisted Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -553,6 +599,10 @@ model Supplier {
   code        String
   name        String
   nameAr      String?
+  searchTerm  String?
+  legalForm   String?
+  industry    String?
+  language    String   @default("ar")
 
   // Contact
   email       String?
@@ -561,30 +611,59 @@ model Supplier {
   fax         String?
   website     String?
 
-  // Address
+  // Address (Saudi National Address standard fields alongside the generic ones)
   address     String?
+  buildingNumber String?
+  street      String?
+  district    String?
+  additionalNumber String?
+  poBox       String?
   city        String?
   state       String?
+  region      String?
   country     String   @default("SA")
   zipCode     String?
   latitude    Float?
   longitude   Float?
 
-  // Tax
+  // Tax / legal
   taxId       String?
+  vatRegistrationDate DateTime?
+  withholdingTaxApplicable Boolean @default(false)
+  withholdingTaxRate Decimal? @db.Decimal(5, 2)
   commercialReg String?
+  crExpiryDate DateTime?
 
   // Financial
   creditLimit     Decimal  @default(0) @db.Decimal(18, 2)
   currentBalance  Decimal  @default(0) @db.Decimal(18, 2)
   paymentTerms    Int      @default(30)
   currency        String   @default("SAR")
+  paymentMethod   String?
+  reconciliationAccountId String?
+  reconciliationAccount   Account? @relation("SupplierReconciliationAccount", fields: [reconciliationAccountId], references: [id])
+  paymentBlock    Boolean  @default(false)
+
+  // Purchasing / vendor evaluation
+  buyerId         String?
+  buyer           User?    @relation("SupplierBuyer", fields: [buyerId], references: [id])
+  minimumOrderValue Decimal? @db.Decimal(18, 2)
+  leadTimeDays    Int?
+  incoterm        Incoterm?
+  defaultPriceListId String?
+  defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id])
+  qualityRating   Decimal? @db.Decimal(3, 2) // 0-5
+  deliveryRating  Decimal? @db.Decimal(3, 2)
+  priceRating     Decimal? @db.Decimal(3, 2)
+  isApprovedVendor Boolean @default(true)
+  vendorClassification String? // ABC classification: A, B, C
 
   // Classification
   supplierType    SupplierType @default(COMPANY)
   supplierGroup   String?
 
   status      SupplierStatus @default(ACTIVE)
+  isBlacklisted Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -601,6 +680,7 @@ model Supplier {
   contacts    Contact[]
   bankDetails BankDetail[]
   partnerFunctions PartnerFunction[]
+  preferredForItems Item[] @relation("ItemPreferredSupplier")
 
   @@unique([companyId, code])
 
@@ -629,29 +709,72 @@ model Item {
   name        String
   nameAr      String?
   description String?
+  oldItemCode String? // legacy/predecessor code, for migrated master data
+  manufacturerName String?
+  manufacturerPartNumber String?
+  barcode     String? // EAN/UPC
 
   // Classification
   itemType    ItemType @default(INVENTORY)
   itemGroup   String?
+  division    String?
   brand       String?
+  countryOfOrigin String? @default("SA")
+  hsCode      String? // customs harmonized system tariff code, needed for import/export
 
-  // Unit
+  // Unit / logistics (Basic Data view)
   unitOfMeasure String @default("PCS")
+  grossWeight Decimal? @db.Decimal(12, 3)
+  netWeight   Decimal? @db.Decimal(12, 3)
+  weightUnit  String   @default("KG")
+  volume      Decimal? @db.Decimal(12, 4)
+  volumeUnit  String   @default("M3")
+  length      Decimal? @db.Decimal(10, 2)
+  width       Decimal? @db.Decimal(10, 2)
+  height      Decimal? @db.Decimal(10, 2)
 
   // Pricing
   standardCost    Decimal @default(0) @db.Decimal(18, 2)
   sellingPrice    Decimal @default(0) @db.Decimal(18, 2)
+  priceControl    String  @default("STANDARD") // STANDARD (standard cost) or MOVING_AVERAGE
+
+  // Sales view
+  salesUnitOfMeasure String? // if different from base UOM
+  minOrderQuantity   Decimal? @db.Decimal(18, 4)
+  deliveryTimeDays   Int?
+
+  // Purchasing view
+  purchasingUnitOfMeasure String?
+  purchasingGroup    String?
+  preferredSupplierId String?
+  preferredSupplier   Supplier? @relation("ItemPreferredSupplier", fields: [preferredSupplierId], references: [id])
+  goodsReceiptBasedInvoiceVerification Boolean @default(true) // ties into three-way matching
 
   // Inventory
   isStockItem     Boolean @default(true)
   hasVariants     Boolean @default(false)
+  batchManaged    Boolean @default(false) // requires a Batch on every stock movement
+  serialManaged   Boolean @default(false) // requires a SerialNumber on every stock movement
+  shelfLifeDays   Int?
+  storageConditions String? // e.g. "Keep refrigerated", "Keep dry"
+  isHazardous     Boolean @default(false)
+
+  // MRP view
+  procurementType String  @default("BUY") // BUY or MAKE
+  lotSizingProcedure String @default("LOT_FOR_LOT") // LOT_FOR_LOT, FIXED_QTY, REORDER_POINT
+  safetyStock     Decimal @default(0) @db.Decimal(18, 2)
+  planningTimeFenceDays Int @default(0)
 
   // Reorder
   reorderLevel    Decimal @default(0) @db.Decimal(18, 2)
   reorderQuantity Decimal @default(0) @db.Decimal(18, 2)
 
+  // Quality view
+  qualityInspectionRequired Boolean @default(false)
+
   // Tax
   taxRate         Decimal @default(15) @db.Decimal(5, 2)
+  taxClassification String? @default("STANDARD_RATED") // STANDARD_RATED, ZERO_RATED, EXEMPT
 
   status      ItemStatus @default(ACTIVE)
   createdAt   DateTime @default(now())
@@ -2971,6 +3094,8 @@ model PriceList {
   company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   items         PriceListItem[]
+  defaultForCustomers Customer[]
+  defaultForSuppliers Supplier[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
