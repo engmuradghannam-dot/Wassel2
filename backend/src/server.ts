@@ -50,6 +50,16 @@ import performanceReviewRoutes from './routes/performanceReviews';
 import projectExpenseClaimRoutes from './routes/projectExpenseClaims';
 import maintenanceRoutes from './routes/maintenance';
 
+import notificationRoutes from './routes/notifications';
+import approvalRoutes from './routes/approvals';
+import emailRoutes from './routes/emails';
+import exportRoutes from './routes/exports';
+import importRoutes from './routes/imports';
+import fileRoutes from './routes/files';
+import activityLogRoutes from './routes/activityLogs';
+import settingsRoutes from './routes/settings';
+import zakatRoutes from './routes/zakat';
+
 dotenv.config();
 
 const app = express();
@@ -118,6 +128,16 @@ app.use('/api/recruitment', recruitmentRoutes);
 app.use('/api/performance-reviews', performanceReviewRoutes);
 app.use('/api/project-expense-claims', projectExpenseClaimRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
+
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/approvals', approvalRoutes);
+app.use('/api/emails', emailRoutes);
+app.use('/api/exports', exportRoutes);
+app.use('/api/imports', importRoutes);
+app.use('/api/files', fileRoutes);
+app.use('/api/activity-logs', activityLogRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/zakat', zakatRoutes);
 
 // Static files (uploads)
 app.use('/uploads', express.static('uploads'));
