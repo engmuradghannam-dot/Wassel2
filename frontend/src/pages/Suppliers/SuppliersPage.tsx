@@ -71,6 +71,7 @@ export const SuppliersPage = () => {
     e.preventDefault();
     const payload = {
       ...form,
+      code: form.code || undefined,
       creditLimit: Number(form.creditLimit),
       paymentTerms: Number(form.paymentTerms),
       withholdingTaxRate: form.withholdingTaxRate ? Number(form.withholdingTaxRate) : undefined,

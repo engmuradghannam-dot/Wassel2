@@ -206,7 +206,13 @@
     "fieldReorderLevel": "Reorder Level",
     "fieldTaxRate": "Tax Rate %",
     "stockItemLabel": "Stock item (tracked in inventory)",
-    "confirmDelete": "Delete \"{{name}}\"?"
+    "confirmDelete": "Delete \"{{name}}\"?",
+    "colGroup": "Group",
+    "colUOM": "UOM",
+    "fieldGroup": "Item Group",
+    "fieldUOM": "Unit of Measure",
+    "fieldStandardCost": "Standard Cost",
+    "fieldIsStock": "Stock Item"
   },
   "invoices": {
     "title": "Invoices",

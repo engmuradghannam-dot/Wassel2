@@ -70,6 +70,7 @@ export const ItemsPage = () => {
     e.preventDefault();
     const payload = {
       ...form,
+      code: form.code || undefined,
       standardCost: Number(form.standardCost),
       sellingPrice: Number(form.sellingPrice),
       reorderLevel: Number(form.reorderLevel),

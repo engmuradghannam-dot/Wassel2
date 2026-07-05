@@ -206,7 +206,13 @@
     "fieldReorderLevel": "حد إعادة الطلب",
     "fieldTaxRate": "نسبة الضريبة %",
     "stockItemLabel": "منتج مخزني (يُتابع بالمخزون)",
-    "confirmDelete": "متأكد تبي تحذف \"{{name}}\"؟"
+    "confirmDelete": "متأكد تبي تحذف \"{{name}}\"؟",
+    "colGroup": "المجموعة",
+    "colUOM": "الوحدة",
+    "fieldGroup": "مجموعة الصنف",
+    "fieldUOM": "وحدة القياس",
+    "fieldStandardCost": "التكلفة المعيارية",
+    "fieldIsStock": "صنف مخزني"
   },
   "invoices": {
     "title": "الفواتير",

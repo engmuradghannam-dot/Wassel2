@@ -53,6 +53,17 @@ export const getUsers = async (req: any, res: Response, next: NextFunction) => {
 export const getUser = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
+
+    if (req.user.role !== 'SUPER_ADMIN' && req.user.userId !== id) {
+      const sharedCompany = await prisma.companyMember.findFirst({
+        where: {
+          userId: id,
+          company: { members: { some: { userId: req.user.userId } } },
+        },
+      });
+      if (!sharedCompany) throw new AppError('User not found', 404);
+    }
+
     const user = await prisma.user.findUnique({
       where: { id },
       select: {

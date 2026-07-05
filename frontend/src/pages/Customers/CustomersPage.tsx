@@ -71,6 +71,7 @@ export const CustomersPage = () => {
     e.preventDefault();
     const payload = {
       ...form,
+      code: form.code || undefined,
       creditLimit: Number(form.creditLimit),
       paymentTerms: Number(form.paymentTerms),
       deliveryPriority: Number(form.deliveryPriority),
