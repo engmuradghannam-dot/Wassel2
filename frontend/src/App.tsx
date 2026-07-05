@@ -26,9 +26,14 @@ import { ManufacturingPage } from './pages/Manufacturing/ManufacturingPage';
 import { HRPage } from './pages/HR/HRPage';
 import { ProjectsPage } from './pages/Projects/ProjectsPage';
 
-// Placeholder pages (data model exists, controllers/UI still pending - next phase)
+import { SettingsPage } from './pages/Settings/SettingsPage';
+import { NotificationsPage } from './pages/Notifications/NotificationsPage';
+import { BranchesPage } from './pages/Branches/BranchesPage';
+import { ActivityLogsPage } from './pages/ActivityLogs/ActivityLogsPage';
+import { ZakatPage } from './pages/Zakat/ZakatPage';
+import { ApprovalsPage } from './pages/Approvals/ApprovalsPage';
 
-const SettingsPage = () => <div className="card"><h1 className="text-2xl font-bold">الإعدادات</h1></div>;
+// Placeholder pages (data model exists, controllers/UI still pending - next phase)
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -62,7 +67,13 @@ function App() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
-      </Route>
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/branches" element={<BranchesPage />} />
+        <Route path="/activity-logs" element={<ActivityLogsPage />} />
+        <Route path="/zakat" element={<ZakatPage />} />
+        <Route path="/approvals" element={<ApprovalsPage />} />
+            </Route>
     </Routes>
   );
 }
