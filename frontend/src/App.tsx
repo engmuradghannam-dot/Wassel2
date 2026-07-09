@@ -41,6 +41,7 @@ import { CostCentersPage } from './pages/CostCenters/CostCentersPage';
 import { ForecastPage } from './pages/Forecast/ForecastPage';
 import { IoTPage } from './pages/IoT/IoTPage';
 import { ConsolidationPage } from './pages/Consolidation/ConsolidationPage';
+import { ChatPage } from './pages/Chat/ChatPage';
 import { OnboardingPage } from './pages/Onboarding/OnboardingPage';
 
 // Placeholder pages (data model exists, controllers/UI still pending - next phase)
@@ -91,6 +92,7 @@ function App() {
         <Route path="/forecast" element={<ForecastPage />} />
         <Route path="/iot-devices" element={<IoTPage />} />
         <Route path="/consolidation" element={<ConsolidationPage />} />
+        <Route path="/chat" element={<ChatPage />} />
             </Route>
         <Route path="/onboarding" element={<OnboardingPage />} />
     </Routes>

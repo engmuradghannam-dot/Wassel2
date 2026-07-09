@@ -572,3 +572,17 @@ export const iotDeviceApi = {
   getReadings: (id: string) => api.get(`/iot-devices/${id}/readings`),
   delete: (id: string) => api.delete(`/iot-devices/${id}`),
 };
+
+// Chat API
+export const chatApi = {
+  getAll: () => 
+    api.get('/chats'),
+  create: (participantId: string) => 
+    api.post('/chats', { participantId }),
+  getMessages: (chatId: string) => 
+    api.get(`/chats/${chatId}/messages`),
+  sendMessage: (chatId: string, content: string) => 
+    api.post('/chats/messages', { chatId, content }),
+  delete: (chatId: string) => 
+    api.delete(`/chats/${chatId}`),
+};
