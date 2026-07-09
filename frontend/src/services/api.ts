@@ -80,6 +80,8 @@ export const api = new ApiService();
 export const authApi = {
   login: (email: string, password: string) => 
     api.post('/auth/login', { email, password }),
+  googleLogin: (credential: string) => 
+    api.post('/auth/google', { credential }),
   register: (data: any) => 
     api.post('/auth/register', data),
   refresh: (refreshToken: string) => 

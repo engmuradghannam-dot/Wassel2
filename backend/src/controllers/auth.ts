@@ -1,3 +1,4 @@
+import { OAuth2Client } from 'google-auth-library';
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../utils/prisma';
@@ -274,3 +275,110 @@ export const changePassword = async (req: any, res: Response, next: NextFunction
     next(error);
   }
 };
+
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      throw new AppError('Google credential required', 400);
+    }
+
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      throw new AppError('Invalid Google token', 401);
+    }
+
+    const email = payload.email;
+    const firstName = payload.given_name || payload.name?.split(' ')[0] || 'User';
+    const lastName = payload.family_name || payload.name?.split(' ').slice(1).join(' ') || '';
+    const avatar = payload.picture || undefined;
+
+    // Find or create user
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: { companyMemberships: { orderBy: { createdAt: 'asc' }, take: 1 } },
+    });
+
+    if (!user) {
+      // Create new user from Google data
+      const isFirstUser = (await prisma.user.count()) === 0;
+      user = await prisma.user.create({
+        data: {
+          email,
+          firstName,
+          lastName,
+          avatar,
+          password: await hashPassword(Math.random().toString(36).slice(-16)), // Random password
+          role: isFirstUser ? 'SUPER_ADMIN' : 'USER',
+          status: 'ACTIVE',
+        },
+        include: { companyMemberships: { orderBy: { createdAt: 'asc' }, take: 1 } },
+      });
+    } else {
+      // Update avatar if changed
+      if (avatar && user.avatar !== avatar) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { avatar, lastLoginAt: new Date() },
+        });
+      } else {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        });
+      }
+      // Refresh user data
+      user = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { companyMemberships: { orderBy: { createdAt: 'asc' }, take: 1 } },
+      });
+    }
+
+    if (!user || user.status !== 'ACTIVE') {
+      throw new AppError('Account is not active', 403);
+    }
+
+    const defaultCompanyId = user.companyMemberships[0]?.companyId;
+
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      companyId: defaultCompanyId,
+    });
+
+    const refreshToken = generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      companyId: defaultCompanyId,
+    });
+
+    res.json(successResponse({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        avatar: user.avatar,
+      },
+      token,
+      refreshToken,
+      defaultCompanyId,
+    }, 'Google login successful'));
+  } catch (error) {
+    next(error);
+  }
+};
+

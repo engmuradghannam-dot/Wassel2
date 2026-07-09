@@ -3,14 +3,16 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
+import { GoogleLogin } from '@react-oauth/google';
 import { LanguageSwitcher } from '../../components/common/LanguageSwitcher';
 
 export const LoginPage = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoginLoading } = useAuth();
+  const { login, googleLogin, isLoginLoading } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +93,32 @@ export const LoginPage = () => {
               )}
             </button>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-secondary-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-2 text-secondary-500">أو</span>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-center">
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  if (credentialResponse.credential) {
+                    googleLogin(credentialResponse.credential);
+                  }
+                }}
+                onError={() => {
+                  toast.error('فشل تسجيل الدخول بـ Google');
+                }}
+                text="signin_with"
+                shape="pill"
+                locale="ar"
+              />
+            </div>
+          </div>
 
           <p className="mt-6 text-center text-sm text-secondary-500">
             {t('auth.noAccount')}{' '}
