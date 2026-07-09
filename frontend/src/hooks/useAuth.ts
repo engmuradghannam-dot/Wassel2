@@ -22,7 +22,12 @@ export const useAuth = () => {
         localStorage.setItem('murad_erp_token', token);
         localStorage.setItem('murad_erp_refresh_token', refreshToken);
         toast.success('تم تسجيل الدخول بنجاح');
-        navigate('/dashboard');
+        // If user has no company, redirect to onboarding wizard
+        if (!response.data.defaultCompanyId) {
+          navigate('/onboarding');
+        } else {
+          navigate('/dashboard');
+        }
       }
     },
     onError: (error: any) => {
