@@ -74,6 +74,7 @@ model User {
   assignedTodos Todo[]
   companyMemberships CompanyMember[]
 
+  pmoProjects       PMOProject[]
   @@map("users")
   chatParticipants ChatParticipant[]
   sentMessages     Message[]
@@ -227,6 +228,7 @@ model Company {
   salesForecasts SalesForecast[]
   iotDevices   IoTDevice[]
 
+  pmoProjects       PMOProject[]
   @@map("companies")
 }
 
@@ -3279,4 +3281,935 @@ model Message {
   sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+// ─────────────────────────────────────────────────────────────
+// INDUSTRY CONTROL LIBRARY (from Industry_Control_Library_Master.xlsx)
+// ─────────────────────────────────────────────────────────────
+
+model IndustryCatalog {
+  id          String   @id @default(cuid())
+  industryId  String   @unique  // AVI, HLT, MFG, etc.
+  name        String
+  category    String   // Transportation, Healthcare, Industrial, etc.
+  description String?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  controls    IndustryControl[]
+  aiAgents    AIAgent[]
+
+  @@map("industry_catalogs")
+}
+
+model IndustryControl {
+  id              String  @id @default(cuid())
+  industryId      String
+  module          String
+  controlId       String  // AVI-FOP-001
+  controlName     String
+  subControl      String?
+  description     String?
+  required        Boolean @default(true)
+  aiAgentName     String?
+  databaseEntity  String?
+  kpi             String?
+  compliance      String? // IATA, FAA, HIPAA, ISO9001, etc.
+  status          String  @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  industry        IndustryCatalog @relation(fields: [industryId], references: [industryId], onDelete: Cascade)
+
+  @@unique([industryId, controlId])
+  @@map("industry_controls")
+}
+
+model AIAgent {
+  id              String  @id @default(cuid())
+  industryId      String
+  name            String  // Flight AI Agent, Clinical AI Agent
+  responsibility  String?
+  databaseEntity  String?
+  status          String  @default("ACTIVE")
+  createdAt       DateTime @default(now())
+
+  industry        IndustryCatalog @relation(fields: [industryId], references: [industryId], onDelete: Cascade)
+
+  @@map("ai_agents")
+}
+
+model EntityMaster {
+  id          String  @id @default(cuid())
+  name        String  // Customer, Employee, Asset, Inventory
+  type        String  // Master Data, Asset Management, Supply Chain
+  usage       String?
+  status      String  @default("ACTIVE")
+  createdAt   DateTime @default(now())
+
+  @@map("entity_masters")
+}
+
+// ─────────────────────────────────────────────────────────────
+// PMO MASTER WORKBOOK (from PMO_Master_Workbook.xlsx)
+// ─────────────────────────────────────────────────────────────
+
+model PMOProject {
+  id              String   @id @default(cuid())
+  projectCode     String   @unique
+  name            String
+  description     String?
+  ownerId         String
+  status          String   @default("DRAFT") // DRAFT, ACTIVE, ON_HOLD, COMPLETED, CANCELLED
+  priority        String   @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  startDate       DateTime?
+  endDate         DateTime?
+  budget          Decimal? @db.Decimal(18, 2)
+  actualCost      Decimal? @db.Decimal(18, 2)
+  progressPercent Int      @default(0)
+  notes           String?
+
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner           User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // PMO Sub-modules
+  charter         ProjectCharter?
+  businessCase    BusinessCase?
+  stakeholders    ProjectStakeholder[]
+  requirements    ProjectRequirement[]
+  wbsItems        WBSItem[]
+  deliverables    ProjectDeliverable[]
+  milestones      ProjectMilestone[]
+  scheduleItems   ScheduleItem[]
+  sprints         Sprint[]
+  kanbanItems     KanbanItem[]
+  resources       ProjectResource[]
+  raciEntries     RACIEntry[]
+  budgetItems     BudgetItem[]
+  costTrackings   CostTracking[]
+  procurements    Procurement[]
+  vendors         Vendor[]
+  contracts       Contract[]
+  payments        ProjectPayment[]
+  risks           RiskRegister[]
+  issues          IssueLog[]
+  changeRequests  ChangeRequest[]
+  decisions       DecisionLog[]
+  qualityPlans    QualityPlan[]
+  qaChecklists    QAChecklist[]
+  testCases       TestCase[]
+  bugs            BugTracker[]
+  uatItems        UATItem[]
+  kpis            ProjectKPI[]
+  weeklyReports   WeeklyReport[]
+  monthlyReports  MonthlyReport[]
+  execReports     ExecutiveReport[]
+  lessonsLearned  LessonsLearned[]
+  meetingMinutes  MeetingMinute[]
+  actionItems     ActionItem[]
+  raidLogs        RAIDLog[]
+  dependencies    Dependency[]
+  commPlans       CommunicationPlan[]
+  docRegisters    DocumentRegister[]
+  versionControls VersionControl[]
+  trainingPlans   TrainingPlan[]
+  goLivePlans     GoLivePlan[]
+  maintenances    Maintenance[]
+  closureDocs     ProjectClosure[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("pmo_projects")
+}
+
+model ProjectCharter {
+  id          String  @id @default(cuid())
+  projectId   String  @unique
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  purpose     String?
+  objectives  String?
+  scope       String?
+  constraints String?
+  assumptions String?
+  deliverables String?
+  successCriteria String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("project_charters")
+}
+
+model BusinessCase {
+  id              String  @id @default(cuid())
+  projectId       String  @unique
+  project         PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  problemStatement String?
+  proposedSolution String?
+  benefits        String?
+  financialAnalysis String?
+  riskAssessment  String?
+  recommendation  String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("business_cases")
+}
+
+model ProjectStakeholder {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  role        String?
+  influence   String? // HIGH, MEDIUM, LOW
+  interest    String? // HIGH, MEDIUM, LOW
+  engagementStrategy String?
+  email       String?
+  phone       String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_stakeholders")
+}
+
+model ProjectRequirement {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  reqCode     String
+  title       String
+  description String?
+  type        String? // FUNCTIONAL, NON_FUNCTIONAL, TECHNICAL
+  priority    String  @default("MEDIUM")
+  status      String  @default("PENDING") // PENDING, APPROVED, REJECTED, IMPLEMENTED
+  verifiedBy  String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, reqCode])
+  @@map("project_requirements")
+}
+
+model WBSItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  wbsCode     String
+  name        String
+  description String?
+  parentId    String?
+  parent      WBSItem? @relation("WBSParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children    WBSItem[] @relation("WBSParent")
+  level       Int     @default(1)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, wbsCode])
+  @@map("wbs_items")
+}
+
+model ProjectDeliverable {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  acceptanceCriteria String?
+  dueDate     DateTime?
+  status      String  @default("PENDING")
+  approvedBy  String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("project_deliverables")
+}
+
+model ProjectMilestone {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  targetDate  DateTime
+  actualDate  DateTime?
+  status      String  @default("PENDING") // PENDING, ACHIEVED, MISSED
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_milestones")
+}
+
+model ScheduleItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  taskName    String
+  startDate   DateTime
+  endDate     DateTime
+  duration    Int?    // in days
+  progress    Int     @default(0)
+  dependencies String? // comma-separated IDs
+  assignedTo  String?
+  status      String  @default("NOT_STARTED")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("schedule_items")
+}
+
+model Sprint {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  sprintNumber Int
+  name        String
+  goal        String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String  @default("PLANNED") // PLANNED, ACTIVE, COMPLETED
+  velocity    Int?
+
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, sprintNumber])
+  @@map("sprints")
+}
+
+model KanbanItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  column      String  @default("BACKLOG") // BACKLOG, TODO, IN_PROGRESS, REVIEW, DONE
+  priority    String  @default("MEDIUM")
+  assignedTo  String?
+  tags        String? // comma-separated
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("kanban_items")
+}
+
+model ProjectResource {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  resourceType String // HUMAN, EQUIPMENT, MATERIAL, BUDGET
+  name        String
+  role        String?
+  allocation  Int?    // percentage
+  costRate    Decimal? @db.Decimal(18, 2)
+  startDate   DateTime?
+  endDate     DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_resources")
+}
+
+model RACIEntry {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  task        String
+  responsible String? // comma-separated user IDs
+  accountable String?
+  consulted   String? // comma-separated
+  informed    String? // comma-separated
+
+  createdAt   DateTime @default(now())
+
+  @@map("raci_entries")
+}
+
+model BudgetItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  category    String  // LABOR, MATERIAL, EQUIPMENT, OVERHEAD
+  itemName    String
+  plannedAmount Decimal @db.Decimal(18, 2)
+  actualAmount  Decimal? @db.Decimal(18, 2)
+  variance    Decimal? @db.Decimal(18, 2)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("budget_items")
+}
+
+model CostTracking {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  expenseType String
+  description String?
+  amount      Decimal @db.Decimal(18, 2)
+  date        DateTime
+  approvedBy  String?
+  receiptUrl  String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("cost_trackings")
+}
+
+model Procurement {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  itemName    String
+  description String?
+  quantity    Int
+  unitPrice   Decimal? @db.Decimal(18, 2)
+  totalCost   Decimal? @db.Decimal(18, 2)
+  vendorId    String?
+  status      String  @default("DRAFT") // DRAFT, APPROVED, ORDERED, RECEIVED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("procurements")
+}
+
+model Vendor {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  taxId       String?
+  rating      Int?    // 1-5
+  status      String  @default("ACTIVE")
+
+  createdAt   DateTime @default(now())
+
+  @@map("vendors")
+}
+
+model Contract {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  contractNumber String @unique
+  vendorName  String
+  type        String? // FIXED_PRICE, TIME_MATERIAL, RETAINER
+  value       Decimal? @db.Decimal(18, 2)
+  startDate   DateTime?
+  endDate     DateTime?
+  terms       String?
+  status      String  @default("DRAFT")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("contracts")
+}
+
+model ProjectPayment {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  paymentNumber String
+  description String?
+  amount      Decimal @db.Decimal(18, 2)
+  date        DateTime
+  method      String? // BANK_TRANSFER, CHECK, CASH
+  status      String  @default("PENDING")
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_payments")
+}
+
+model RiskRegister {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  riskCode    String
+  description String
+  category    String? // TECHNICAL, FINANCIAL, SCHEDULE, RESOURCE
+  probability Int     @default(3) // 1-5
+  impact      Int     @default(3) // 1-5
+  score       Int?    // probability * impact
+  mitigation  String?
+  contingency String?
+  owner       String?
+  status      String  @default("OPEN") // OPEN, MITIGATED, CLOSED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, riskCode])
+  @@map("risk_registers")
+}
+
+model IssueLog {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  issueCode   String
+  title       String
+  description String?
+  severity    String  @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  reportedBy  String?
+  assignedTo  String?
+  resolution  String?
+  status      String  @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, issueCode])
+  @@map("issue_logs")
+}
+
+model ChangeRequest {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  crNumber    String
+  title       String
+  description String?
+  reason      String?
+  impact      String?
+  requestedBy String?
+  approvedBy  String?
+  status      String  @default("PENDING") // PENDING, APPROVED, REJECTED, IMPLEMENTED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, crNumber])
+  @@map("change_requests")
+}
+
+model DecisionLog {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  decision    String
+  context     String?
+  alternatives String?
+  decidedBy   String?
+  date        DateTime
+  impact      String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("decision_logs")
+}
+
+model QualityPlan {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  objective   String
+  criteria    String?
+  method      String?
+  frequency   String?
+  responsible String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("quality_plans")
+}
+
+model QAChecklist {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  item        String
+  standard    String?
+  result      String? // PASS, FAIL, N/A
+  notes       String?
+  checkedBy   String?
+  checkedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@map("qa_checklists")
+}
+
+model TestCase {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  tcCode      String
+  title       String
+  description String?
+  preconditions String?
+  steps       String?
+  expectedResult String?
+  actualResult String?
+  status      String  @default("NOT_RUN") // NOT_RUN, PASSED, FAILED, BLOCKED
+  testedBy    String?
+  testedAt    DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, tcCode])
+  @@map("test_cases")
+}
+
+model BugTracker {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  bugId       String
+  title       String
+  description String?
+  severity    String  @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  stepsToReproduce String?
+  reportedBy  String?
+  assignedTo  String?
+  resolution  String?
+  status      String  @default("NEW") // NEW, CONFIRMED, IN_PROGRESS, FIXED, VERIFIED, CLOSED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, bugId])
+  @@map("bug_trackers")
+}
+
+model UATItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  scenario    String
+  testData    String?
+  expectedResult String?
+  actualResult String?
+  status      String  @default("PENDING") // PENDING, PASSED, FAILED
+  testedBy    String?
+  testedAt    DateTime?
+  signOffBy   String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("uat_items")
+}
+
+model ProjectKPI {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  metric      String?
+  target      Decimal? @db.Decimal(18, 4)
+  actual      Decimal? @db.Decimal(18, 4)
+  unit        String?
+  frequency   String? // DAILY, WEEKLY, MONTHLY
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_kpis")
+}
+
+model WeeklyReport {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  weekNumber  Int
+  year        Int
+  summary     String?
+  achievements String?
+  issues      String?
+  risks       String?
+  nextWeekPlan String?
+  submittedBy String?
+
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, weekNumber, year])
+  @@map("weekly_reports")
+}
+
+model MonthlyReport {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  month       Int
+  year        Int
+  summary     String?
+  financials  String?
+  milestones  String?
+  issues      String?
+  nextMonthPlan String?
+  submittedBy String?
+
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, month, year])
+  @@map("monthly_reports")
+}
+
+model ExecutiveReport {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  period      String
+  overallStatus String? // GREEN, YELLOW, RED
+  highlights  String?
+  concerns    String?
+  decisionsNeeded String?
+  submittedBy String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("executive_reports")
+}
+
+model LessonsLearned {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  category    String? // WHAT_WENT_WELL, WHAT_WENT_WRONG, RECOMMENDATION
+  description String
+  impact      String?
+  actionItem  String?
+  reportedBy  String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("lessons_learned")
+}
+
+model MeetingMinute {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  meetingType String
+  date        DateTime
+  attendees   String? // comma-separated
+  agenda      String?
+  decisions   String?
+  actionItems String?
+  nextMeeting DateTime?
+  recordedBy  String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("meeting_minutes")
+}
+
+model ActionItem {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  description String
+  assignedTo  String?
+  dueDate     DateTime?
+  priority    String  @default("MEDIUM")
+  status      String  @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED, OVERDUE
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("action_items")
+}
+
+model RAIDLog {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  type        String  // RISK, ASSUMPTION, ISSUE, DEPENDENCY
+  description String
+  owner       String?
+  impact      String?
+  mitigation  String?
+  status      String  @default("OPEN")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("raid_logs")
+}
+
+model Dependency {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  taskId      String?
+  dependsOn   String?
+  type        String  @default("FS") // FS, SS, FF, SF
+  description String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("dependencies")
+}
+
+model CommunicationPlan {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  stakeholder String
+  method      String? // EMAIL, MEETING, REPORT, PORTAL
+  frequency   String? // DAILY, WEEKLY, MONTHLY, AD_HOC
+  purpose     String?
+  responsible String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("communication_plans")
+}
+
+model DocumentRegister {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  docCode     String
+  title       String
+  type        String? // REQUIREMENT, DESIGN, TEST, MANUAL
+  version     String  @default("1.0")
+  author      String?
+  approvedBy  String?
+  status      String  @default("DRAFT")
+  fileUrl     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, docCode])
+  @@map("document_registers")
+}
+
+model VersionControl {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  documentName String
+  version     String
+  changes     String?
+  changedBy   String?
+  changedAt   DateTime
+  approvedBy  String?
+
+  createdAt   DateTime @default(now())
+
+  @@map("version_controls")
+}
+
+model TrainingPlan {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  topic       String
+  audience    String?
+  method      String? // ON_SITE, ONLINE, WORKSHOP
+  duration    Int?    // hours
+  trainer     String?
+  scheduledDate DateTime?
+  status      String  @default("PLANNED")
+
+  createdAt   DateTime @default(now())
+
+  @@map("training_plans")
+}
+
+model GoLivePlan {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  phase       String  @default("PREPARATION") // PREPARATION, DRY_RUN, GO_LIVE, POST_GO_LIVE
+  checklist   String?
+  responsible String?
+  targetDate  DateTime?
+  completedAt DateTime?
+  status      String  @default("PENDING")
+
+  createdAt   DateTime @default(now())
+
+  @@map("go_live_plans")
+}
+
+model Maintenance {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  type        String? // CORRECTIVE, PREVENTIVE, ADAPTIVE
+  description String
+  frequency   String?
+  responsible String?
+  scheduledDate DateTime?
+  completedAt DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@map("maintenances")
+}
+
+model ProjectClosure {
+  id          String  @id @default(cuid())
+  projectId   String  @unique
+  project     PMOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  handoverDate DateTime?
+  deliverablesAccepted String?
+  finalBudget  Decimal? @db.Decimal(18, 2)
+  finalReport  String?
+  signOffBy    String?
+  archivedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@map("project_closures")
 }

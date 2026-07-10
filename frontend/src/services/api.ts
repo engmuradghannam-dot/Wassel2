@@ -586,3 +586,42 @@ export const chatApi = {
   delete: (chatId: string) => 
     api.delete(`/chats/${chatId}`),
 };
+
+// Industry & PMO API
+export const industryApi = {
+  // Industry Catalog
+  getIndustries: () => 
+    api.get('/industry/catalog'),
+  getIndustry: (id: string) => 
+    api.get(`/industry/catalog/${id}`),
+  getIndustryControls: (industryId: string) => 
+    api.get(`/industry/catalog/${industryId}/controls`),
+  getIndustryAgents: (industryId: string) => 
+    api.get(`/industry/catalog/${industryId}/agents`),
+  getEntities: () => 
+    api.get('/industry/entities'),
+
+  // PMO Projects
+  getPMOProjects: () => 
+    api.get('/industry/pmo/projects'),
+  getPMOProject: (id: string) => 
+    api.get(`/industry/pmo/projects/${id}`),
+  createPMOProject: (data: any) => 
+    api.post('/industry/pmo/projects', data),
+  updatePMOProject: (id: string, data: any) => 
+    api.put(`/industry/pmo/projects/${id}`, data),
+  deletePMOProject: (id: string) => 
+    api.delete(`/industry/pmo/projects/${id}`),
+
+  // PMO Sub-modules
+  addMilestone: (data: any) => 
+    api.post('/industry/pmo/milestones', data),
+  addRisk: (data: any) => 
+    api.post('/industry/pmo/risks', data),
+  addIssue: (data: any) => 
+    api.post('/industry/pmo/issues', data),
+  addBudgetItem: (data: any) => 
+    api.post('/industry/pmo/budget', data),
+  addStakeholder: (data: any) => 
+    api.post('/industry/pmo/stakeholders', data),
+};
